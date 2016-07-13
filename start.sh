@@ -25,7 +25,7 @@ _install () {
 # Check if run with sudo
 
 if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
-	_print_red "Must be run as root"
+	_print_red "Must be run with sudo"
 	exit 1
 fi
 
