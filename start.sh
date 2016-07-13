@@ -1,8 +1,31 @@
 #!/bin/sh
 
+# Functions
+
+_print_red () {
+	echo "${RED}${1}${NC}"
+}
+
+_install_success () {
+	echo "Installed $1"
+}
+
+_install_fail () {
+	_print_red "Installing $1 failed"
+}
+
+_install () {
+	if apt-get -y -q install $1 ; then
+		_install_success $1
+	else
+		_install_fail $1
+	fi
+}
+
 # Check if run with sudo
 
 if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
+	_print_red "Must be run as root"
 	exit 1
 fi
 
@@ -15,24 +38,6 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 export DEBIAN_FRONTEND=noninteractive
-
-# Functions
-
-_install_success () {
-	echo "Installed $1"
-}
-
-_install_fail () {
-	echo "${RED}Installing $1 failed!${NC}"
-}
-
-_install () {
-	if apt-get -y -q install $1 ; then
-		_install_success $1
-	else
-		_install_fail $1
-	fi
-}
 
 # $1 = Name of software
 # $2 = Download prefix (without file name, without / at the end)
@@ -57,12 +62,12 @@ _install_dpkg () {
 if apt-get update ; then
 	echo "Updated"
 else
-	echo "${RED}Update failed!${NC}"
+	_print_red "Update failed"
 fi
 if apt-get upgrade ; then
 	echo "Upgraded"
 else
-	echo "${RED}Upgrade failed!${NC}"
+	_print_red "Upgrade failed"
 fi
 
 # Install tools
