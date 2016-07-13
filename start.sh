@@ -1,22 +1,94 @@
+#!/bin/sh
+
+# Check if run with sudo
+
+if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
+	exit 1
+fi
+
+# Variables
+
+USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+DR=sudo --user=#$UID
+DL_PREFIX=/tmp
+RED='\033[0;31m'
+NC='\033[0m'
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Functions
+
+_install_success () {
+	echo "Installed $1"
+}
+
+_install_fail () {
+	echo "${RED}Installing $1 failed!${NC}"
+}
+
+_install () {
+	if apt-get -y -q install $1 ; then
+		_install_success $1
+	else
+		_install_fail $1
+	fi
+}
+
+# $1 = Name of software
+# $2 = Download prefix (without file name, without / at the end)
+# $3 = File name to download and install
+_install_dpkg () {
+	wget --tries=3 $2/$3 -P $DL_PREFIX
+	if [ $? -eq 0 ]; then
+		dpkg -i -G $DL_PREFIX/$3
+		if [ $? -ne 0 ]; then
+			_install_fail $1
+		else
+			_install_success $1
+		fi
+		rm $DL_PREFIX/$3
+	else
+		_install_fail $1
+	fi
+}
+
 # Update
 
-apt-get update
-apt-get upgrade
+if apt-get update ; then
+	echo "Updated"
+else
+	echo "${RED}Update failed!${NC}"
+fi
+if apt-get upgrade ; then
+	echo "Upgraded"
+else
+	echo "${RED}Upgrade failed!${NC}"
+fi
 
 # Install tools
 
-apt-get install git
-apt-get install google-chrome-stable
-apt-get install tmux
-apt-get install cloc
-apt-get install build-essential
+_install git
+_install google-chrome-stable
+_install tmux
+_install cloc
+_install build-essential
+_install unity-tweak-tool
+_install ubuntu-restricted-extras
+
+SUBL3_NAME="Sublime Text 3" 
+SUBL3_SITE="https://download.sublimetext.com"
+SUBL3_FILE="sublime-text_build-3114_amd64.deb"
+_install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
 
 apt-get autoremove
 
-SUBL_PACKAGE=sublime-text_build-3114_amd64.deb
-wget --tries=3 https://download.sublimetext.com/$SUBL_PACKAGE
-dpkg -i $SUBL_PACKAGE
-rm $SUBL_PACKAGE
+# SSH
+
+$DR mkdir -p $USER_HOME/.ssh
+$DR chmod 700 $USER_HOME/.ssh
+$DR ssh-keygen -q -t rsa -N "" -f $USER_HOME/.ssh/id_rsa
+$DR touch $USER_HOME/.ssh/authorized_keys
+$DR chmod 600 USER_HOME/.ssh/authorized_keys
 
 # Append .bashrc
 
@@ -53,3 +125,7 @@ function fond {
         find . -name $1
 }
 " >> ~/.bashrc
+
+echo "You should run '. ~/.bashrc' now."
+
+exit 0
