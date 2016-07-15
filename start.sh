@@ -22,23 +22,6 @@ _install () {
 	fi
 }
 
-# Check if run with sudo
-
-if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
-	_print_red "Must be run with sudo"
-	exit 1
-fi
-
-# Variables
-
-USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
-DR=sudo --user=#$UID
-DL_PREFIX=/tmp
-RED='\033[0;31m'
-NC='\033[0m'
-
-export DEBIAN_FRONTEND=noninteractive
-
 # $1 = Name of software
 # $2 = Download prefix (without file name, without / at the end)
 # $3 = File name to download and install
@@ -56,6 +39,23 @@ _install_dpkg () {
 		_install_fail $1
 	fi
 }
+
+# Check if run with sudo
+
+if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
+	_print_red "Must be run with sudo"
+	exit 1
+fi
+
+# Variables
+
+USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+DR=sudo --user=#$UID
+DL_PREFIX=/tmp
+RED='\033[0;31m'
+NC='\033[0m'
+
+export DEBIAN_FRONTEND=noninteractive
 
 # Update
 
@@ -131,7 +131,20 @@ function grip {
 function fond {
         find . -name $1
 }
-" >> ~/.bashrc
+" >> $USER_HOME/.bashrc
+
+# Create .hidden
+
+echo "
+Pictures
+Videos
+Music
+Documents
+Bilder
+Musik
+Dokumente" > $USER_HOME/.hidden
+
+# End
 
 echo "You should run '. ~/.bashrc' now."
 
