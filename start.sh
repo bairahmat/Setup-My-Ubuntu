@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# Variables
+
+USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+DR=sudo --user=#$UID
+DL_PREFIX=/tmp
+RED='\033[0;31m'
+NC='\033[0m'
+
 # Functions
 
 _print_red () {
@@ -46,14 +54,6 @@ if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
 	_print_red "Must be run with sudo"
 	exit 1
 fi
-
-# Variables
-
-USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
-DR=sudo --user=#$UID
-DL_PREFIX=/tmp
-RED='\033[0;31m'
-NC='\033[0m'
 
 export DEBIAN_FRONTEND=noninteractive
 
