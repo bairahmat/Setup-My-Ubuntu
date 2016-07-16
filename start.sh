@@ -8,6 +8,8 @@ DL_PREFIX=/tmp
 RED='\033[0;31m'
 NC='\033[0m'
 
+export DEBIAN_FRONTEND=noninteractive
+
 # Functions
 
 _print_red () {
@@ -54,8 +56,6 @@ if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
 	_print_red "Must be run with sudo"
 	exit 1
 fi
-
-export DEBIAN_FRONTEND=noninteractive
 
 # Update
 
