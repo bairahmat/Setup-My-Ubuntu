@@ -2,8 +2,6 @@
 
 # Variables
 
-USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
-DR=sudo --user=#$UID
 DL_PREFIX=/tmp
 RED='\033[0;31m'
 NC='\033[0m'
@@ -56,6 +54,11 @@ if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
 	_print_red "Must be run with sudo"
 	exit 1
 fi
+
+# More variables
+
+USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+DR=sudo --user=#$UID
 
 # Update
 
