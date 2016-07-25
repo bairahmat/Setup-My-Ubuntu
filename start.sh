@@ -115,6 +115,7 @@ alias grip='ps aux | grep -i -e'
 alias fond='find . -name'
 alias git-count='git rev-list --all --count'
 alias giff='git diff HEAD'
+alias giss='git status'
 alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
 
