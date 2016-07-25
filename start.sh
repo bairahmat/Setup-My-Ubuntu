@@ -107,8 +107,8 @@ echo "
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
-alias ll='ls -AlFh'
-alias ls='ls -lFh --color'
+alias ll='ls -AlFh --color=auto'
+alias ls='ls -lFh --color=auto'
 alias dta='dmesg | tail'
 alias grap='grep -R -n -i -e'
 alias grip='ps aux | grep -i -e'
