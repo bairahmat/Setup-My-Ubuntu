@@ -109,6 +109,10 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
 alias ll='ls -AlFh'
 alias ls='ls -lFh --color'
+alias dta='dmesg | tail'
+alias grap='grep -R -n -i -e'
+alias grip='ps aux | grep -i -e'
+alias fond='find . -name'
 alias git-count='git rev-list --all --count'
 alias giff='git diff HEAD'
 alias cloc-all='cloc *.c *.h Makefile'
@@ -119,21 +123,6 @@ function mkc {
         cd $1
 }
 
-function dta {
-        dmesg | tail
-}
-
-function grap {
-        grep -R -n -i -e $1
-}
-
-function grip {
-        ps aux | grep -i -e $1
-}
-
-function fond {
-        find . -name $1
-}
 " >> $USER_HOME/.bashrc
 
 # Create .hidden
