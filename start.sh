@@ -46,7 +46,7 @@ _install_dpkg () {
 	fi
 }
 
-# Check if run as root
+# Check if run with sudo
 if [[ $EUID != 0 ]]; then
 	_print_red "Must be run with root privilages!"
 	exit 1
