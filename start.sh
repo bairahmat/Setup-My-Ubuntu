@@ -14,19 +14,18 @@ _print_red () {
 	echo -e "${RED}${1}${NC}"
 }
 
-_install_success () {
-	echo -e "Installed $1"
-}
-
 _install_fail () {
 	_print_red "Installing $1 failed"
 }
 
+_install_start () {
+	echo -e "Installing $1..."
+}
+
 _install () {
-	if apt-get -y -qq install $1 ; then
-		_install_success $1
-	else
-		_install_fail $1
+	_install_start $1
+	if [[ $(apt-get -y -qq install $1) -ne 0 ]] ; then
+		_install_fail $1;
 	fi
 }
 
@@ -34,13 +33,12 @@ _install () {
 # $2 = Download prefix (without file name, without / at the end)
 # $3 = File name to download and install
 _install_dpkg () {
+	_install_start $1
 	wget --tries=3 $2/$3 -P $DL_PREFIX -q
 	if [ $? -eq 0 ]; then
 		dpkg -i -G $DL_PREFIX/$3 > /dev/null
 		if [ $? -ne 0 ]; then
 			_install_fail $1
-		else
-			_install_success $1
 		fi
 		rm $DL_PREFIX/$3
 	else
@@ -65,15 +63,11 @@ DR="sudo --user=$SUDO_USER"
 # Update
 
 echo "Updating... (this could take a while)"
-if apt-get -qq update ; then
-	echo "Updated"
-else
+if [[ $(apt-get -qq update) -ne 0 ]] ; then
 	_print_red "Update failed"
 fi
 echo "Upgrading... (this could take a while)"
-if apt-get -y -qq upgrade > /dev/null ; then
-	echo "Upgraded"
-else
+if [[ $(apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
 	_print_red "Upgrade failed"
 fi
 
