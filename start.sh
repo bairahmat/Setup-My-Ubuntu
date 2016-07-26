@@ -1,21 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 
 # Variables
 
 DL_PREFIX=/tmp
-RED='\033[0;31m'
-NC='\033[0m'
+RED='\e[31m'
+NC='\e[0m'
 
 export DEBIAN_FRONTEND=noninteractive
 
 # Functions
 
 _print_red () {
-	echo "${RED}${1}${NC}"
+	echo -e "${RED}${1}${NC}"
 }
 
 _install_success () {
-	echo "Installed $1"
+	echo -e "Installed $1"
 }
 
 _install_fail () {
@@ -23,7 +23,7 @@ _install_fail () {
 }
 
 _install () {
-	if apt-get -y -q install $1 ; then
+	if apt-get -y -qq install $1 ; then
 		_install_success $1
 	else
 		_install_fail $1
@@ -34,9 +34,9 @@ _install () {
 # $2 = Download prefix (without file name, without / at the end)
 # $3 = File name to download and install
 _install_dpkg () {
-	wget --tries=3 $2/$3 -P $DL_PREFIX
+	wget --tries=3 $2/$3 -P $DL_PREFIX -q
 	if [ $? -eq 0 ]; then
-		dpkg -i -G $DL_PREFIX/$3
+		dpkg -i -G $DL_PREFIX/$3 > /dev/null
 		if [ $? -ne 0 ]; then
 			_install_fail $1
 		else
@@ -48,26 +48,30 @@ _install_dpkg () {
 	fi
 }
 
-# Check if run with sudo
-
-if [ "$(whoami)" != "root" ]; then
-	_print_red "Must be run with as root"
+# Check if run as root
+if [[ $EUID != 0 ]]; then
+	_print_red "Must be run with root privilages!"
+	exit 1
+elif [[ "$SUDO_USER" = "" ]]; then
+	_print_red "Can't be run as root!"
 	exit 1
 fi
 
 # More variables
 
 USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
-DR=sudo --user=#$UID
+DR="sudo --user=$SUDO_USER"
 
 # Update
 
-if apt-get update ; then
+echo "Updating... (this could take a while)"
+if apt-get -qq update ; then
 	echo "Updated"
 else
 	_print_red "Update failed"
 fi
-if apt-get upgrade ; then
+echo "Upgrading... (this could take a while)"
+if apt-get -y -qq upgrade ; then
 	echo "Upgraded"
 else
 	_print_red "Upgrade failed"
@@ -76,19 +80,26 @@ fi
 # Install tools
 
 _install git
-_install google-chrome-stable
 _install tmux
 _install cloc
 _install build-essential
 _install unity-tweak-tool
 _install ubuntu-restricted-extras
 
-SUBL3_NAME="Sublime Text 3" 
+SUBL3_NAME="Sublime_Text_3"
 SUBL3_SITE="https://download.sublimetext.com"
 SUBL3_FILE="sublime-text_build-3114_amd64.deb"
 _install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
 
-apt-get autoremove
+_install libindicator7
+_install libappindicator1
+
+CHROME_NAME="Google_Chrome"
+CHROME_SITE="https://dl.google.com/linux/direct"
+CHROME_FILE="google-chrome-stable_current_amd64.deb"
+_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
+
+apt-get autoremove > /dev/null
 
 # SSH
 
