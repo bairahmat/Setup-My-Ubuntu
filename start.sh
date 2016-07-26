@@ -91,11 +91,21 @@ sudo apt-get autoremove > /dev/null
 
 echo -e "Setting up SSH ..."
 
-AKFILE=$HOME/.ssh/authorized_keys
+SSH_DIR=$HOME/.ssh
+SSH_FILE=$SSH_DIR/id_rsa
+SSH_PFILE=$SSH_FILE.pub
+AKFILE=$SSH_DIR/authorized_keys
 
-mkdir -p $HOME/.ssh
-chmod 700 $HOME/.ssh
-ssh-keygen -q -t rsa -N "" -f $HOME/.ssh/id_rsa
+mkdir -p $SSH_DIR
+chmod 700 $SSH_DIR
+if [[ -f $SSH_FILE ]]; then
+	mv $SSH_FILE $SSH_DIR/old_id_rsa
+	echo -e "SSH key files already existed, renamed to old_id_rsa"
+fi
+if [[ -f $SSH_PFILE ]]; then
+	mv $SSH_PFILE $SSH_DIR/old_id_rsa.pub
+fi
+ssh-keygen -q -t rsa -N "" -f $SSH_FILE
 touch $AKFILE
 chmod 600 $AKFILE
 
