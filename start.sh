@@ -101,7 +101,7 @@ $DR mkdir -p $USER_HOME/.ssh
 $DR chmod 700 $USER_HOME/.ssh
 $DR ssh-keygen -q -t rsa -N "" -f $USER_HOME/.ssh/id_rsa
 $DR touch $USER_HOME/.ssh/authorized_keys
-$DR chmod 600 USER_HOME/.ssh/authorized_keys
+$DR chmod 600 $USER_HOME/.ssh/authorized_keys
 
 # TODO: Add my public keys to authorized_keys
 
