@@ -24,7 +24,7 @@ _install_start () {
 
 _install () {
 	_install_start $1
-	if [[ $(apt-get -y -qq install $1 > /dev/null) -ne 0 ]] ; then
+	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) -ne 0 ]] ; then
 		_install_fail $1;
 	fi
 }
@@ -36,7 +36,7 @@ _install_dpkg () {
 	_install_start $1
 	wget --tries=3 $2/$3 -P $DL_PREFIX -q
 	if [ $? -eq 0 ]; then
-		dpkg -i -G $DL_PREFIX/$3 > /dev/null
+		sudo dpkg -i -G $DL_PREFIX/$3 > /dev/null
 		if [ $? -ne 0 ]; then
 			_install_fail $1
 		fi
@@ -46,28 +46,20 @@ _install_dpkg () {
 	fi
 }
 
-# Check if run with sudo
-if [[ $EUID != 0 ]]; then
-	_print_red "Must be run with root privilages!"
-	exit 1
-elif [[ "$SUDO_USER" = "" ]]; then
-	_print_red "Can't be run as root!"
+# Check if run without sudo
+if [[ $EUID == 0 ]]; then
+	_print_red "Don't run with sudo or as root!"
 	exit 1
 fi
-
-# More variables
-
-USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
-DR="sudo --user=$SUDO_USER"
 
 # Update
 
 echo "Updating ..."
-if [[ $(apt-get -qq update) -ne 0 ]] ; then
+if [[ $(sudo apt-get -qq update) -ne 0 ]] ; then
 	_print_red "Update failed"
 fi
 echo "Upgrading ... (this could take a while)"
-if [[ $(apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
+if [[ $(sudo apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
 	_print_red "Upgrade failed"
 fi
 
@@ -93,19 +85,19 @@ CHROME_SITE="https://dl.google.com/linux/direct"
 CHROME_FILE="google-chrome-stable_current_amd64.deb"
 _install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
 
-apt-get autoremove > /dev/null
+sudo apt-get autoremove > /dev/null
 
 # SSH
 
 echo -e "Setting up SSH ..."
 
-AKFILE=$USER_HOME/.ssh/authorized_keys
+AKFILE=$HOME/.ssh/authorized_keys
 
-$DR mkdir -p $USER_HOME/.ssh
-$DR chmod 700 $USER_HOME/.ssh
-$DR ssh-keygen -q -t rsa -N "" -f $USER_HOME/.ssh/id_rsa
-$DR touch $AKFILE
-$DR chmod 600 $AKFILE
+mkdir -p $HOME/.ssh
+chmod 700 $HOME/.ssh
+ssh-keygen -q -t rsa -N "" -f $HOME/.ssh/id_rsa
+touch $AKFILE
+chmod 600 $AKFILE
 
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu" >> $AKFILE
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com" >> $AKFILE
@@ -115,8 +107,8 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthS
 echo -e "Configuring ..."
 
 timedatectl set-timezone Europe/Berlin
-locale-gen de_DE.UTF-8 > /dev/null
-update-locale LANG=de_DE.UTF-8
+sudo locale-gen de_DE.UTF-8 > /dev/null
+sudo update-locale LANG=de_DE.UTF-8
 
 dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
 gsettings set com.ubuntu.update-notifier no-show-notifications true
@@ -160,7 +152,7 @@ function mkc {
         cd $1
 }
 
-" >> $USER_HOME/.bashrc
+" >> $HOME/.bashrc
 
 # Create .hidden
 
@@ -173,7 +165,7 @@ Music
 Documents
 Bilder
 Musik
-Dokumente" > $USER_HOME/.hidden
+Dokumente" > $HOME/.hidden
 
 # End
 
