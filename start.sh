@@ -71,7 +71,7 @@ else
 	_print_red "Update failed"
 fi
 echo "Upgrading... (this could take a while)"
-if apt-get -y -qq upgrade ; then
+if apt-get -y -qq upgrade > /dev/null ; then
 	echo "Upgraded"
 else
 	_print_red "Upgrade failed"
