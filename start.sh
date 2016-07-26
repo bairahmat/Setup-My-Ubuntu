@@ -134,6 +134,7 @@ alias giff='git diff HEAD'
 alias giss='git status'
 alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
+alias updog='sudo apt-get update; sudo apt-get upgrade'
 
 function mkc {
         mkdir $1
