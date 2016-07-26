@@ -50,8 +50,8 @@ _install_dpkg () {
 
 # Check if run with sudo
 
-if [ ($EUID -ne 0) || ($UID -eq 0) ]; then
-	_print_red "Must be run with sudo"
+if [ "$(whoami)" != "root" ]; then
+	_print_red "Must be run with as root"
 	exit 1
 fi
 
