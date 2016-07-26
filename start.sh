@@ -24,7 +24,7 @@ _install_start () {
 
 _install () {
 	_install_start $1
-	if [[ $(apt-get -y -qq install $1) -ne 0 ]] ; then
+	if [[ $(apt-get -y -qq install $1 > /dev/null) -ne 0 ]] ; then
 		_install_fail $1;
 	fi
 }
