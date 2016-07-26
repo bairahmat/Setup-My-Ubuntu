@@ -62,7 +62,7 @@ DR="sudo --user=$SUDO_USER"
 
 # Update
 
-echo "Updating... (this could take a while)"
+echo "Updating..."
 if [[ $(apt-get -qq update) -ne 0 ]] ; then
 	_print_red "Update failed"
 fi
