@@ -107,6 +107,9 @@ $DR chmod 600 USER_HOME/.ssh/authorized_keys
 
 # Configuration
 
+timedatectl set-timezone Europe/Berlin
+locale-gen de_DE.UTF-8 > /dev/null
+update-locale LANG=de_DE.UTF-8
 git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
 
