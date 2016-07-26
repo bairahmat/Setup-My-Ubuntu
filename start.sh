@@ -19,7 +19,7 @@ _install_fail () {
 }
 
 _install_start () {
-	echo -e "Installing $1..."
+	echo -e "Installing $1 ..."
 }
 
 _install () {
@@ -62,11 +62,11 @@ DR="sudo --user=$SUDO_USER"
 
 # Update
 
-echo "Updating..."
+echo "Updating ..."
 if [[ $(apt-get -qq update) -ne 0 ]] ; then
 	_print_red "Update failed"
 fi
-echo "Upgrading... (this could take a while)"
+echo "Upgrading ... (this could take a while)"
 if [[ $(apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
 	_print_red "Upgrade failed"
 fi
@@ -97,6 +97,8 @@ apt-get autoremove > /dev/null
 
 # SSH
 
+echo -e "Setting up SSH ..."
+
 AKFILE=$USER_HOME/.ssh/authorized_keys
 
 $DR mkdir -p $USER_HOME/.ssh
@@ -110,6 +112,8 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthS
 
 # Configuration
 
+echo -e "Configuring ..."
+
 timedatectl set-timezone Europe/Berlin
 locale-gen de_DE.UTF-8 > /dev/null
 update-locale LANG=de_DE.UTF-8
@@ -118,6 +122,8 @@ git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
 
 # Append .bashrc
+
+echo -e "Appending .bashrc ..."
 
 echo "
 ############ CUSTOM ############
@@ -146,6 +152,8 @@ function mkc {
 
 # Create .hidden
 
+echo -e "Creating .hidden ..."
+
 echo "
 Pictures
 Videos
@@ -157,6 +165,7 @@ Dokumente" > $USER_HOME/.hidden
 
 # End
 
-echo "You should run '. ~/.bashrc' now."
+echo -e "Done."
+echo -e "You should run '. ~/.bashrc' now."
 
 exit 0
