@@ -111,6 +111,11 @@ $DR chmod 600 USER_HOME/.ssh/authorized_keys
 
 # TODO: Add my public keys to authorized_keys
 
+# Configuration
+
+git config --global user.email "meyer.lasse@gmail.com"
+git config --global user.name "Lasse Meyer"
+
 # Append .bashrc
 
 echo "
