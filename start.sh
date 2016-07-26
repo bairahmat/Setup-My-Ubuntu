@@ -117,7 +117,17 @@ echo -e "Configuring ..."
 timedatectl set-timezone Europe/Berlin
 locale-gen de_DE.UTF-8 > /dev/null
 update-locale LANG=de_DE.UTF-8
+
 dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
+gsettings set com.ubuntu.update-notifier no-show-notifications true
+gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
+gsettings set org.gnome.desktop.interface clock-show-date true
+TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
+TPROFILE=${TPROFILE:1:-1}
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ background-color "#000000"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ foreground-color "#FFFFFF"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ scrollback-unlimited true
+
 git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
 
@@ -142,6 +152,7 @@ alias giss='git status'
 alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
 alias updog='sudo apt-get update; sudo apt-get upgrade'
+alias dl='sudo apt-get install'
 
 function mkc {
         mkdir $1
