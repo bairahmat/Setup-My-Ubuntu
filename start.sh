@@ -110,6 +110,7 @@ $DR chmod 600 USER_HOME/.ssh/authorized_keys
 timedatectl set-timezone Europe/Berlin
 locale-gen de_DE.UTF-8 > /dev/null
 update-locale LANG=de_DE.UTF-8
+dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
 git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
 
