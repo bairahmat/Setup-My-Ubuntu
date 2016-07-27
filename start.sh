@@ -137,36 +137,36 @@ git config --global user.name "Lasse Meyer"
 
 echo "
 
-# Enable mouse mode (tmux 2.1 and above)
+\# Enable mouse mode (tmux 2.1 and above)
 set -g mouse on
 
-######################
-### DESIGN CHANGES ###
-######################
+\######################
+\### DESIGN CHANGES \###
+\######################
 
-# panes
+\# panes
 set -g pane-border-fg black
 set -g pane-active-border-fg brightred
 
-## Status bar design
-# status line
+\## Status bar design
+\# status line
 set -g status-utf8 on
 set -g status-justify left
 set -g status-bg default
 set -g status-fg colour12
 set -g status-interval 1
 
-# messaging
+\# messaging
 set -g message-fg black
 set -g message-bg yellow
 set -g message-command-fg blue
 set -g message-command-bg black
 
-#window mode
+\#window mode
 setw -g mode-bg colour6
 setw -g mode-fg colour0
 
-# window status
+\# window status
 setw -g window-status-format " #F#I:#W#F "
 setw -g window-status-current-format " #F#I:#W#F "
 setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
@@ -178,10 +178,10 @@ setw -g window-status-bg green
 setw -g window-status-fg black
 setw -g window-status-attr reverse
 
-# Info on left (I don't have a session display for now)
+\# Info on left (I don't have a session display for now)
 set -g status-left ''
 
-# loud or quiet?
+\# loud or quiet?
 set-option -g visual-activity off
 set-option -g visual-bell off
 set-option -g visual-silence off
@@ -190,22 +190,22 @@ set-option -g bell-action none
 
 set -g default-terminal "screen-256color"
 
-# The modes {
+\# The modes {
 setw -g clock-mode-colour colour135
 setw -g mode-attr bold
 setw -g mode-fg colour196
 setw -g mode-bg colour238
 
-# }
-# The panes {
+\# }
+\# The panes {
 
 set -g pane-border-bg colour0
 set -g pane-border-fg colour238
 set -g pane-active-border-bg colour0
 set -g pane-active-border-fg colour51
 
-# }
-# The statusbar {
+\# }
+\# The statusbar {
 
 set -g status-position bottom
 set -g status-bg colour234
@@ -230,14 +230,14 @@ setw -g window-status-bell-attr bold
 setw -g window-status-bell-fg colour255
 setw -g window-status-bell-bg colour1
 
-# }
-# The messages {
+\# }
+\# The messages {
 
 set -g message-attr bold
 set -g message-fg colour232
 set -g message-bg colour166
 
-# }" > $HOME/.tmux.conf
+\# }" > $HOME/.tmux.conf
 
 # Append .bashrc
 
