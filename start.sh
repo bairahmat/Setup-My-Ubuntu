@@ -138,7 +138,7 @@ git config --global user.name "Lasse Meyer"
 echo "
 
 # Enable mouse mode (tmux 2.1 and above)
-set -g mouse on
+# set -g mouse on
 
 ######################
 ### DESIGN CHANGES ###
