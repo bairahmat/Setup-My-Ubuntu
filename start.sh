@@ -135,7 +135,7 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthS
 
 echo -e "Configuring ..."
 
-echo "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:/usr/local/lib\"" >> /etc/environment
+sudo sed -i -e "\$aLD_LIBRARY_PATH=/usr/local/lib" /etc/environment
 
 timedatectl set-timezone Europe/Berlin
 sudo locale-gen de_DE.UTF-8 > /dev/null
