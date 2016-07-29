@@ -23,27 +23,34 @@ _install_start () {
 }
 
 _install () {
+	SUCCESS=0
 	_install_start $1
-	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) -ne 0 ]] ; then
-		_install_fail $1;
+	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) != 0 ]] ; then
+		_install_fail $1
+		SUCCESS=1
 	fi
+	return $SUCCESS
 }
 
 # $1 = Name of software
 # $2 = Download prefix (without file name, without / at the end)
 # $3 = File name to download and install
 _install_dpkg () {
+	SUCCESS=0
 	_install_start $1
 	wget --tries=3 $2/$3 -P $DL_PREFIX -q
 	if [ $? -eq 0 ]; then
 		sudo dpkg -i -G $DL_PREFIX/$3 > /dev/null
 		if [ $? -ne 0 ]; then
 			_install_fail $1
+			SUCCESS=1
 		fi
 		rm $DL_PREFIX/$3
 	else
 		_install_fail $1
+		SUCCESS=1
 	fi
+	return $SUCCESS
 }
 
 # Check if run without sudo
@@ -55,11 +62,11 @@ fi
 # Update
 
 echo "Updating ..."
-if [[ $(sudo apt-get -qq update) -ne 0 ]] ; then
+if [[ $(sudo apt-get -qq update) != 0 ]] ; then
 	_print_red "Update failed"
 fi
 echo "Upgrading ... (this could take a while)"
-if [[ $(sudo apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
+if [[ $(sudo apt-get -y -qq upgrade > /dev/null) != 0 ]] ; then
 	_print_red "Upgrade failed"
 fi
 
@@ -282,6 +289,8 @@ Musik
 Dokumente" > $HOME/.hidden
 
 # Creating Desktop files
+
+echo -e "Creating Desktop files ..."
 
 echo "[Desktop Entry]
 Categories=;
