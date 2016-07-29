@@ -268,6 +268,7 @@ alias make='make -j4'
 alias updog='sudo apt-get update; sudo apt-get upgrade'
 alias dl='sudo apt-get install'
 alias go-dl='cd ~/Downloads'
+alias go-pr='cd ~/projects'
 
 function mkc {
         mkdir $1
