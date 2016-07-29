@@ -85,6 +85,7 @@ _install git
 _install git-gui
 _install tmux
 _install cloc
+_install htop
 _install build-essential
 _install unity-tweak-tool
 _install ubuntu-restricted-extras
