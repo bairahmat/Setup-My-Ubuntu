@@ -261,6 +261,7 @@ alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
 alias updog='sudo apt-get update; sudo apt-get upgrade'
 alias dl='sudo apt-get install'
+alias go-dl='cd ~/Downloads'
 
 function mkc {
         mkdir $1
