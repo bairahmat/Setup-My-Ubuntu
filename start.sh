@@ -125,6 +125,8 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthS
 
 echo -e "Configuring ..."
 
+echo "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:/usr/local/lib\"" >> /etc/environment
+
 timedatectl set-timezone Europe/Berlin
 sudo locale-gen de_DE.UTF-8 > /dev/null
 sudo update-locale LANG=de_DE.UTF-8
@@ -252,8 +254,6 @@ echo -e "Appending .bashrc ..."
 
 echo "############ CUSTOM ############
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-
 alias ll='ls -AlFh --color=auto'
 alias ls='ls -lFh --color=auto'
 alias dta='dmesg | tail'
@@ -288,23 +288,6 @@ Documents
 Bilder
 Musik
 Dokumente" > $HOME/.hidden
-
-# Creating Desktop files
-
-echo -e "Creating Desktop files ..."
-
-echo "[Desktop Entry]
-Categories=;
-Comment=Edit file in Sublime Text
-Exec=subl %f
-GenericName=Text Editor
-Hidden=false
-Icon=subl
-Name=Sublime Text 3
-Terminal=false
-Type=Application
-Version=3.${SUBL3_VERSION}
-" > $HOME/.local/share/applications/subl.desktop
 
 # End
 
