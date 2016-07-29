@@ -3,6 +3,7 @@
 # Variables
 
 DL_PREFIX=/tmp
+DEFAULTS=/usr/share/applications/defaults.list
 RED='\e[31m'
 NC='\e[0m'
 
@@ -51,6 +52,14 @@ _install_dpkg () {
 		SUCCESS=1
 	fi
 	return $SUCCESS
+}
+
+# $1 = Array of MIME types
+# $2 = Name of desktop file that should be applied
+_setmimes () {
+	for MIMETYPE in "${1[@]}"; do
+   		sudo sed -i "/${MIMETYPE}/c\${MIMETYPE}=${2}" $DEFAULTS
+	done
 }
 
 # Check if run without sudo
@@ -142,6 +151,14 @@ dconf write /org/gnome/terminal/legacy/profiles:/:$TPROFILE/palette "['rgb(0,0,0
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ background-color "#000000"
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ foreground-color "#FFFFFF"
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ scrollback-unlimited true
+
+DESKTOP_SUBL=sublime_text.desktop
+MIMES_SUBL=("text\/xml" "text\/richtext" "text\/x-java" "text\/plain" "text\/tab-separated-values" "text\/x-c++hdr" "text\/x-c++src" "text\/x-chdr" "text\/x-csrc" "text\/x-sql" "text\/x-python" "text\/x-dtd" "text\/mathml"  "application\/x-perl")
+_setmimes MIMES_SUBL DESKTOP_SUBL
+
+DESKTOP_CHROME=google-chrome.desktop
+MIMES_CHROME=("appplication\/xhtml+xml" "application\/xhtml_xml" "text\/html" "x-scheme-handler\/http" "x-scheme-handler\/https" "x-scheme-handler\/ftp")
+_setmimes MIMES_CHROME DESKTOP_CHROME
 
 git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
