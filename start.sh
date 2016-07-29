@@ -66,15 +66,17 @@ fi
 # Install tools
 
 _install git
+_install git-gui
 _install tmux
 _install cloc
 _install build-essential
 _install unity-tweak-tool
 _install ubuntu-restricted-extras
 
+SUBL3_VERSION=114
 SUBL3_NAME="Sublime_Text_3"
 SUBL3_SITE="https://download.sublimetext.com"
-SUBL3_FILE="sublime-text_build-3114_amd64.deb"
+SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
 _install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
 
 _install libindicator7
@@ -135,9 +137,7 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
 
-echo "
-
-# Enable mouse mode (tmux 2.1 and above)
+echo "# Enable mouse mode (tmux 2.1 and above)
 # set -g mouse on
 
 ######################
@@ -243,8 +243,7 @@ set -g message-bg colour166
 
 echo -e "Appending .bashrc ..."
 
-echo "
-############ CUSTOM ############
+echo "############ CUSTOM ############
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
@@ -274,8 +273,7 @@ function mkc {
 
 echo -e "Creating .hidden ..."
 
-echo "
-Pictures
+echo "Pictures
 Videos
 Music
 Documents
