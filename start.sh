@@ -26,7 +26,7 @@ _install_start () {
 _install () {
 	SUCCESS=0
 	_install_start $1
-	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) != 0 ]] ; then
+	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) -ne 0 ]] ; then
 		_install_fail $1
 		SUCCESS=1
 	fi
@@ -71,11 +71,11 @@ fi
 # Update
 
 echo "Updating ..."
-if [[ $(sudo apt-get -qq update) != 0 ]] ; then
+if [[ $(sudo apt-get -qq update) -ne 0 ]] ; then
 	_print_red "Update failed"
 fi
 echo "Upgrading ... (this could take a while)"
-if [[ $(sudo apt-get -y -qq upgrade > /dev/null) != 0 ]] ; then
+if [[ $(sudo apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
 	_print_red "Upgrade failed"
 fi
 
