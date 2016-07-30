@@ -2,6 +2,8 @@
 
 # Variables
 
+PARAM_QUICK=0
+
 DL_PREFIX=/tmp
 DEFAULTS=$HOME/.local/share/applications/defaults.list
 RED='\e[31m'
@@ -46,7 +48,7 @@ _install_dpkg () {
 			_install_fail $1
 			SUCCESS=1
 		fi
-		rm $DL_PREFIX/$3
+		rm -f $DL_PREFIX/$3
 	else
 		_install_fail $1
 		SUCCESS=1
@@ -63,7 +65,24 @@ _setmimes () {
 	done
 }
 
+# Parameter parsing
+
+while [[ $# -gt 0 ]]; do
+	PARAM="$1"
+	case $PARAM in
+		-q|--quick)
+			PARAM_QUICK=1
+			shift
+			;;
+		*)
+			_print_red "Invalid parameter: $PARAM"
+			exit 1
+		;;
+	esac
+done
+
 # Check if run without sudo
+
 if [[ $EUID == 0 ]]; then
 	_print_red "Don't run with sudo or as root!"
 	exit 1
@@ -75,12 +94,19 @@ echo "Updating ..."
 if [[ $(sudo apt-get -qq update) -ne 0 ]] ; then
 	_print_red "Update failed"
 fi
-echo "Upgrading ... (this could take a while)"
-if [[ $(sudo apt-get -y -qq upgrade > /dev/null) -ne 0 ]] ; then
-	_print_red "Upgrade failed"
+
+if [[ $PARAM_QUICK -ne 1 ]]; then
+	echo "Upgrading ... (this could take a while)"
+	if [[ $(sudo apt-get -y -qq upgrade > /dev/null) -ne 0 ]]; then
+		_print_red "Upgrade failed"
+	fi
 fi
 
 # Install tools
+
+if [[ $PARAM_QUICK -ne 1 ]]; then
+	_install ubuntu-restricted-extras
+fi
 
 _install git
 _install git-gui
@@ -89,7 +115,6 @@ _install cloc
 _install htop
 _install build-essential
 _install unity-tweak-tool
-_install ubuntu-restricted-extras
 
 SUBL3_VERSION=114
 SUBL3_NAME="Sublime_Text_3"
