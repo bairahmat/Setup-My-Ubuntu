@@ -28,7 +28,7 @@ _install_start () {
 _install () {
 	SUCCESS=0
 	_install_start $1
-	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) -ne 0 ]] ; then
+	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) -ne 0 ]]; then
 		_install_fail $1
 		SUCCESS=1
 	fi
@@ -91,7 +91,7 @@ fi
 # Update
 
 echo "Updating ..."
-if [[ $(sudo apt-get -qq update) -ne 0 ]] ; then
+if [[ $(sudo apt-get -qq update) -ne 0 ]]; then
 	_print_red "Update failed"
 fi
 
@@ -315,15 +315,15 @@ alias go-dl='cd ~/Downloads'
 alias go-pr='cd ~/projects'
 
 function mkc {
-        mkdir $1
-        cd $1
+	mkdir $1
+	cd $1
 }
 
 " >> $HOME/.bashrc
 
 # Create .hidden
 
-echo -e "Creating .hidden ..."
+echo -e "Cleaning up home directory ..."
 
 echo "Pictures
 Videos
@@ -331,7 +331,13 @@ Music
 Documents
 Bilder
 Musik
-Dokumente" > $HOME/.hidden
+Dokumente
+Templates
+Vorlagen
+Public
+Öffentlich" > $HOME/.hidden
+
+rm -f $HOME/examples.desktop
 
 # End
 
