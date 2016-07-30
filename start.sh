@@ -110,10 +110,12 @@ fi
 
 _install git
 _install git-gui
+_install subversion
 _install tmux
 _install cloc
 _install htop
 _install build-essential
+_install cmake
 _install unity-tweak-tool
 
 SUBL3_VERSION=114
