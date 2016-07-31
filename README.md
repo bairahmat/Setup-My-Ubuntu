@@ -1,6 +1,6 @@
 # Linux-Init
 #### A script to install, set and configure basic things that I need for a new Linux setup.
-Does currently only works with Ubuntu, a version for Raspbian is planned.
+Does currently only work with Ubuntu, a version for Raspbian is planned.
 <hr>
 **Does the following:**
 
