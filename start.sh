@@ -1,5 +1,6 @@
 #!/bin/bash
 # Author: 	Lasse Meyer
+# Source:	https://github.com/meyerlasse/Linux-Init
 # License: 	MIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE)
 
 # Variables
