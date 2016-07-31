@@ -30,7 +30,8 @@ _install_start () {
 _install () {
 	SUCCESS=0
 	_install_start $1
-	if [[ $(sudo apt-get -y -qq install $1 > /dev/null) -ne 0 ]]; then
+	sudo apt-get -y -qq install $1 > /dev/null
+	if [[ $? -ne 0 ]]; then
 		_install_fail $1
 		SUCCESS=1
 	fi
@@ -44,9 +45,9 @@ _install_dpkg () {
 	SUCCESS=0
 	_install_start $1
 	wget --tries=3 $2/$3 -P $DL_PREFIX -q
-	if [ $? -eq 0 ]; then
+	if [[ $? -eq 0 ]]; then
 		sudo dpkg -i -G $DL_PREFIX/$3 > /dev/null
-		if [ $? -ne 0 ]; then
+		if [[ $? -ne 0 ]]; then
 			_install_fail $1
 			SUCCESS=1
 		fi
@@ -93,13 +94,15 @@ fi
 # Update
 
 echo "Updating ..."
-if [[ $(sudo apt-get -qq update) -ne 0 ]]; then
+sudo apt-get -qq update
+if [[ $? -ne 0 ]]; then
 	_print_red "Update failed"
 fi
 
 if [[ $PARAM_QUICK -ne 1 ]]; then
 	echo "Upgrading ... (this could take a while)"
-	if [[ $(sudo apt-get -y -qq upgrade > /dev/null) -ne 0 ]]; then
+	sudo apt-get -y -qq upgrade > /dev/null
+	if [[ $? -ne 0 ]]; then
 		_print_red "Upgrade failed"
 	fi
 fi
