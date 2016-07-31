@@ -169,6 +169,7 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthS
 echo -e "Configuring ..."
 
 sudo sed -i -e "\$aLD_LIBRARY_PATH=/usr/local/lib" /etc/environment
+rm -f $HOME/.config/monitors.xml
 
 timedatectl set-timezone Europe/Berlin
 sudo locale-gen de_DE.UTF-8 > /dev/null
@@ -298,6 +299,8 @@ set -g message-fg colour232
 set -g message-bg colour166
 
 # }" > $HOME/.tmux.conf
+
+echo "set tabsize 4" >> $HOME/.nanorc
 
 # Append .bashrc
 
