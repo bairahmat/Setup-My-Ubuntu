@@ -3,7 +3,7 @@
 # Source:	https://github.com/meyerlasse/Linux-Init
 # License: 	MIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE)
 
-# Variables
+## Variables
 
 PARAM_QUICK=0
 
@@ -14,7 +14,7 @@ NC='\e[0m'
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Functions
+## Functions
 
 _print_red () {
 	echo -e "${RED}${1}${NC}"
@@ -91,7 +91,7 @@ _setmimes () {
 	done
 }
 
-# Parameter parsing
+## Parameter parsing
 
 while [[ $# -gt 0 ]]; do
 	PARAM="$1"
@@ -107,14 +107,14 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-# Check if run without sudo
+## Check if run without sudo
 
 if [[ $EUID == 0 ]]; then
 	_print_red "Don't run with sudo or as root!"
 	exit 1
 fi
 
-# Update
+## Update
 
 echo "Updating ..."
 sudo apt-get -qq update
@@ -130,7 +130,7 @@ if [[ $PARAM_QUICK -ne 1 ]]; then
 	fi
 fi
 
-# Install tools
+## Install tools
 
 if [[ $PARAM_QUICK -ne 1 ]]; then
 	_install ubuntu-restricted-extras
@@ -164,8 +164,9 @@ fi
 
 sudo apt-get autoremove > /dev/null
 
-# SSH
+## SSH
 
+# SSH keys
 echo -e "Setting up SSH ..."
 
 SSH_DIR=$HOME/.ssh
@@ -177,7 +178,7 @@ mkdir -p $SSH_DIR
 chmod 700 $SSH_DIR
 if [[ -f $SSH_FILE ]]; then
 	mv $SSH_FILE $SSH_DIR/old_id_rsa
-	echo -e "SSH key files already existed, renamed to old_id_rsa"
+	echo -e "SSH key files already existed, renamed to old_id_rsa(.pub)"
 fi
 if [[ -f $SSH_PFILE ]]; then
 	mv $SSH_PFILE $SSH_DIR/old_id_rsa.pub
@@ -186,8 +187,10 @@ ssh-keygen -q -t rsa -N "" -f $SSH_FILE
 touch $SSH_KFILE
 chmod 600 $SSH_KFILE
 
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu" >> $SSH_KFILE
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com" >> $SSH_KFILE
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
+ >> $SSH_KFILE
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com"\
+ >> $SSH_KFILE
 
 # SSH server
 SSH_SCONFIG=/etc/ssh/sshd_config
@@ -199,22 +202,26 @@ sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
 sudo sed -i -e "\$aLasse Meyer <meyer.lasse@gmail.com>" $SSH_SCONFIG
 sudo systemctl restart ssh
 
-# Configuration
+## Configuration
 
 echo -e "Configuring ..."
 
 sudo sed -i -e "\$aLD_LIBRARY_PATH=/usr/local/lib" /etc/environment
 rm -f $HOME/.config/monitors.xml
 
+# Locale and timezone
 timedatectl set-timezone Europe/Berlin
 sudo locale-gen de_DE.UTF-8 > /dev/null
 sudo update-locale LANG=de_DE.UTF-8
 
+# Desktop
 dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
 dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
 gsettings set com.ubuntu.update-notifier no-show-notifications true
 gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
 gsettings set org.gnome.desktop.interface clock-show-date true
+
+# Terminal
 TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
 TPROFILE=${TPROFILE:1:-1}
 dconf write /org/gnome/terminal/legacy/profiles:/:$TPROFILE/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
@@ -222,6 +229,7 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ foreground-color "#FFFFFF"
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ scrollback-unlimited true
 
+# Default applications
 echo "[Default Applications]" > $DEFAULTS
 DESKTOP_SUBL=sublime_text.desktop
 MIMES_SUBL=("text/xml" "text/richtext" "text/x-java" "text/plain" "text/tab-separated-values" "text/x-c++hdr" "text/x-c++src" "text/x-chdr" "text/x-csrc" "text/x-sql" "text/x-python" "text/x-dtd" "text/mathml"  "application/x-perl")
@@ -230,9 +238,11 @@ DESKTOP_CHROME=google-chrome.desktop
 MIMES_CHROME=("appplication/xhtml+xml" "application/xhtml_xml" "text/html" "x-scheme-handler/http" "x-scheme-handler/https" "x-scheme-handler/ftp")
 _setmimes MIMES_CHROME[@] $DESKTOP_CHROME
 
+# git
 git config --global user.email "meyer.lasse@gmail.com"
 git config --global user.name "Lasse Meyer"
 
+# tmux
 echo "# Enable mouse mode (tmux 2.1 and above)
 # set -g mouse on
 
@@ -335,9 +345,10 @@ set -g message-bg colour166
 
 # }" > $HOME/.tmux.conf
 
+# Nano
 echo "set tabsize 4" >> $HOME/.nanorc
 
-# Append .bashrc
+## Append .bashrc
 
 echo -e "Appending .bashrc ..."
 
@@ -366,7 +377,7 @@ function mkc {
 
 " >> $HOME/.bashrc
 
-# Create .hidden
+## Create .hidden
 
 echo -e "Cleaning up home directory ..."
 
@@ -384,7 +395,7 @@ Public
 
 rm -f $HOME/examples.desktop
 
-# End
+## End
 
 echo -e "Done."
 echo -e "You should run '. ~/.bashrc' now."
