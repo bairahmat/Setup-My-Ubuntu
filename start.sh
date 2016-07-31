@@ -153,12 +153,12 @@ SUBL3_SITE="https://download.sublimetext.com"
 SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
 _install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
 
+CHROME_NAME="Google_Chrome"
+CHROME_SITE="https://dl.google.com/linux/direct"
+CHROME_FILE="google-chrome-stable_current_amd64.deb"
 CHROME_DEPENDS=("libindicator7" "libappindicator1")
-_install_depends CHROME_DEPENDS[@] "Google_Chrome"
+_install_depends CHROME_DEPENDS[@] $CHROME_NAME
 if [[ $? -eq 0 ]]; then
-	CHROME_NAME="Google_Chrome"
-	CHROME_SITE="https://dl.google.com/linux/direct"
-	CHROME_FILE="google-chrome-stable_current_amd64.deb"
 	_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
 fi
 
