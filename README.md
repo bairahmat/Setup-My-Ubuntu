@@ -21,6 +21,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 - Creating config files for tmux & nano
 - Appending a bunch of aliases to .bashrc
 - Cleaning up home directory
+- More to come (if you have any suggestions, create an issue to let me know)
 
 <hr>
 
