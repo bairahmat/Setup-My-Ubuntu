@@ -1,4 +1,31 @@
 # Linux-Init
-A script to install, set and configure basic things that I need for a new Linux setup. Uses my name and email address for git configuration, obviously needs to be changed if used by someone else.
+#### A script to install, set and configure basic things that I need for a new Linux setup.
+Does currently only work with Ubuntu, a version for Raspbian is planned.
+<hr>
+### Parameters:
+- \-q / --quick: Don't do anything that takes a significant amount of time (~ >1 min.)
 
-Uses apt-get and installs two Ubuntu-specific tools, so it's not going to work 100% with other distros. If something cannot be installed/executed, it prints out an error message, but keeps running.
+### Features:
+
+- Update and upgrade
+- Install a bunch of tools
+- Setting up SSH (keys and authorized_keys file) and openssh-server
+- A lot of configuration:
+  - Global environment variables
+  - Locale and timezone
+  - Background picture
+  - Terminal colors and schemes
+  - Default applications for MIME types
+  - Initial git configuration
+  - ...
+- Creating config files for tmux & nano
+- Appending a bunch of aliases to .bashrc
+- Cleaning up home directory
+
+<hr>
+
+If you want to use it, you have to **_change the following first_**:
+- Public keys that are added to authorized_keys
+- Git name and email address</br>
+
+The rest *can* be left unchanged.
