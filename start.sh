@@ -28,13 +28,35 @@ _install_start () {
 	echo -e "Installing $1 ..."
 }
 
-_install () {
+_install_generic () {
 	SUCCESS=0
-	_install_start $1
 	sudo apt-get -y -qq install $1 > /dev/null
 	if [[ $? -ne 0 ]]; then
 		_install_fail $1
 		SUCCESS=1
+	fi
+	return $SUCCESS
+}
+
+_install () {
+	_install_start $1
+	_install_generic $1
+	return $?
+}
+
+# $1 = Array of dependencies (has to be passed like this: NAME_OF_ARRAY[@])
+# $2 = Name of software that needs dependencies
+_install_depends () {
+	SUCCESS=0
+	declare -a DEPENDS=("${!1}")
+	for DEP in "${DEPENDS[@]}"; do
+		_install_generic $DEP
+		if [[ $? -ne 0 ]]; then
+			SUCCESS=1
+		fi
+	done
+	if [[ SUCCESS -ne 0 ]]; then
+		_print_red "Installing dependencies for $2 failed"
 	fi
 	return $SUCCESS
 }
@@ -60,7 +82,7 @@ _install_dpkg () {
 	return $SUCCESS
 }
 
-# $1 = Array of MIME types
+# $1 = Array of MIME types (has to be passed like this: NAME_OF_ARRAY[@])
 # $2 = Name of desktop file that should be applied
 _setmimes () {
 	declare -a MIMES=("${!1}")
@@ -131,13 +153,14 @@ SUBL3_SITE="https://download.sublimetext.com"
 SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
 _install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
 
-_install libindicator7
-_install libappindicator1
-
-CHROME_NAME="Google_Chrome"
-CHROME_SITE="https://dl.google.com/linux/direct"
-CHROME_FILE="google-chrome-stable_current_amd64.deb"
-_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
+CHROME_DEPENDS=("libindicator7" "libappindicator1")
+_install_depends CHROME_DEPENDS[@] "Google_Chrome"
+if [[ $? -eq 0 ]]; then
+	CHROME_NAME="Google_Chrome"
+	CHROME_SITE="https://dl.google.com/linux/direct"
+	CHROME_FILE="google-chrome-stable_current_amd64.deb"
+	_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
+fi
 
 sudo apt-get autoremove > /dev/null
 
