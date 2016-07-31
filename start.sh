@@ -120,6 +120,7 @@ _install subversion
 _install tmux
 _install cloc
 _install htop
+_install openssh-server
 _install build-essential
 _install cmake
 _install unity-tweak-tool
