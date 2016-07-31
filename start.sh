@@ -1,4 +1,6 @@
 #!/bin/bash
+# Author: 	Lasse Meyer
+# License: 	MIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE)
 
 # Variables
 
