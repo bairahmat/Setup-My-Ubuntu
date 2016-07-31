@@ -2,7 +2,10 @@
 #### A script to install, set and configure basic things that I need for a new Linux setup.
 Does currently only work with Ubuntu, a version for Raspbian is planned.
 <hr>
-**Does the following:**
+### Parameters:
+- \-q / --quick: Don't do anything that takes a significant amount of time (~ >1 min.)
+
+### Features:
 
 - Update and upgrade
 - Install a bunch of tools
