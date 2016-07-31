@@ -18,6 +18,7 @@ Does currently only work with Ubuntu, a version for Raspbian is planned.
 - Creating config files for tmux & nano
 - Appending a bunch of aliases to .bashrc
 - Cleaning up home directory
+
 <hr>
 
 If you want to use it, you have to **_change the following first_**:
