@@ -26,6 +26,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 If you want to use it, you have to **_change the following first_**:
 - Public keys that are added to authorized_keys
+- Banner for SSH server
 - Git name and email address</br>
 
 The rest *can* be left unchanged.
