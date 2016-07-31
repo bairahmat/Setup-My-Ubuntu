@@ -199,7 +199,7 @@ if [[ -f $SSH_SCONFIG ]]; then
 fi
 sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
 sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
-sudo sed -i -e "\$aLasse Meyer <meyer.lasse@gmail.com>" $SSH_SCONFIG
+sudo sed -i -e "\$aLasse Meyer <meyer.lasse@gmail.com>" /etc/issue.net
 sudo systemctl restart ssh
 
 ## Configuration
