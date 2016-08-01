@@ -377,6 +377,8 @@ echo -e "Appending .bashrc ..."
 
 echo "############ CUSTOM ############
 
+export PATH=\$PATH:$HOME/.bin
+
 alias go-dl='cd ~/Downloads'
 alias go-pr='cd ~/projects'
 alias go-re='cd ~/repos'
@@ -419,6 +421,7 @@ Public
 Öffentlich" > $HOME/.hidden
 
 rm -f $HOME/examples.desktop
+mkdir $HOME/.bin
 
 ## End
 
