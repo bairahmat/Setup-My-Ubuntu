@@ -129,7 +129,7 @@ fi
 
 ## Update
 
-sudo add-apt-repository ppa:texlive-backports/ppa
+sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
 
 echo "Updating ..."
 sudo apt-get -qq update
