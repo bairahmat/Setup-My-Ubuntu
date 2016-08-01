@@ -129,6 +129,8 @@ fi
 
 ## Update
 
+sudo add-apt-repository ppa:texlive-backports/ppa
+
 echo "Updating ..."
 sudo apt-get -qq update
 if [[ $? -ne 0 ]]; then
@@ -145,10 +147,6 @@ fi
 
 ## Install tools
 
-if [[ $PARAM_QUICK -ne 1 ]]; then
-	_install ubuntu-restricted-extras
-fi
-
 _install git
 _install git-gui
 _install subversion
@@ -159,6 +157,15 @@ _install openssh-server
 _install build-essential
 _install cmake
 _install unity-tweak-tool
+
+if [[ $PARAM_QUICK -ne 1 ]]; then
+	_install ubuntu-restricted-extras
+	_install texlive
+	_install latexmk
+	_install texlive-lang-ger
+	_install texlive-latex-extra
+	_install texlive-fonts-extra
+fi
 
 SUBL3_VERSION=114
 SUBL3_NAME="Sublime_Text_3"
