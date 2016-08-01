@@ -369,6 +369,7 @@ alias updog='sudo apt-get update; sudo apt-get upgrade'
 alias dl='sudo apt-get install'
 alias go-dl='cd ~/Downloads'
 alias go-pr='cd ~/projects'
+alias go-re='cd ~/repos'
 
 function mkc {
 	mkdir $1
