@@ -9,6 +9,7 @@ PARAM_QUICK=0
 
 DL_PREFIX=/tmp
 DEFAULTS=$HOME/.local/share/applications/defaults.list
+ENV_FILE=/etc/environment
 RED='\e[31m'
 NC='\e[0m'
 
@@ -89,6 +90,18 @@ _setmimes () {
 	for MIMETYPE in "${MIMES[@]}"; do
 		echo "$MIMETYPE=$2" >> $DEFAULTS
 	done
+}
+
+# $1 = Path to append to PATH
+_append_to_path () {
+	# Is the path already in PATH?
+	cat $ENV_FILE | grep PATH=.*$1 &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		# Cut off "
+		sudo sed -i '/^PATH=/ s/\"$//' $ENV_FILE
+		# Add new path and add "
+		sudo sed -i "/^PATH=/ s|$|:${1}\"|" $ENV_FILE
+	fi
 }
 
 ## Parameter parsing
@@ -206,8 +219,18 @@ sudo systemctl restart ssh
 
 echo -e "Configuring ..."
 
-sudo sed -i -e "\$aLD_LIBRARY_PATH=/usr/local/lib" /etc/environment
 rm -f $HOME/.config/monitors.xml
+
+# Modifying global environment variables and library search path for linker
+LOCAL_LIB=/usr/local/lib
+LD_CONFIG_PATH=/etc/ld.so.conf.d
+LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
+grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
+if [[ $? -ne 0 ]]; then
+	sudo sh -c  "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
+fi
+_append_to_path "/usr/local/bin"
+_append_to_path "/usr/local/sbin"
 
 # Locale and timezone
 timedatectl set-timezone Europe/Berlin
