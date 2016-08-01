@@ -354,22 +354,23 @@ echo -e "Appending .bashrc ..."
 
 echo "############ CUSTOM ############
 
+alias go-dl='cd ~/Downloads'
+alias go-pr='cd ~/projects'
+alias go-re='cd ~/repos'
 alias ll='ls -AlFh --color=auto'
 alias ls='ls -lFh --color=auto'
 alias dta='dmesg | tail'
 alias grap='grep -R -n -i -e'
 alias grip='ps aux | grep -i -e'
 alias fond='find . -name'
+alias extr='tar xvf'
+alias updog='sudo apt-get update; sudo apt-get upgrade'
+alias dl='sudo apt-get install'
 alias git-count='git rev-list --all --count'
 alias giff='git diff HEAD'
 alias giss='git status'
 alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
-alias updog='sudo apt-get update; sudo apt-get upgrade'
-alias dl='sudo apt-get install'
-alias go-dl='cd ~/Downloads'
-alias go-pr='cd ~/projects'
-alias go-re='cd ~/repos'
 
 function mkc {
 	mkdir $1
