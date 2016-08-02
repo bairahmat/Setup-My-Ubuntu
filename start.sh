@@ -233,6 +233,8 @@ _do_config () {
 	gsettings set com.ubuntu.update-notifier no-show-notifications true
 	gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
 	gsettings set org.gnome.desktop.interface clock-show-date true
+	gsettings set org.gnome.desktop.screensaver lock-enabled false
+	gsettings set org.gnome.desktop.session idle-delay 0
 
 	# Terminal
 	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
@@ -251,7 +253,7 @@ _do_config () {
 	MIMES_CHROME=("appplication/xhtml+xml" "application/xhtml_xml" "text/html" "x-scheme-handler/http" "x-scheme-handler/https" "x-scheme-handler/ftp")
 	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
 
-	# git
+	# Git
 	git config --global user.email "meyer.lasse@gmail.com"
 	git config --global user.name "Lasse Meyer"
 
