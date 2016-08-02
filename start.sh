@@ -47,6 +47,12 @@ _install_generic () {
 	return $SUCCESS
 }
 
+_install_long () {
+	echo -e "Installing $1 ... (this could take a while)"
+	_install_generic $1
+	return $?
+}
+
 _install () {
 	_install_start $1
 	_install_generic $1
@@ -198,12 +204,12 @@ _do_install () {
 	_install unity-tweak-tool
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
-		_install ubuntu-restricted-extras
-		_install texlive
-		_install latexmk
-		_install texlive-lang-ger
-		_install texlive-latex-extra
-		_install texlive-fonts-extra
+		_install_long ubuntu-restricted-extras
+		_install_long texlive
+		_install_long latexmk
+		_install_long texlive-lang-german
+		_install_long texlive-latex-extra
+		_install_long texlive-fonts-extra
 	fi
 
 	SUBL3_VERSION=114
