@@ -165,13 +165,16 @@ Public
 }
 
 _do_update () {
-	sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
-
 	echo "Updating ..."
-	sudo apt-get -qq update
+	sudo apt-get -qq update &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		_print_red "Update failed"
 	fi
+
+	# Add texlive repository after first update, because it would always cause
+	# apt-get update to throw errors that really should be warnings
+	sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
+	sudo apt-get -qq update &> /dev/null
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
 		echo "Upgrading ... (this could take a while)"
