@@ -6,6 +6,14 @@
 ## Variables
 
 PARAM_QUICK=0
+PARAM_OFFLINE=0
+PARAM_DO_UPDATE=1
+PARAM_DO_INSTALL=1
+PARAM_DO_SSH=1
+PARAM_DO_CONFIG=1
+PARAM_DO_HOMEDIR=1
+
+DOS_CLEANED=0
 
 DL_PREFIX=/tmp
 DEFAULTS=$HOME/.local/share/applications/defaults.list
@@ -104,176 +112,151 @@ _append_to_path () {
 	fi
 }
 
-## Parameter parsing
+_do_update () {
+	sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
 
-while [[ $# -gt 0 ]]; do
-	PARAM="$1"
-	case $PARAM in
-		-q|--quick)
-			PARAM_QUICK=1
-			shift
-			;;
-		*)
-			_print_red "Invalid parameter: $PARAM"
-			exit 1
-		;;
-	esac
-done
-
-## Check if run without sudo
-
-if [[ $EUID == 0 ]]; then
-	_print_red "Don't run with sudo or as root!"
-	exit 1
-fi
-
-## Update
-
-sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
-
-echo "Updating ..."
-sudo apt-get -qq update
-if [[ $? -ne 0 ]]; then
-	_print_red "Update failed"
-fi
-
-if [[ $PARAM_QUICK -ne 1 ]]; then
-	echo "Upgrading ... (this could take a while)"
-	sudo apt-get -y -qq upgrade > /dev/null
+	echo "Updating ..."
+	sudo apt-get -qq update
 	if [[ $? -ne 0 ]]; then
-		_print_red "Upgrade failed"
+		_print_red "Update failed"
 	fi
-fi
 
-## Install tools
+	if [[ $PARAM_QUICK -ne 1 ]]; then
+		echo "Upgrading ... (this could take a while)"
+		sudo apt-get -y -qq upgrade > /dev/null
+		if [[ $? -ne 0 ]]; then
+			_print_red "Upgrade failed"
+		fi
+	fi
+}
 
-_install git
-_install git-gui
-_install subversion
-_install tmux
-_install cloc
-_install htop
-_install openssh-server
-_install build-essential
-_install cmake
-_install unity-tweak-tool
+_do_install () {
+	_install git
+	_install git-gui
+	_install subversion
+	_install tmux
+	_install cloc
+	_install htop
+	_install openssh-server
+	_install build-essential
+	_install cmake
+	_install unity-tweak-tool
 
-if [[ $PARAM_QUICK -ne 1 ]]; then
-	_install ubuntu-restricted-extras
-	_install texlive
-	_install latexmk
-	_install texlive-lang-ger
-	_install texlive-latex-extra
-	_install texlive-fonts-extra
-fi
+	if [[ $PARAM_QUICK -ne 1 ]]; then
+		_install ubuntu-restricted-extras
+		_install texlive
+		_install latexmk
+		_install texlive-lang-ger
+		_install texlive-latex-extra
+		_install texlive-fonts-extra
+	fi
 
-SUBL3_VERSION=114
-SUBL3_NAME="Sublime_Text_3"
-SUBL3_SITE="https://download.sublimetext.com"
-SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
-_install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
+	SUBL3_VERSION=114
+	SUBL3_NAME="Sublime_Text_3"
+	SUBL3_SITE="https://download.sublimetext.com"
+	SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
+	_install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
 
-CHROME_NAME="Google_Chrome"
-CHROME_SITE="https://dl.google.com/linux/direct"
-CHROME_FILE="google-chrome-stable_current_amd64.deb"
-CHROME_DEPENDS=("libindicator7" "libappindicator1")
-_install_depends CHROME_DEPENDS[@] $CHROME_NAME
-if [[ $? -eq 0 ]]; then
-	_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
-fi
+	CHROME_NAME="Google_Chrome"
+	CHROME_SITE="https://dl.google.com/linux/direct"
+	CHROME_FILE="google-chrome-stable_current_amd64.deb"
+	CHROME_DEPENDS=("libindicator7" "libappindicator1")
+	_install_depends CHROME_DEPENDS[@] $CHROME_NAME
+	if [[ $? -eq 0 ]]; then
+		_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
+	fi
 
-sudo apt-get autoremove > /dev/null
+	sudo apt-get autoremove > /dev/null
+}
 
-## SSH
+_do_ssh () {
+	echo -e "Setting up SSH ..."
 
-# SSH keys
-echo -e "Setting up SSH ..."
+	SSH_DIR=$HOME/.ssh
+	SSH_FILE=$SSH_DIR/id_rsa
+	SSH_PFILE=$SSH_FILE.pub
+	SSH_KFILE=$SSH_DIR/authorized_keys
 
-SSH_DIR=$HOME/.ssh
-SSH_FILE=$SSH_DIR/id_rsa
-SSH_PFILE=$SSH_FILE.pub
-SSH_KFILE=$SSH_DIR/authorized_keys
+	mkdir -p $SSH_DIR
+	chmod 700 $SSH_DIR
+	if [[ -f $SSH_FILE ]]; then
+		mv $SSH_FILE $SSH_DIR/old_id_rsa
+		echo -e "SSH key files already existed, renamed to old_id_rsa(.pub)"
+	fi
+	if [[ -f $SSH_PFILE ]]; then
+		mv $SSH_PFILE $SSH_DIR/old_id_rsa.pub
+	fi
+	ssh-keygen -q -t rsa -N "" -f $SSH_FILE
+	touch $SSH_KFILE
+	chmod 600 $SSH_KFILE
 
-mkdir -p $SSH_DIR
-chmod 700 $SSH_DIR
-if [[ -f $SSH_FILE ]]; then
-	mv $SSH_FILE $SSH_DIR/old_id_rsa
-	echo -e "SSH key files already existed, renamed to old_id_rsa(.pub)"
-fi
-if [[ -f $SSH_PFILE ]]; then
-	mv $SSH_PFILE $SSH_DIR/old_id_rsa.pub
-fi
-ssh-keygen -q -t rsa -N "" -f $SSH_FILE
-touch $SSH_KFILE
-chmod 600 $SSH_KFILE
+	echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
+	 >> $SSH_KFILE
+	echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com"\
+	 >> $SSH_KFILE
 
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
- >> $SSH_KFILE
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com"\
- >> $SSH_KFILE
+	# SSH server
+	SSH_SCONFIG=/etc/ssh/sshd_config
+	if [[ -f $SSH_SCONFIG ]]; then
+		sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
+	fi
+	sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
+	sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
+	sudo sed -i -e "\$aLasse Meyer <meyer.lasse@gmail.com>" /etc/issue.net
+	sudo systemctl restart ssh
+}
 
-# SSH server
-SSH_SCONFIG=/etc/ssh/sshd_config
-if [[ -f $SSH_SCONFIG ]]; then
-	sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
-fi
-sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
-sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
-sudo sed -i -e "\$aLasse Meyer <meyer.lasse@gmail.com>" /etc/issue.net
-sudo systemctl restart ssh
+_do_config () {
+	echo -e "Configuring ..."
 
-## Configuration
+	rm -f $HOME/.config/monitors.xml
 
-echo -e "Configuring ..."
+	# Modifying global environment variables and library search path for linker
+	LOCAL_LIB=/usr/local/lib
+	LD_CONFIG_PATH=/etc/ld.so.conf.d
+	LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
+	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		sudo sh -c  "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
+	fi
+	_append_to_path "/usr/local/bin"
+	_append_to_path "/usr/local/sbin"
 
-rm -f $HOME/.config/monitors.xml
+	# Locale and timezone
+	timedatectl set-timezone Europe/Berlin
+	sudo locale-gen de_DE.UTF-8 > /dev/null
+	sudo update-locale LANG=de_DE.UTF-8
 
-# Modifying global environment variables and library search path for linker
-LOCAL_LIB=/usr/local/lib
-LD_CONFIG_PATH=/etc/ld.so.conf.d
-LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
-grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
-if [[ $? -ne 0 ]]; then
-	sudo sh -c  "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
-fi
-_append_to_path "/usr/local/bin"
-_append_to_path "/usr/local/sbin"
+	# Desktop
+	dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
+	dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
+	gsettings set com.ubuntu.update-notifier no-show-notifications true
+	gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
+	gsettings set org.gnome.desktop.interface clock-show-date true
 
-# Locale and timezone
-timedatectl set-timezone Europe/Berlin
-sudo locale-gen de_DE.UTF-8 > /dev/null
-sudo update-locale LANG=de_DE.UTF-8
+	# Terminal
+	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
+	TPROFILE=${TPROFILE:1:-1}
+	dconf write /org/gnome/terminal/legacy/profiles:/:$TPROFILE/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ background-color "#000000"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ foreground-color "#FFFFFF"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ scrollback-unlimited true
 
-# Desktop
-dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
-dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
-gsettings set com.ubuntu.update-notifier no-show-notifications true
-gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
-gsettings set org.gnome.desktop.interface clock-show-date true
+	# Default applications
+	echo "[Default Applications]" > $DEFAULTS
+	DESKTOP_SUBL=sublime_text.desktop
+	MIMES_SUBL=("text/xml" "text/richtext" "text/x-java" "text/plain" "text/tab-separated-values" "text/x-c++hdr" "text/x-c++src" "text/x-chdr" "text/x-csrc" "text/x-sql" "text/x-python" "text/x-dtd" "text/mathml"  "application/x-perl")
+	_setmimes MIMES_SUBL[@] $DESKTOP_SUBL
+	DESKTOP_CHROME=google-chrome.desktop
+	MIMES_CHROME=("appplication/xhtml+xml" "application/xhtml_xml" "text/html" "x-scheme-handler/http" "x-scheme-handler/https" "x-scheme-handler/ftp")
+	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
 
-# Terminal
-TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
-TPROFILE=${TPROFILE:1:-1}
-dconf write /org/gnome/terminal/legacy/profiles:/:$TPROFILE/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ background-color "#000000"
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ foreground-color "#FFFFFF"
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ scrollback-unlimited true
+	# git
+	git config --global user.email "meyer.lasse@gmail.com"
+	git config --global user.name "Lasse Meyer"
 
-# Default applications
-echo "[Default Applications]" > $DEFAULTS
-DESKTOP_SUBL=sublime_text.desktop
-MIMES_SUBL=("text/xml" "text/richtext" "text/x-java" "text/plain" "text/tab-separated-values" "text/x-c++hdr" "text/x-c++src" "text/x-chdr" "text/x-csrc" "text/x-sql" "text/x-python" "text/x-dtd" "text/mathml"  "application/x-perl")
-_setmimes MIMES_SUBL[@] $DESKTOP_SUBL
-DESKTOP_CHROME=google-chrome.desktop
-MIMES_CHROME=("appplication/xhtml+xml" "application/xhtml_xml" "text/html" "x-scheme-handler/http" "x-scheme-handler/https" "x-scheme-handler/ftp")
-_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
-
-# git
-git config --global user.email "meyer.lasse@gmail.com"
-git config --global user.name "Lasse Meyer"
-
-# tmux
-echo "# Enable mouse mode (tmux 2.1 and above)
+	# tmux
+	echo "# Enable mouse mode (tmux 2.1 and above)
 # set -g mouse on
 
 ######################
@@ -375,14 +358,14 @@ set -g message-bg colour166
 
 # }" > $HOME/.tmux.conf
 
-# Nano
-echo "set tabsize 4" >> $HOME/.nanorc
+	# Nano
+	echo "set tabsize 4" >> $HOME/.nanorc
+}
 
-## Append .bashrc
+_do_homedir () {
+	echo -e "Appending .bashrc ..."
 
-echo -e "Appending .bashrc ..."
-
-echo "############ CUSTOM ############
+	echo "############ CUSTOM ############
 
 export PATH=\$PATH:$HOME/.bin
 
@@ -411,11 +394,11 @@ function mkc {
 
 " >> $HOME/.bashrc
 
-## Create .hidden
+	## Create .hidden
 
-echo -e "Cleaning up home directory ..."
+	echo -e "Cleaning up home directory ..."
 
-echo "Pictures
+	echo "Pictures
 Videos
 Music
 Documents
@@ -427,8 +410,88 @@ Vorlagen
 Public
 Öffentlich" > $HOME/.hidden
 
-rm -f $HOME/examples.desktop
-mkdir $HOME/.bin
+	rm -f $HOME/examples.desktop
+	mkdir $HOME/.bin
+}
+
+_clean_dos () {
+	if [[ DOS_CLEANED -ne 1 ]]; then
+		PARAM_DO_UPDATE=0
+		PARAM_DO_INSTALL=0
+		PARAM_DO_SSH=0
+		PARAM_DO_CONFIG=0
+		PARAM_DO_HOMEDIR=0
+		DOS_CLEANED=1
+	fi
+}
+
+## Parameter parsing
+
+while [[ $# -gt 0 ]]; do
+	PARAM="$1"
+	case $PARAM in
+		-q|--quick)
+			PARAM_QUICK=1
+			shift
+			;;
+		-o|--offline)
+			PARAM_OFFLINE=1
+			shift
+			;;
+		--do_update)
+			_clean_dos
+			PARAM_DO_UPDATE=1
+			shift
+			;;
+		--do_install)
+			_clean_dos
+			PARAM_DO_INSTALL=1
+			shift
+			;;
+		--do_ssh)
+			_clean_dos
+			PARAM_DO_SSH=1
+			shift
+			;;
+		--do_config)
+			_clean_dos
+			PARAM_DO_CONFIG=1
+			shift
+			;;
+		--do_homedir)
+			_clean_dos
+			PARAM_DO_HOMEDIR=1
+			shift
+			;;
+		*)
+			_print_red "Invalid parameter: $PARAM"
+			exit 1
+		;;
+	esac
+done
+
+## Check if run without sudo
+
+if [[ $EUID == 0 ]]; then
+	_print_red "Don't run with sudo or as root!"
+	exit 1
+fi
+
+if [[ $PARAM_DO_UPDATE -eq 1 ]]; then
+	_do_update
+fi
+if [[ $PARAM_DO_INSTALL -eq 1 ]]; then
+	_do_install
+fi
+if [[ $PARAM_DO_SSH -eq 1 ]]; then
+	_do_ssh
+fi
+if [[ $PARAM_DO_CONFIG -eq 1 ]]; then
+	_do_config
+fi
+if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
+	_do_homedir
+fi
 
 ## End
 
