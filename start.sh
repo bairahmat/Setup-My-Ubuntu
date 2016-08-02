@@ -112,6 +112,58 @@ _append_to_path () {
 	fi
 }
 
+_do_homedir () {
+	echo -e "Appending .bashrc ..."
+
+	echo "############ CUSTOM ############
+
+export PATH=\$PATH:$HOME/.bin
+
+alias go-dl='cd ~/Downloads'
+alias go-pr='cd ~/projects'
+alias go-re='cd ~/repos'
+alias ll='ls -AlFh --color=auto'
+alias ls='ls -lFh --color=auto'
+alias dta='dmesg | tail'
+alias grap='grep -R -n -i -e'
+alias grip='ps aux | grep -i -e'
+alias fond='find . -name'
+alias extr='tar xvf'
+alias updog='sudo apt-get update; sudo apt-get upgrade'
+alias dl='sudo apt-get install'
+alias git-count='git rev-list --all --count'
+alias giff='git diff HEAD'
+alias giss='git status'
+alias cloc-all='cloc *.c *.h Makefile'
+alias make='make -j4'
+
+function mkc {
+	mkdir $1
+	cd $1
+}
+
+" >> $HOME/.bashrc
+
+	## Create .hidden
+
+	echo -e "Cleaning up home directory ..."
+
+	echo "Pictures
+Videos
+Music
+Documents
+Bilder
+Musik
+Dokumente
+Templates
+Vorlagen
+Public
+Öffentlich" > $HOME/.hidden
+
+	rm -f $HOME/examples.desktop
+	mkdir $HOME/.bin
+}
+
 _do_update () {
 	sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
 
@@ -364,58 +416,6 @@ set -g message-bg colour166
 	echo "set tabsize 4" >> $HOME/.nanorc
 }
 
-_do_homedir () {
-	echo -e "Appending .bashrc ..."
-
-	echo "############ CUSTOM ############
-
-export PATH=\$PATH:$HOME/.bin
-
-alias go-dl='cd ~/Downloads'
-alias go-pr='cd ~/projects'
-alias go-re='cd ~/repos'
-alias ll='ls -AlFh --color=auto'
-alias ls='ls -lFh --color=auto'
-alias dta='dmesg | tail'
-alias grap='grep -R -n -i -e'
-alias grip='ps aux | grep -i -e'
-alias fond='find . -name'
-alias extr='tar xvf'
-alias updog='sudo apt-get update; sudo apt-get upgrade'
-alias dl='sudo apt-get install'
-alias git-count='git rev-list --all --count'
-alias giff='git diff HEAD'
-alias giss='git status'
-alias cloc-all='cloc *.c *.h Makefile'
-alias make='make -j4'
-
-function mkc {
-	mkdir $1
-	cd $1
-}
-
-" >> $HOME/.bashrc
-
-	## Create .hidden
-
-	echo -e "Cleaning up home directory ..."
-
-	echo "Pictures
-Videos
-Music
-Documents
-Bilder
-Musik
-Dokumente
-Templates
-Vorlagen
-Public
-Öffentlich" > $HOME/.hidden
-
-	rm -f $HOME/examples.desktop
-	mkdir $HOME/.bin
-}
-
 _clean_dos () {
 	if [[ DOS_CLEANED -ne 1 ]]; then
 		PARAM_DO_UPDATE=0
@@ -479,6 +479,9 @@ if [[ $EUID == 0 ]]; then
 	exit 1
 fi
 
+if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
+	_do_homedir
+fi
 if [[ $PARAM_DO_UPDATE -eq 1 ]]; then
 	_do_update
 fi
@@ -490,9 +493,6 @@ if [[ $PARAM_DO_SSH -eq 1 ]]; then
 fi
 if [[ $PARAM_DO_CONFIG -eq 1 ]]; then
 	_do_config
-fi
-if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
-	_do_homedir
 fi
 
 ## End
