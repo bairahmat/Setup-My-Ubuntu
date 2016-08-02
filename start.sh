@@ -75,17 +75,17 @@ _install_depends () {
 # $3 = File name to download and install
 _install_dpkg () {
 	SUCCESS=0
-	_install_start $1
+	_install_start "$1"
 	wget --tries=3 $2/$3 -P $DL_PREFIX -q
 	if [[ $? -eq 0 ]]; then
 		sudo dpkg -i -G $DL_PREFIX/$3 > /dev/null
 		if [[ $? -ne 0 ]]; then
-			_install_fail $1
+			_install_fail "$1"
 			SUCCESS=1
 		fi
 		rm -f $DL_PREFIX/$3
 	else
-		_install_fail $1
+		_install_fail "$1"
 		SUCCESS=1
 	fi
 	return $SUCCESS
@@ -152,18 +152,18 @@ _do_install () {
 	fi
 
 	SUBL3_VERSION=114
-	SUBL3_NAME="Sublime_Text_3"
+	SUBL3_NAME="Sublime Text 3"
 	SUBL3_SITE="https://download.sublimetext.com"
 	SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
-	_install_dpkg $SUBL3_NAME $SUBL3_SITE $SUBL3_FILE
+	_install_dpkg "$SUBL3_NAME" $SUBL3_SITE $SUBL3_FILE
 
-	CHROME_NAME="Google_Chrome"
+	CHROME_NAME="Google Chrome"
 	CHROME_SITE="https://dl.google.com/linux/direct"
 	CHROME_FILE="google-chrome-stable_current_amd64.deb"
 	CHROME_DEPENDS=("libindicator7" "libappindicator1")
-	_install_depends CHROME_DEPENDS[@] $CHROME_NAME
+	_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
 	if [[ $? -eq 0 ]]; then
-		_install_dpkg $CHROME_NAME $CHROME_SITE $CHROME_FILE
+		_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
 	fi
 
 	sudo apt-get autoremove > /dev/null
