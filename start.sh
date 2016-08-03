@@ -118,12 +118,12 @@ _append_to_path () {
 	fi
 }
 
+
 _do_homedir () {
-	echo -e "Appending .bashrc ..."
+	## Create .customrc and source it in .bashrc
+	echo -e "Setting up home directory ..."
 
-	echo "############ CUSTOM ############
-
-export PATH=\$PATH:$HOME/.bin
+	echo "export PATH=\$PATH:$HOME/bin
 
 alias go-dl='cd ~/Downloads'
 alias go-pr='cd ~/projects'
@@ -144,15 +144,18 @@ alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
 
 function mkc {
-	mkdir $1
-	cd $1
+	mkdir \$1
+	cd \$1
 }
 
-" >> $HOME/.bashrc
+" >> $HOME/.customrc
+
+	cat $HOME/.bashrc | grep .customrc &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		echo -e "\nsource .customrc" >> $HOME/.bashrc
+	fi
 
 	## Create .hidden
-
-	echo -e "Cleaning up home directory ..."
 
 	echo "Pictures
 Videos
