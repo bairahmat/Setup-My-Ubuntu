@@ -27,14 +27,17 @@ export DEBIAN_FRONTEND=noninteractive
 
 _print_red () {
 	echo -e "${RED}${1}${NC}"
+	return 0
 }
 
 _install_fail () {
 	_print_red "Installing $1 failed"
+	return 0
 }
 
 _install_start () {
 	echo -e "Installing $1 ..."
+	return 0
 }
 
 _install_generic () {
@@ -104,6 +107,7 @@ _setmimes () {
 	for MIMETYPE in "${MIMES[@]}"; do
 		echo "$MIMETYPE=$2" >> $DEFAULTS
 	done
+	return 0
 }
 
 # $1 = Path to append to PATH
@@ -116,6 +120,7 @@ _append_to_path () {
 		# Add new path and add "
 		sudo sed -i "/^PATH=/ s|$|:${1}\"|" $ENV_FILE
 	fi
+	return 0
 }
 
 # $1 = Array of directories to delete (has to be passed like this: NAME_OF_ARRAY[@])
@@ -193,6 +198,8 @@ Public
 	if [[ ! -d $HOME/bin ]]; then
 		mkdir $HOME/bin
 	fi
+
+	return 0
 }
 
 _do_update () {
@@ -214,6 +221,8 @@ _do_update () {
 			_print_red "Upgrade failed"
 		fi
 	fi
+
+	return 0
 }
 
 _do_install () {
@@ -253,6 +262,8 @@ _do_install () {
 	fi
 
 	sudo apt-get autoremove > /dev/null
+
+	return 0
 }
 
 _do_ssh () {
@@ -290,6 +301,8 @@ _do_ssh () {
 	sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
 	sudo sed -i -e "\$aLasse Meyer <meyer.lasse@gmail.com>" /etc/issue.net
 	sudo systemctl restart ssh
+
+	return 0
 }
 
 _do_config () {
@@ -333,10 +346,28 @@ _do_config () {
 	# Default applications
 	echo "[Default Applications]" > $DEFAULTS
 	DESKTOP_SUBL=sublime_text.desktop
-	MIMES_SUBL=("text/xml" "text/richtext" "text/x-java" "text/plain" "text/tab-separated-values" "text/x-c++hdr" "text/x-c++src" "text/x-chdr" "text/x-csrc" "text/x-sql" "text/x-python" "text/x-dtd" "text/mathml"  "application/x-perl")
+	MIMES_SUBL=("text/xml"\
+				"text/richtext"\
+				"text/x-java"\
+				"text/plain"\
+				"text/tab-separated-values"\
+				"text/x-c++hdr"\
+				"text/x-c++src"\
+				"text/x-chdr"\
+				"text/x-csrc"\
+				"text/x-sql"\
+				"text/x-python"\
+				"text/x-dtd"\
+				"text/mathml"\
+				"application/x-perl")
 	_setmimes MIMES_SUBL[@] $DESKTOP_SUBL
 	DESKTOP_CHROME=google-chrome.desktop
-	MIMES_CHROME=("appplication/xhtml+xml" "application/xhtml_xml" "text/html" "x-scheme-handler/http" "x-scheme-handler/https" "x-scheme-handler/ftp")
+	MIMES_CHROME=("appplication/xhtml+xml"\
+				  "application/xhtml_xml"\
+				  "text/html"\
+				  "x-scheme-handler/http"\
+				  "x-scheme-handler/https"\
+				  "x-scheme-handler/ftp")
 	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
 
 	# Git
@@ -448,6 +479,8 @@ set -g message-bg colour166
 
 	# Nano
 	echo "set tabsize 4" >> $HOME/.nanorc
+
+	return 0
 }
 
 _clean_dos () {
@@ -459,6 +492,7 @@ _clean_dos () {
 		PARAM_DO_HOMEDIR=0
 		DOS_CLEANED=1
 	fi
+	return 0
 }
 
 ## Parameter parsing
