@@ -25,21 +25,25 @@ export DEBIAN_FRONTEND=noninteractive
 
 ## Functions
 
+# $1 = content to print in red
 _print_red () {
 	echo -e "${RED}${1}${NC}"
 	return 0
 }
 
+# $1 = Name of software
 _install_fail () {
 	_print_red "Installing $1 failed"
 	return 0
 }
 
+# $1 = Name of software
 _install_start () {
 	echo -e "Installing $1 ..."
 	return 0
 }
 
+# $1 = Name of software
 _install_generic () {
 	SUCCESS=0
 	sudo apt-get -y -qq install "$1" > /dev/null
@@ -50,12 +54,14 @@ _install_generic () {
 	return $SUCCESS
 }
 
+# $1 = Name of software
 _install_long () {
 	echo -e "Installing $1 ... (this could take a while)"
 	_install_generic "$1"
 	return $?
 }
 
+# $1 = Name of software
 _install () {
 	_install_start "$1"
 	_install_generic "$1"
@@ -291,6 +297,7 @@ _do_install () {
 	_install cmake
 	_install shellcheck
 	_install unity-tweak-tool
+	_install unp
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
 		_install_long ubuntu-restricted-extras
@@ -299,6 +306,7 @@ _do_install () {
 		_install_long texlive-lang-german
 		_install_long texlive-latex-extra
 		_install_long texlive-fonts-extra
+		_install_long openjdk-8-jdk
 	fi
 
 	SUBL3_VERSION=114
