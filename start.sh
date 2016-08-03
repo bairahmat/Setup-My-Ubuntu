@@ -143,11 +143,14 @@ alias go-pr='cd ~/projects'
 alias go-re='cd ~/repos'
 alias ll='ls -AlFh --color=auto'
 alias ls='ls -lFh --color=auto'
+alias l='ls -ACF --color=auto'
+alias lsr='ls -ACFR --color=auto'
+alias llr='ls -AlFRh --color=auto'
+alias more='less'
 alias dta='dmesg | tail'
 alias grap='grep -R -n -i -e'
 alias grip='ps aux | grep -i -e'
 alias fond='find . -name'
-alias extr='tar xvf'
 alias updog='sudo apt-get update; sudo apt-get upgrade'
 alias dl='sudo apt-get install'
 alias git-count='git rev-list --all --count'
@@ -156,16 +159,66 @@ alias giss='git status'
 alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
 
-function mkc {
-	mkdir \$1
-	cd \$1
+# Create directory and enter it
+mkc () {
+	mkdir \"\$1\"
+	cd \"\$1\"
 }
+
+# Copy and go to dir
+cpg () {
+	if [[ -d \"\$2\" ]]; then
+		cp \"\$1\" \" \$2\" && cd \"\$2\"
+	else
+		cp \"\$1\" \"\$2\"
+	fi
+}
+
+# Move and go to dir
+mvg () {
+	if [[ -d \"\$2\" ]]; then
+		mv \"\$1\" \"\$2\" && cd \"\$2\"
+	else
+		mv \"\$1\" \"\$2\"
+	fi
+}
+
+up () {
+	local D=\"\"
+	limit=\$1
+	for ((I=1 ; I <= limit ; I++)); do
+		D=\$D/..
+    done
+	D=\$(echo \$D | sed 's/^\///')
+	if [[ -z \"\$D\" ]]; then
+		D=..
+	fi
+	cd \$D
+}
+
+# For colored manpages
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# Some command history settings
+export HISTFILESIZE=20000
+export HISTSIZE=10000
+shopt -s histappend
+# Combine multiline commands into one in history
+shopt -s cmdhist
+# Ignore duplicates
+HISTCONTROL=ignoredups
 
 " >> "$HOME"/.customrc
 
 	grep .customrc < "$HOME"/.bashrc &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		echo -e "\nsource .customrc" >> "$HOME"/.bashrc
+		echo -e "\nsource ~/.customrc" >> "$HOME"/.bashrc
 	fi
 
 	## Create .hidden
