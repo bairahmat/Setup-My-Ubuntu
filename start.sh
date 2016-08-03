@@ -118,6 +118,14 @@ _append_to_path () {
 	fi
 }
 
+# $1 = Array of directories to delete (has to be passed like this: NAME_OF_ARRAY[@])
+_delete_dirs () {
+	declare -a DIRECS=("${!1}")
+	for DIR in "${DIRECS[@]}"; do
+		rm -rf $DIR
+	done
+	return 0
+}
 
 _do_homedir () {
 	## Create .customrc and source it in .bashrc
@@ -169,8 +177,22 @@ Vorlagen
 Public
 Öffentlich" > $HOME/.hidden
 
+	DEL_DIRS=("$HOME/Documents"\
+			  "$HOME/Dokumente"\
+			  "$HOME/Music"\
+			  "$HOME/Musik"\
+			  "$HOME/Videos"\
+			  "$HOME/Pictures"\
+			  "$HOME/Bilder"\
+			  "$HOME/Templates"\
+			  "$HOME/Vorlagen"\
+			  "$HOME/Public"\
+			  "$HOME/Öffentlich")
+	_delete_dirs DEL_DIRS[@]
 	rm -f $HOME/examples.desktop
-	mkdir $HOME/.bin
+	if [[ ! -d $HOME/bin ]]; then
+		mkdir $HOME/bin
+	fi
 }
 
 _do_update () {
