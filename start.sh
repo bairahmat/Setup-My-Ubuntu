@@ -235,6 +235,7 @@ _do_install () {
 	_install openssh-server
 	_install build-essential
 	_install cmake
+	_install shellcheck
 	_install unity-tweak-tool
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
