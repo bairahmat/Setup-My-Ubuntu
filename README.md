@@ -7,11 +7,11 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 |----------------|----------------------------------------------------------------------|
 | -q / --quick   | Don't do anything that takes a significant amount of time (~ >1 min) |
 | -o / --offline | Don't do anything that requires an internet connection               |
+| --do_homedir   | Call homedir function                                                |
 | --do_update    | Call update function                                                 |
 | --do_install   | Call install function                                                |
 | --do_ssh       | Call SSH function                                                    |
 | --do_config    | Call config function                                                 |
-| --do_homedir   | Call homedir function                                                |
 
 If one or more of the *--do_** parameters are used, only the according functions will be called, but not the others. These parameters do not have priority, so if you use both *--offline* and *--do_install*, nothing will happen.
 
