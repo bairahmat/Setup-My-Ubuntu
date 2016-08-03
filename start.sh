@@ -42,9 +42,9 @@ _install_start () {
 
 _install_generic () {
 	SUCCESS=0
-	sudo apt-get -y -qq install $1 > /dev/null
+	sudo apt-get -y -qq install "$1" > /dev/null
 	if [[ $? -ne 0 ]]; then
-		_install_fail $1
+		_install_fail "$1"
 		SUCCESS=1
 	fi
 	return $SUCCESS
@@ -52,13 +52,13 @@ _install_generic () {
 
 _install_long () {
 	echo -e "Installing $1 ... (this could take a while)"
-	_install_generic $1
+	_install_generic "$1"
 	return $?
 }
 
 _install () {
-	_install_start $1
-	_install_generic $1
+	_install_start "$1"
+	_install_generic "$1"
 	return $?
 }
 
@@ -68,12 +68,12 @@ _install_depends () {
 	SUCCESS=0
 	declare -a DEPENDS=("${!1}")
 	for DEP in "${DEPENDS[@]}"; do
-		_install_generic $DEP
+		_install_generic "$DEP"
 		if [[ $? -ne 0 ]]; then
 			SUCCESS=1
 		fi
 	done
-	if [[ SUCCESS -ne 0 ]]; then
+	if [[ $SUCCESS -ne 0 ]]; then
 		_print_red "Installing dependencies for $2 failed"
 	fi
 	return $SUCCESS
@@ -85,14 +85,14 @@ _install_depends () {
 _install_dpkg () {
 	SUCCESS=0
 	_install_start "$1"
-	wget --tries=3 $2/$3 -P $DL_PREFIX -q
+	wget --tries=3 "$2"/"$3" -P $DL_PREFIX -q
 	if [[ $? -eq 0 ]]; then
-		sudo dpkg -i -G $DL_PREFIX/$3 > /dev/null
+		sudo dpkg -i -G $DL_PREFIX/"$3" > /dev/null
 		if [[ $? -ne 0 ]]; then
 			_install_fail "$1"
 			SUCCESS=1
 		fi
-		rm -f $DL_PREFIX/$3
+		rm -f $DL_PREFIX/"$3"
 	else
 		_install_fail "$1"
 		SUCCESS=1
@@ -105,7 +105,7 @@ _install_dpkg () {
 _setmimes () {
 	declare -a MIMES=("${!1}")
 	for MIMETYPE in "${MIMES[@]}"; do
-		echo "$MIMETYPE=$2" >> $DEFAULTS
+		echo "$MIMETYPE=$2" >> "$DEFAULTS"
 	done
 	return 0
 }
@@ -113,7 +113,7 @@ _setmimes () {
 # $1 = Path to append to PATH
 _append_to_path () {
 	# Is the path already in PATH?
-	cat $ENV_FILE | grep PATH=.*$1 &> /dev/null
+	grep "PATH=.*$1" < "$ENV_FILE" &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		# Cut off "
 		sudo sed -i '/^PATH=/ s/\"$//' $ENV_FILE
@@ -127,7 +127,7 @@ _append_to_path () {
 _delete_dirs () {
 	declare -a DIRECS=("${!1}")
 	for DIR in "${DIRECS[@]}"; do
-		rm -rf $DIR
+		rm -rf "$DIR"
 	done
 	return 0
 }
@@ -161,11 +161,11 @@ function mkc {
 	cd \$1
 }
 
-" >> $HOME/.customrc
+" >> "$HOME"/.customrc
 
-	cat $HOME/.bashrc | grep .customrc &> /dev/null
+	grep .customrc < "$HOME"/.bashrc &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		echo -e "\nsource .customrc" >> $HOME/.bashrc
+		echo -e "\nsource .customrc" >> "$HOME"/.bashrc
 	fi
 
 	## Create .hidden
@@ -180,8 +180,9 @@ Dokumente
 Templates
 Vorlagen
 Public
-Öffentlich" > $HOME/.hidden
+Öffentlich" > "$HOME"/.hidden
 
+	# shellcheck disable=2034
 	DEL_DIRS=("$HOME/Documents"\
 			  "$HOME/Dokumente"\
 			  "$HOME/Music"\
@@ -194,9 +195,9 @@ Public
 			  "$HOME/Public"\
 			  "$HOME/Öffentlich")
 	_delete_dirs DEL_DIRS[@]
-	rm -f $HOME/examples.desktop
+	rm -f "$HOME"/examples.desktop
 	if [[ ! -d $HOME/bin ]]; then
-		mkdir $HOME/bin
+		mkdir "$HOME"/bin
 	fi
 
 	return 0
@@ -256,6 +257,7 @@ _do_install () {
 	CHROME_NAME="Google Chrome"
 	CHROME_SITE="https://dl.google.com/linux/direct"
 	CHROME_FILE="google-chrome-stable_current_amd64.deb"
+	# shellcheck disable=2034
 	CHROME_DEPENDS=("libindicator7" "libappindicator1")
 	_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
 	if [[ $? -eq 0 ]]; then
@@ -275,23 +277,23 @@ _do_ssh () {
 	SSH_PFILE=$SSH_FILE.pub
 	SSH_KFILE=$SSH_DIR/authorized_keys
 
-	mkdir -p $SSH_DIR
-	chmod 700 $SSH_DIR
+	mkdir -p "$SSH_DIR"
+	chmod 700 "$SSH_DIR"
 	if [[ -f $SSH_FILE ]]; then
-		mv $SSH_FILE $SSH_DIR/old_id_rsa
+		mv "$SSH_FILE" "$SSH_DIR"/old_id_rsa
 		echo -e "SSH key files already existed, renamed to old_id_rsa(.pub)"
 	fi
 	if [[ -f $SSH_PFILE ]]; then
-		mv $SSH_PFILE $SSH_DIR/old_id_rsa.pub
+		mv "$SSH_PFILE" "$SSH_DIR"/old_id_rsa.pub
 	fi
-	ssh-keygen -q -t rsa -N "" -f $SSH_FILE
-	touch $SSH_KFILE
-	chmod 600 $SSH_KFILE
+	ssh-keygen -q -t rsa -N "" -f "$SSH_FILE"
+	touch "$SSH_KFILE"
+	chmod 600 "$SSH_KFILE"
 
 	echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
-	 >> $SSH_KFILE
+	 >> "$SSH_KFILE"
 	echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com"\
-	 >> $SSH_KFILE
+	 >> "$SSH_KFILE"
 
 	# SSH server
 	SSH_SCONFIG=/etc/ssh/sshd_config
@@ -309,7 +311,7 @@ _do_ssh () {
 _do_config () {
 	echo -e "Configuring ..."
 
-	rm -f $HOME/.config/monitors.xml
+	rm -f "$HOME"/.config/monitors.xml
 
 	# Modifying global environment variables and library search path for linker
 	LOCAL_LIB=/usr/local/lib
@@ -339,14 +341,15 @@ _do_config () {
 	# Terminal
 	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
 	TPROFILE=${TPROFILE:1:-1}
-	dconf write /org/gnome/terminal/legacy/profiles:/:$TPROFILE/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ background-color "#000000"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ foreground-color "#FFFFFF"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$TPROFILE/ scrollback-unlimited true
+	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
 
 	# Default applications
-	echo "[Default Applications]" > $DEFAULTS
+	echo "[Default Applications]" > "$DEFAULTS"
 	DESKTOP_SUBL=sublime_text.desktop
+	# shellcheck disable=2034
 	MIMES_SUBL=("text/xml"\
 				"text/richtext"\
 				"text/x-java"\
@@ -363,6 +366,7 @@ _do_config () {
 				"application/x-perl")
 	_setmimes MIMES_SUBL[@] $DESKTOP_SUBL
 	DESKTOP_CHROME=google-chrome.desktop
+	# shellcheck disable=2034
 	MIMES_CHROME=("appplication/xhtml+xml"\
 				  "application/xhtml_xml"\
 				  "text/html"\
@@ -476,16 +480,16 @@ set -g message-attr bold
 set -g message-fg colour232
 set -g message-bg colour166
 
-# }" > $HOME/.tmux.conf
+# }" > "$HOME"/.tmux.conf
 
 	# Nano
-	echo "set tabsize 4" >> $HOME/.nanorc
+	echo "set tabsize 4" >> "$HOME"/.nanorc
 
 	return 0
 }
 
 _clean_dos () {
-	if [[ DOS_CLEANED -ne 1 ]]; then
+	if [[ $DOS_CLEANED -ne 1 ]]; then
 		PARAM_DO_UPDATE=0
 		PARAM_DO_INSTALL=0
 		PARAM_DO_SSH=0
