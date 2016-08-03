@@ -152,6 +152,7 @@ alias ls='ls -lFh --color=auto'
 alias l='ls -ACF --color=auto'
 alias lsr='ls -ACFR --color=auto'
 alias llr='ls -AlFRh --color=auto'
+alias dsize='du -sh'
 alias more='less'
 alias dta='dmesg | tail'
 alias grap='grep -R -n -i -e'
@@ -166,12 +167,16 @@ alias cloc-all='cloc *.c *.h Makefile'
 alias make='make -j4'
 
 # Create directory and enter it
+# \$1 = Name of new directory
 mkc () {
 	mkdir \"\$1\"
 	cd \"\$1\"
 }
 
-# Copy and go to dir
+
+# Copy file and cd to destination
+# \$1 = File to copy
+# \$2 = Destination
 cpg () {
 	if [[ -d \"\$2\" ]]; then
 		cp \"\$1\" \" \$2\" && cd \"\$2\"
@@ -180,7 +185,9 @@ cpg () {
 	fi
 }
 
-# Move and go to dir
+# Move file and cd to destination
+# \$1 = File to move
+# \$2 = Destination
 mvg () {
 	if [[ -d \"\$2\" ]]; then
 		mv \"\$1\" \"\$2\" && cd \"\$2\"
@@ -189,6 +196,8 @@ mvg () {
 	fi
 }
 
+# Do move up multiple directories at once
+# \$1 = Number of directories to go up
 up () {
 	local D=\"\"
 	limit=\$1
