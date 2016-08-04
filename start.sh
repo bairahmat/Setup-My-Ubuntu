@@ -5,6 +5,18 @@
 
 ## Variables
 
+FORMAT_BOLD="\e[1m"
+FORMAT_RESET_ALL="\e[0m"
+
+COLOR_DEFAULT="\e[39m"
+COLOR_RED="\e[31m"
+COLOR_GREEN="\e[32m"
+COLOR_YELLOW="\e[33m"
+
+DL_PREFIX=/tmp
+DEFAULTS=$HOME/.local/share/applications/defaults.list
+ENV_FILE=/etc/environment
+
 PARAM_QUICK=0
 PARAM_OFFLINE=0
 PARAM_DO_UPDATE=1
@@ -12,34 +24,36 @@ PARAM_DO_INSTALL=1
 PARAM_DO_SSH=1
 PARAM_DO_CONFIG=1
 PARAM_DO_HOMEDIR=1
-
 DOS_CLEANED=0
-
-DL_PREFIX=/tmp
-DEFAULTS=$HOME/.local/share/applications/defaults.list
-ENV_FILE=/etc/environment
-RED='\e[31m'
-NC='\e[0m'
 
 export DEBIAN_FRONTEND=noninteractive
 
 ## Functions
 
-# $1 = content to print in red
-_print_red () {
-	echo -e "${RED}${1}${NC}"
-	return 0
+# $1 = String to print
+_print_info () {
+	printf "[$COLOR_GREEN%s$COLOR_DEFAULT] %s\n" "INF" "$1"
+}
+
+# $1 = String to print
+_print_warning () {
+	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s\n" "WRN" "$1"
+}
+
+# $1 = String to print
+_print_error () {
+	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "ERR" "$1"
 }
 
 # $1 = Name of software
 _install_fail () {
-	_print_red "Installing $1 failed"
+	_print_error "Installing $1 failed"
 	return 0
 }
 
 # $1 = Name of software
 _install_start () {
-	echo -e "Installing $1 ..."
+	_print_info "Installing $1 ..."
 	return 0
 }
 
@@ -56,7 +70,7 @@ _install_generic () {
 
 # $1 = Name of software
 _install_long () {
-	echo -e "Installing $1 ... (this could take a while)"
+	_print_info "Installing $1 ... (this could take a while)"
 	_install_generic "$1"
 	return $?
 }
@@ -80,7 +94,7 @@ _install_depends () {
 		fi
 	done
 	if [[ $SUCCESS -ne 0 ]]; then
-		_print_red "Installing dependencies for $2 failed"
+		_print_error "Installing dependencies for $2 failed"
 	fi
 	return $SUCCESS
 }
@@ -140,7 +154,7 @@ _delete_dirs () {
 
 _do_homedir () {
 	## Create .customrc and source it in .bashrc
-	echo -e "Setting up home directory ..."
+	_print_info "Setting up home directory ..."
 
 	echo "export PATH=\$PATH:$HOME/bin
 
@@ -273,10 +287,11 @@ Public
 }
 
 _do_update () {
-	echo "Updating ..."
+	_print_info "Updating ..."
+
 	sudo apt-get -qq update &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		_print_red "Update failed"
+		_print_error "Update failed"
 	fi
 
 	# Add texlive repository after first update, because it would always cause
@@ -285,10 +300,10 @@ _do_update () {
 	sudo apt-get -qq update &> /dev/null
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
-		echo "Upgrading ... (this could take a while)"
+		_print_info "Upgrading ... (this could take a while)"
 		sudo apt-get -y -qq upgrade > /dev/null
 		if [[ $? -ne 0 ]]; then
-			_print_red "Upgrade failed"
+			_print_error "Upgrade failed"
 		fi
 	fi
 
@@ -341,7 +356,7 @@ _do_install () {
 }
 
 _do_ssh () {
-	echo -e "Setting up SSH ..."
+	_print_info "Setting up SSH ..."
 
 	SSH_DIR=$HOME/.ssh
 	SSH_FILE=$SSH_DIR/id_rsa
@@ -351,11 +366,11 @@ _do_ssh () {
 	mkdir -p "$SSH_DIR"
 	chmod 700 "$SSH_DIR"
 	if [[ -f $SSH_FILE ]]; then
-		mv "$SSH_FILE" "$SSH_DIR"/old_id_rsa
-		echo -e "SSH key files already existed, renamed to old_id_rsa(.pub)"
+		mv "$SSH_FILE" "$SSH_DIR"/id_rsa.old
+		_print_warning "SSH key files already existed, renamed to id_rsa.old and id_rsa.pub.old"
 	fi
 	if [[ -f $SSH_PFILE ]]; then
-		mv "$SSH_PFILE" "$SSH_DIR"/old_id_rsa.pub
+		mv "$SSH_PFILE" "$SSH_DIR"/old_id_rsa.pub.old
 	fi
 	ssh-keygen -q -t rsa -N "" -f "$SSH_FILE"
 	touch "$SSH_KFILE"
@@ -380,7 +395,7 @@ _do_ssh () {
 }
 
 _do_config () {
-	echo -e "Configuring ..."
+	_print_info "Configuring ..."
 
 	rm -f "$HOME"/.config/monitors.xml
 
@@ -610,7 +625,7 @@ while [[ $# -gt 0 ]]; do
 			shift
 			;;
 		*)
-			_print_red "Invalid parameter: $PARAM"
+			_print_error "Invalid parameter: $PARAM"
 			exit 1
 		;;
 	esac
@@ -619,7 +634,7 @@ done
 ## Check if run without sudo
 
 if [[ $EUID == 0 ]]; then
-	_print_red "Don't run with sudo or as root!"
+	_print_error "Don't run with sudo or as root!"
 	exit 1
 fi
 
@@ -641,7 +656,8 @@ fi
 
 ## End
 
-echo -e "Done."
-echo -e "You should run '. ~/.bashrc' now."
+_print_info "Done."
+# shellcheck disable=2059
+printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
 
 exit 0
