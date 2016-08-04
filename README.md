@@ -45,4 +45,4 @@ If one or more of the *--do_** parameters are used, only the according functions
 <hr>
 
 ## Contributing
-If you have an idea to improve the script, create versions for other Linux distributions or find an error, feel free to create a pull reqeust or an issue, or just send an email to let me know.
+If you have an idea to improve the script, created a version for another Linux distribution or find an error, feel free to create a pull reqeust or an issue, or just send an email to let me know.
