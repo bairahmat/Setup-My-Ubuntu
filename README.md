@@ -2,7 +2,7 @@
 #### A script to install, set and configure basic things that I need for a new Linux setup.
 Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 <hr>
-### Features
+## Features
 
 - Update and upgrade
 - Install a bunch of tools
@@ -20,7 +20,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 - Cleaning up home directory
 - More to come (if you have any suggestions, create an issue to let me know)
 
-### Using it yourself
+## Using it yourself
 
 If you want to use it, you have to **_change the following first_**:
 - Public keys that are added to authorized_keys
@@ -29,7 +29,7 @@ If you want to use it, you have to **_change the following first_**:
 
 The rest *can* be left unchanged.
 
-### Parameters
+## Parameters
 | Parameter      | Meaning                                                              |
 |----------------|----------------------------------------------------------------------|
 | -q / --quick   | Don't do anything that takes a significant amount of time (~ >1 min) |
@@ -44,5 +44,5 @@ If one or more of the *--do_** parameters are used, only the according functions
 
 <hr>
 
-### Contributing
+## Contributing
 If you have an idea to improve the script, create versions for other Linux distributions or find an error, feel free to create a pull reqeust or an issue, or just send an email to let me know.
