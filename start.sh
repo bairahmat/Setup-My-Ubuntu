@@ -321,6 +321,7 @@ _do_install () {
 	_install build-essential
 	_install cmake
 	_install shellcheck
+	_install valgrind
 	_install unity-tweak-tool
 	_install unp
 
