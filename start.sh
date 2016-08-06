@@ -321,6 +321,7 @@ _do_update () {
 _do_install () {
 	_install git
 	_install git-gui
+	_install tig
 	_install subversion
 	_install tmux
 	_install cloc
@@ -328,11 +329,16 @@ _do_install () {
 	_install openssh-server
 	_install build-essential
 	_install cmake
+	_install automake
 	_install shellcheck
 	_install valgrind
 	_install unity-tweak-tool
 	_install unp
+	_install dstat
+	_install qalc
+	_install tpp
 	_install hh
+	_install hollywood
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
 		_install_long ubuntu-restricted-extras
