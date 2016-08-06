@@ -235,16 +235,22 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-# Some command history settings
-export HISTFILESIZE=20000
-export HISTSIZE=10000
-shopt -s histappend
+# Command history settings
 # Combine multiline commands into one in history
 shopt -s cmdhist
 # Ignore duplicates
 HISTCONTROL=ignoredups
 
-" >> "$HOME"/.customrc
+# HSTR settings
+export HH_CONFIG=hicolor,rawhistory,blacklist
+shopt -s histappend
+export HISTCONTROL=ignorespace
+export HISTFILESIZE=10000
+export HISTSIZE=${HISTFILESIZE}
+export PROMPT_COMMAND=\"history -a; history -n; \${PROMPT_COMMAND}\"
+bind '\"\C-r\": \"\C-a hh \C-j\"'
+
+" > "$HOME"/.customrc
 
 	grep .customrc < "$HOME"/.bashrc &> /dev/null
 	if [[ $? -ne 0 ]]; then
@@ -297,6 +303,7 @@ _do_update () {
 	# Add texlive repository after first update, because it would always cause
 	# apt-get update to throw errors that really should be warnings
 	sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
+	sudo add-apt-repository -y ppa:ultradvorka/ppa &> /dev/null
 	sudo apt-get -qq update &> /dev/null
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
@@ -324,6 +331,7 @@ _do_install () {
 	_install valgrind
 	_install unity-tweak-tool
 	_install unp
+	_install hh
 
 	if [[ $PARAM_QUICK -ne 1 ]]; then
 		_install_long ubuntu-restricted-extras
@@ -465,6 +473,16 @@ _do_config () {
 	# Git
 	git config --global user.email "meyer.lasse@gmail.com"
 	git config --global user.name "Lasse Meyer"
+
+	# HSTR
+	echo "cd
+ls
+ll
+l
+lsr
+llr
+" > "$HOME"/.hh_blacklist
+
 
 	# tmux
 	echo "# Enable mouse mode (tmux 2.1 and above)
