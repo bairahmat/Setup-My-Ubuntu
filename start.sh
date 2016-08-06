@@ -157,6 +157,7 @@ _do_homedir () {
 	_print_info "Setting up home directory ..."
 
 	echo "export PATH=\$PATH:$HOME/bin
+export PS4='[ \$LINENO ] '
 
 alias go-dl='cd ~/Downloads'
 alias go-pr='cd ~/projects'
@@ -302,7 +303,7 @@ _do_update () {
 
 	# Add texlive repository after first update, because it would always cause
 	# apt-get update to throw errors that really should be warnings
-	sudo add-apt-repository -y ppa:texlive-backports/ppa > /dev/null
+	sudo add-apt-repository -y ppa:texlive-backports/ppa &> /dev/null
 	sudo add-apt-repository -y ppa:ultradvorka/ppa &> /dev/null
 	sudo apt-get -qq update &> /dev/null
 
