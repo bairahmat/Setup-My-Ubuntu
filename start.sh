@@ -333,6 +333,7 @@ _do_install () {
 	_install shellcheck
 	_install valgrind
 	_install unity-tweak-tool
+	_install xclip
 	_install unp
 	_install dstat
 	_install qalc
@@ -594,7 +595,11 @@ bind -n M-Down select-pane -D
 
 # Activate window switching with CTRL + SHIFT + ARROW
 bind -n C-S-Left previous-window
-bind -n C-S-Right next-window" > "$HOME"/.tmux.conf
+bind -n C-S-Right next-window
+
+# Activate copying to system buffer
+setw -g mode-keys vi
+bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'" > "$HOME"/.tmux.conf
 
 	# Nano
 	echo "set tabsize 4" >> "$HOME"/.nanorc
