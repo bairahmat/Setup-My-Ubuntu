@@ -333,6 +333,7 @@ _do_install () {
 	_install shellcheck
 	_install valgrind
 	_install unity-tweak-tool
+	_install xclip
 	_install unp
 	_install qalc
 	_install tpp
@@ -537,31 +538,27 @@ setw -g window-status-attr reverse
 set -g status-left ''
 
 # loud or quiet?
-set-option -g visual-activity off
+set-option -g visual-activity on
 set-option -g visual-bell off
 set-option -g visual-silence off
-set-window-option -g monitor-activity off
+set-window-option -g monitor-activity on
 set-option -g bell-action none
 
 set -g default-terminal \"screen-256color\"
 
-# The modes {
+# The modes
 setw -g clock-mode-colour colour135
 setw -g mode-attr bold
 setw -g mode-fg colour196
 setw -g mode-bg colour238
 
-# }
-# The panes {
-
+# The panes
 set -g pane-border-bg colour0
 set -g pane-border-fg colour238
 set -g pane-active-border-bg colour0
 set -g pane-active-border-fg colour51
 
-# }
-# The statusbar {
-
+# The statusbar
 set -g status-position bottom
 set -g status-bg colour234
 set -g status-fg colour137
@@ -585,14 +582,24 @@ setw -g window-status-bell-attr bold
 setw -g window-status-bell-fg colour255
 setw -g window-status-bell-bg colour1
 
-# }
-# The messages {
-
+# The messages
 set -g message-attr bold
 set -g message-fg colour232
 set -g message-bg colour166
 
-# }" > "$HOME"/.tmux.conf
+# Activate pane switching with ALT + ARROW
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+# Activate window switching with CTRL + SHIFT + ARROW
+bind -n C-S-Left previous-window
+bind -n C-S-Right next-window
+
+# Activate copying to system buffer
+setw -g mode-keys vi
+bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'" > "$HOME"/.tmux.conf
 
 	# Nano
 	echo "set tabsize 4" >> "$HOME"/.nanorc
