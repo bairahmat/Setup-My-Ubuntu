@@ -25,6 +25,7 @@ PARAM_DO_SSH=1
 PARAM_DO_CONFIG=1
 PARAM_DO_HOMEDIR=1
 DOS_CLEANED=0
+DLLOC_CHANGED=0
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -150,6 +151,11 @@ _delete_dirs () {
 		rm -rf "$DIR"
 	done
 	return 0
+}
+
+_change_dlloc () {
+	sudo sed -i 's|http://us.|http://de.|g' /etc/apt/sources.list
+	DLLOC_CHANGED=1
 }
 
 _do_homedir () {
@@ -296,6 +302,10 @@ Public
 _do_update () {
 	_print_info "Updating ..."
 
+	if [ $DLLOC_CHANGED -ne 1 ]; then
+		_change_dlloc
+	fi
+
 	sudo apt-get -qq update &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		_print_error "Update failed"
@@ -319,6 +329,10 @@ _do_update () {
 }
 
 _do_install () {
+	if [ $DLLOC_CHANGED -ne 1 ]; then
+		_change_dlloc
+	fi
+
 	_install git
 	_install git-gui
 	_install tig
@@ -415,6 +429,9 @@ _do_config () {
 	_print_info "Configuring ..."
 
 	rm -f "$HOME"/.config/monitors.xml
+	if [ $DLLOC_CHANGED -ne 1 ]; then
+		_change_dlloc
+	fi
 
 	# Modifying global environment variables and library search path for linker
 	LOCAL_LIB=/usr/local/lib
