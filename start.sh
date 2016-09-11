@@ -334,7 +334,6 @@ _do_install () {
 	_install valgrind
 	_install unity-tweak-tool
 	_install unp
-	_install dstat
 	_install qalc
 	_install tpp
 	_install hh
@@ -347,6 +346,7 @@ _do_install () {
 		_install_long texlive-lang-german
 		_install_long texlive-latex-extra
 		_install_long texlive-fonts-extra
+		_install_long texlive-bibtex-extra
 		_install_long openjdk-8-jdk
 	fi
 
