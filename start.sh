@@ -46,6 +46,29 @@ _print_error () {
 	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "ERR" "$1"
 }
 
+# $1 = File URL
+_download () {
+	wget --tries=3 "$1" -P $DL_PREFIX -q
+	return $!
+}
+
+# $1 = Full file name
+# $2 = Type of archive
+_unpack () {
+	UNPACK_RETURN=0
+	case $2 in
+		tar.gz)
+			tar xzf "$1"
+			UNPACK_RETURN=$!
+			;;
+		*)
+			_print_error "Unsupported archive type in _unpack"
+			UNPACK_RETURN=1
+			;;
+	esac
+	return $UNPACK_RETURN
+}
+
 # $1 = Name of software
 _install_fail () {
 	_print_error "Installing $1 failed"
@@ -106,7 +129,7 @@ _install_depends () {
 _install_dpkg () {
 	SUCCESS=0
 	_install_start "$1"
-	wget --tries=3 "$2"/"$3" -P $DL_PREFIX -q
+	_download "$2/$3"
 	if [[ $? -eq 0 ]]; then
 		sudo dpkg -i -G $DL_PREFIX/"$3" > /dev/null
 		if [[ $? -ne 0 ]]; then
