@@ -52,23 +52,6 @@ _download () {
 	return $!
 }
 
-# $1 = Full file name
-# $2 = Type of archive
-_unpack () {
-	UNPACK_RETURN=0
-	case $2 in
-		tar.gz)
-			tar xzf "$1"
-			UNPACK_RETURN=$!
-			;;
-		*)
-			_print_error "Unsupported archive type in _unpack"
-			UNPACK_RETURN=1
-			;;
-	esac
-	return $UNPACK_RETURN
-}
-
 # $1 = Name of software
 _install_fail () {
 	_print_error "Installing $1 failed"
