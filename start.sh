@@ -746,10 +746,10 @@ fi
 if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
 	_do_homedir
 fi
-if [[ $PARAM_DO_UPDATE -eq 1 ]]; then
+if [[ $PARAM_DO_UPDATE -eq 1 && $PARAM_OFFLINE -eq 0 ]]; then
 	_do_update
 fi
-if [[ $PARAM_DO_INSTALL -eq 1 ]]; then
+if [[ $PARAM_DO_INSTALL -eq 1 && $PARAM_OFFLINE -eq 0 ]]; then
 	_do_install
 fi
 if [[ $PARAM_DO_SSH -eq 1 ]]; then
