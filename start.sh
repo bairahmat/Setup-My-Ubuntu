@@ -47,8 +47,9 @@ _print_error () {
 }
 
 # $1 = File URL
+# $2 = Download location
 _download () {
-	wget --tries=3 "$1" -P $DL_PREFIX -q
+	wget --tries=3 "$1" -P "$2" -q
 	return $!
 }
 
@@ -112,7 +113,7 @@ _install_depends () {
 _install_dpkg () {
 	SUCCESS=0
 	_install_start "$1"
-	_download "$2/$3"
+	_download "$2/$3" "$DL_PREFIX"
 	if [[ $? -eq 0 ]]; then
 		sudo dpkg -i -G $DL_PREFIX/"$3" > /dev/null
 		if [[ $? -ne 0 ]]; then
