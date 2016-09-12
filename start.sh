@@ -13,10 +13,12 @@ COLOR_RED="\e[31m"
 COLOR_GREEN="\e[32m"
 COLOR_YELLOW="\e[33m"
 
-DL_PREFIX=/tmp
-DEFAULTS=$HOME/.local/share/applications/defaults.list
-ENV_FILE=/etc/environment
+DL_PREFIX="/tmp"
+DEFAULTS="$HOME/.local/share/applications/defaults.list"
+ENV_FILE="/etc/environment"
+DLLOC="de"
 
+PARAM=DLLOC=0
 PARAM_QUICK=0
 PARAM_OFFLINE=0
 PARAM_DO_UPDATE=1
@@ -27,7 +29,7 @@ PARAM_DO_HOMEDIR=1
 DOS_CLEANED=0
 DLLOC_CHANGED=0
 
-export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND="noninteractive"
 
 ## Functions
 
@@ -161,7 +163,7 @@ _delete_dirs () {
 }
 
 _change_dlloc () {
-	sudo sed -i 's|http://us.|http://de.|g' /etc/apt/sources.list
+	sudo sed -i "s|http://us.|http://${DLLOC}.|g" /etc/apt/sources.list
 	DLLOC_CHANGED=1
 }
 
@@ -703,6 +705,11 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-o|--offline)
 			PARAM_OFFLINE=1
+			shift
+			;;
+		-d|--dlloc)
+			DLLOC="$2"
+			shift
 			shift
 			;;
 		--do_update)
