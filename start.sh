@@ -370,6 +370,26 @@ _do_install_oclint () {
 	return $OCLINT_RETURN
 }
 
+_do_install_sublime () {
+	SUBL3_VERSION=114
+	SUBL3_NAME="Sublime Text 3"
+	SUBL3_SITE="https://download.sublimetext.com"
+	SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
+	_install_dpkg "$SUBL3_NAME" $SUBL3_SITE $SUBL3_FILE
+}
+
+_do_install_chrome () {
+	CHROME_NAME="Google Chrome"
+	CHROME_SITE="https://dl.google.com/linux/direct"
+	CHROME_FILE="google-chrome-stable_current_amd64.deb"
+	# shellcheck disable=2034
+	CHROME_DEPENDS=("libindicator7" "libappindicator1")
+	_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
+	if [[ $? -eq 0 ]]; then
+		_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
+	fi
+}
+
 _do_install () {
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
@@ -408,21 +428,8 @@ _do_install () {
 		_install_long openjdk-8-jdk
 	fi
 
-	SUBL3_VERSION=114
-	SUBL3_NAME="Sublime Text 3"
-	SUBL3_SITE="https://download.sublimetext.com"
-	SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
-	_install_dpkg "$SUBL3_NAME" $SUBL3_SITE $SUBL3_FILE
-
-	CHROME_NAME="Google Chrome"
-	CHROME_SITE="https://dl.google.com/linux/direct"
-	CHROME_FILE="google-chrome-stable_current_amd64.deb"
-	# shellcheck disable=2034
-	CHROME_DEPENDS=("libindicator7" "libappindicator1")
-	_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
-	if [[ $? -eq 0 ]]; then
-		_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
-	fi
+	_do_install_sublime
+	_do_install_chrome
 	_do_install_oclint
 
 	sudo apt-get autoremove > /dev/null
