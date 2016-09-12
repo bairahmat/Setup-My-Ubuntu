@@ -483,6 +483,7 @@ _do_config () {
 	_print_info "Configuring ..."
 
 	rm -f "$HOME"/.config/monitors.xml
+	sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
 	fi
