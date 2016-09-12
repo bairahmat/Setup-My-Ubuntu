@@ -338,6 +338,38 @@ _do_update () {
 	return 0
 }
 
+_do_install_oclint () {
+	OCLINT_RETURN=0
+	OCLINT_VERSION="0.10.2"
+	OCLINT_SITE="https://github.com/oclint/oclint/releases/download/v${OCLINT_VERSION}"
+	OCLINT_FILE="oclint-${OCLINT_VERSION}-x86_64-linux-3.13.0-48-generic.tar.gz"
+	_install_start "oclint"
+
+	# Download
+	_download "$OCLINT_SITE/$OCLINT_FILE" "$DL_PREFIX"
+	OCLINT_RETURN=$!
+	# Unpack
+	if [[ $OCLINT_RETURN -eq 0 ]]; then
+		tar xzf "$DL_PREFIX/$OCLINT_FILE"
+		OCLINT_RETURN=$!
+	fi
+	# Install
+	if [[ $OCLINT_RETURN -eq 0 ]]; then
+		cd "$DL_PREFIX/oclint-${OCLINT_VERSION}"
+		OCLINT_RETURN=$!
+	fi
+	if [[ $OCLINT_RETURN -eq 0 ]]; then
+		sudo cp bin/oclint* /usr/local/bin/
+		sudo cp -rp lib/* /usr/local/lib/
+	fi
+
+	if [[ $OCLINT_RETURN -ne 0 ]]; then
+		_install_fail "oclint"
+	fi
+
+	return $OCLINT_RETURN
+}
+
 _do_install () {
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
@@ -356,6 +388,7 @@ _do_install () {
 	_install automake
 	_install shellcheck
 	_install valgrind
+	_install bear
 	_install unity-tweak-tool
 	_install xclip
 	_install unp
@@ -390,6 +423,7 @@ _do_install () {
 	if [[ $? -eq 0 ]]; then
 		_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
 	fi
+	_do_install_oclint
 
 	sudo apt-get autoremove > /dev/null
 
