@@ -22,12 +22,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 ## Using it yourself
 
-If you want to use it, you have to **_change the following first_**:
-- Public keys that are added to authorized_keys
-- Banner for SSH server
-- Git name and email address</br>
-
-The rest *can* be left unchanged.
+If you want to use it, you have to **_change the USER variables first_**. They can be found at the very beginning of the script. The rest *can* be left unchanged.
 
 ## Parameters
 | Parameter      | Meaning                                                              |
