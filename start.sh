@@ -362,6 +362,7 @@ _do_install_oclint () {
 	OCLINT_RETURN=$!
 	# Unpack
 	if [[ $OCLINT_RETURN -eq 0 ]]; then
+		cd "$DL_PREFIX"
 		tar xzf "$DL_PREFIX/$OCLINT_FILE"
 		OCLINT_RETURN=$!
 	fi
