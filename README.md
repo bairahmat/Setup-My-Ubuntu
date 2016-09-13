@@ -35,6 +35,7 @@ The rest *can* be left unchanged.
 | -q / --quick   | Don't do anything that takes a significant amount of time (~ >1 min) |
 | -o / --offline | Don't do anything that requires an internet connection               |
 | -d / --dlloc   | Set download location for apt-get (e.g. "de" or "fr")                |
+| -r / --restart | Restart when done                                                    |
 | --do_homedir   | Call homedir function                                                |
 | --do_update    | Call update function                                                 |
 | --do_install   | Call install function                                                |

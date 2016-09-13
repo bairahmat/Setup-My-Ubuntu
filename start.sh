@@ -21,6 +21,7 @@ DLLOC="de"
 PARAM=DLLOC=0
 PARAM_QUICK=0
 PARAM_OFFLINE=0
+PARAM_RESTART=0
 PARAM_DO_UPDATE=1
 PARAM_DO_INSTALL=1
 PARAM_DO_SSH=1
@@ -713,6 +714,10 @@ while [[ $# -gt 0 ]]; do
 			shift
 			shift
 			;;
+		-r|--restart)
+			PARAM_RESTART=1
+			shift
+			;;
 		--do_update)
 			_clean_dos
 			PARAM_DO_UPDATE=1
@@ -771,7 +776,13 @@ fi
 ## End
 
 _print_info "Done."
-# shellcheck disable=2059
-printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
+
+if [[ $PARAM_RESTART -eq 0 ]]; then
+	# shellcheck disable=2059
+	printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
+else
+	_print_info "Restarting..."
+	sudo reboot
+fi
 
 exit 0
