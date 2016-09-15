@@ -522,6 +522,8 @@ _do_config () {
 	gsettings set org.gnome.desktop.screensaver lock-enabled false
 	gsettings set org.gnome.desktop.session idle-delay 0
 	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-minimize-window true
+	gsettings set com.canonical.Unity always-show-menus true
+	gsettings set com.canonical.Unity integrated-menus true
 
 	# Terminal
 	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
