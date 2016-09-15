@@ -767,6 +767,10 @@ if [[ $EUID == 0 ]]; then
 	exit 1
 fi
 
+if [[ $PARAM_DO_UPDATE -eq 1 || $PARAM_DO_INSTALL -eq 1 || $PARAM_DO_SSH -eq 1 || $PARAM_DO_CONFIG -eq 1 ]]; then
+	sudo test
+fi
+
 if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
 	_do_homedir
 fi
