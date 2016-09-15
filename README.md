@@ -30,7 +30,6 @@ If you want to use it, you have to **_change the USER variables first_**. They c
 | -q / --quick    | Don't do anything that takes a significant amount of time (~ >1 min) |
 | -i / --important| Only install important programs                                      |
 | -o / --offline  | Don't do anything that requires an internet connection               |
-| -d / --dlloc    | Set download location for apt-get (e.g. "de" or "fr")                |
 | -r / --restart  | Restart when done                                                    |
 | --do_homedir    | Call homedir function                                                |
 | --do_update     | Call update function                                                 |

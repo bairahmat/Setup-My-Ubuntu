@@ -726,11 +726,6 @@ while [[ $# -gt 0 ]]; do
 			PARAM_OFFLINE=1
 			shift
 			;;
-		-d|--dlloc)
-			USER_DLLOC="$2"
-			shift
-			shift
-			;;
 		-r|--restart)
 			PARAM_RESTART=1
 			shift
