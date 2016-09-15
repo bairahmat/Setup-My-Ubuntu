@@ -27,6 +27,7 @@ DEFAULTS="$HOME/.local/share/applications/defaults.list"
 ENV_FILE="/etc/environment"
 
 PARAM_QUICK=0
+PARAM_IMPORTANT=0
 PARAM_OFFLINE=0
 PARAM_RESTART=0
 PARAM_DO_UPDATE=1
@@ -409,40 +410,42 @@ _do_install () {
 
 	_install git
 	_install git-gui
-	_install tig
-	_install subversion
 	_install tmux
-	_install cloc
 	_install htop
-	_install openssh-server
 	_install build-essential
-	_install cmake
-	_install automake
-	_install shellcheck
-	_install valgrind
-	_install bear
-	_install unity-tweak-tool
-	_install xclip
 	_install unp
-	_install qalc
-	_install tpp
 	_install hh
-	_install hollywood
-
-	if [[ $PARAM_QUICK -ne 1 ]]; then
-		_install_long ubuntu-restricted-extras
-		_install_long texlive
-		_install_long latexmk
-		_install_long texlive-lang-german
-		_install_long texlive-latex-extra
-		_install_long texlive-fonts-extra
-		_install_long texlive-bibtex-extra
-		_install_long openjdk-8-jdk
-	fi
-
 	_do_install_sublime
 	_do_install_chrome
-	_do_install_oclint
+
+	if [[ $PARAM_IMPORTANT -ne 1 ]]; then
+		_install openssh-server
+		_install cloc
+		_install tig
+		_install subversion
+		_install cmake
+		_install automake
+		_install shellcheck
+		_install valgrind
+		_install bear
+		_install unity-tweak-tool
+		_install xclip
+		_install qalc
+		_install tpp
+		_install hollywood
+		_do_install_oclint
+
+		if [[ $PARAM_QUICK -ne 1 ]]; then
+			_install_long ubuntu-restricted-extras
+			_install_long texlive
+			_install_long latexmk
+			_install_long texlive-lang-german
+			_install_long texlive-latex-extra
+			_install_long texlive-fonts-extra
+			_install_long texlive-bibtex-extra
+			_install_long openjdk-8-jdk
+		fi
+	fi
 
 	sudo apt-get autoremove > /dev/null
 
@@ -713,6 +716,10 @@ while [[ $# -gt 0 ]]; do
 	case $PARAM in
 		-q|--quick)
 			PARAM_QUICK=1
+			shift
+			;;
+		-i|--important)
+			PARAM_IMPORTANT=1
 			shift
 			;;
 		-o|--offline)
