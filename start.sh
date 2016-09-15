@@ -172,7 +172,7 @@ _delete_dirs () {
 }
 
 _change_dlloc () {
-	sudo sed -i "s|http://us.|http://${USER_DLLOC}.|g" /etc/apt/sources.list
+	sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
 	DLLOC_CHANGED=1
 }
 
