@@ -627,10 +627,10 @@ _do_config () {
 		set -g status-left ''
 
 		# loud or quiet?
-		set-option -g visual-activity on
+		set-option -g visual-activity off
 		set-option -g visual-bell off
 		set-option -g visual-silence off
-		set-window-option -g monitor-activity on
+		set-window-option -g monitor-activity off
 		set-option -g bell-action none
 
 		set -g default-terminal \"screen-256color\"
