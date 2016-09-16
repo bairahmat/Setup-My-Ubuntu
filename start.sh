@@ -363,6 +363,7 @@ _do_install_oclint () {
 	OCLINT_VERSION="0.10.2"
 	OCLINT_SITE="https://github.com/oclint/oclint/releases/download/v${OCLINT_VERSION}"
 	OCLINT_FILE="oclint-${OCLINT_VERSION}-x86_64-linux-3.13.0-48-generic.tar.gz"
+	OCLINT_DIR="oclint-${OCLINT_VERSION}"
 	_install_start "oclint"
 
 	# Download
@@ -373,15 +374,17 @@ _do_install_oclint () {
 		cd "$DL_PREFIX"
 		tar xzf "$DL_PREFIX/$OCLINT_FILE"
 		OCLINT_RETURN=$!
+		rm -f "$DL_PREFIX/$OCLINT_FILE"
 	fi
 	# Install
 	if [[ $OCLINT_RETURN -eq 0 ]]; then
-		cd "$DL_PREFIX/oclint-${OCLINT_VERSION}"
+		cd "$DL_PREFIX/$OCLINT_DIR"
 		OCLINT_RETURN=$!
 	fi
 	if [[ $OCLINT_RETURN -eq 0 ]]; then
 		sudo cp bin/oclint* /usr/local/bin/
 		sudo cp -rp lib/* /usr/local/lib/
+		rm -r -f "${DL_PREFIX:?}/$OCLINT_DIR"
 	fi
 
 	if [[ $OCLINT_RETURN -ne 0 ]]; then
