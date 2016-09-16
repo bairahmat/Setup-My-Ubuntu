@@ -14,6 +14,8 @@ USER_DLLOC=de
 
 ## Variables
 
+PWD_START=$PWD
+
 FORMAT_BOLD="\e[1m"
 FORMAT_RESET_ALL="\e[0m"
 
@@ -386,6 +388,7 @@ _do_install_oclint () {
 		_install_fail "oclint"
 	fi
 
+	cd "$PWD_START"
 	return $OCLINT_RETURN
 }
 
@@ -804,6 +807,7 @@ fi
 
 ## End
 
+cd "$PWD_START"
 _print_info "Done."
 
 if [[ $PARAM_RESTART -eq 0 ]]; then
