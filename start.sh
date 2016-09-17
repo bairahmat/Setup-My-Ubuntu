@@ -517,7 +517,7 @@ _do_config () {
 	LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
 	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		sudo sh -c  "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
+		sudo sh -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
 	fi
 	_append_to_path "/usr/local/bin"
 	_append_to_path "/usr/local/sbin"
@@ -548,6 +548,13 @@ _do_config () {
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
+	# PS1 for root
+	ROOTCUSTOMRC="/root/.customrc"
+	sudo sh -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\\$ \"' > $ROOTCUSTOMRC"
+	sudo sh -c "grep $ROOTCUSTOMRC < /root/.bashrc &> /dev/null"
+	if [[ $? -ne 0 ]]; then
+		sudo sh -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
+	fi
 
 	# Default applications
 	echo "[Default Applications]" > "$DEFAULTS"
