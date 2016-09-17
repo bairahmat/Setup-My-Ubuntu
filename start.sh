@@ -280,7 +280,7 @@ HISTCONTROL=ignoredups
 # HSTR settings
 export HH_CONFIG=hicolor,rawhistory,blacklist
 shopt -s histappend
-export HISTCONTROL=ignorespace
+export HISTCONTROL=ignoreboth
 export HISTFILESIZE=10000
 export HISTSIZE=${HISTFILESIZE}
 export PROMPT_COMMAND=\"history -a; history -n; \${PROMPT_COMMAND}\"
