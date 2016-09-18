@@ -274,15 +274,13 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 # Command history settings
 # Combine multiline commands into one in history
 shopt -s cmdhist
-# Ignore duplicates
-HISTCONTROL=ignoredups
+shopt -s histappend
+export HISTCONTROL=ignoreboth
+export HISTFILESIZE=10000
+export HISTSIZE=${HISTFILESIZE}
 
 # HSTR settings
 export HH_CONFIG=hicolor,rawhistory,blacklist
-shopt -s histappend
-export HISTCONTROL=ignorespace
-export HISTFILESIZE=10000
-export HISTSIZE=${HISTFILESIZE}
 bind '\"\C-r\": \"\C-a hh \C-j\"'" \
 	> "$HOME"/.customrc
 
