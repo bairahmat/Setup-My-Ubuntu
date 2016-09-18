@@ -283,7 +283,6 @@ shopt -s histappend
 export HISTCONTROL=ignorespace
 export HISTFILESIZE=10000
 export HISTSIZE=${HISTFILESIZE}
-export PROMPT_COMMAND=\"history -a; history -n; \${PROMPT_COMMAND}\"
 bind '\"\C-r\": \"\C-a hh \C-j\"'" \
 	> "$HOME"/.customrc
 
