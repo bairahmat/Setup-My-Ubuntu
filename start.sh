@@ -289,21 +289,7 @@ bind '\"\C-r\": \"\C-a hh \C-j\"'" \
 		echo -e "\nsource ~/.customrc" >> "$HOME"/.bashrc
 	fi
 
-	## Create .hidden
-
-	echo "\
-		Pictures
-		Videos
-		Music
-		Documents
-		Bilder
-		Musik
-		Dokumente
-		Templates
-		Vorlagen
-		Public
-		Öffentlich" \
-	| tr -d "\t" > "$HOME"/.hidden
+	## Delete most preexisting repositories in home directory
 
 	# shellcheck disable=2034
 	DEL_DIRS=("$HOME/Documents"\
@@ -319,9 +305,10 @@ bind '\"\C-r\": \"\C-a hh \C-j\"'" \
 			  "$HOME/Öffentlich")
 	_delete_dirs DEL_DIRS[@]
 	rm -f "$HOME"/examples.desktop
-	if [[ ! -d $HOME/bin ]]; then
-		mkdir "$HOME"/bin
-	fi
+
+	mkdir -p "$HOME/bin"
+	mkdir -p "$HOME/projects/Archiv"
+	mkdir -p "$HOME/repos"
 
 	return 0
 }
