@@ -380,11 +380,11 @@ _do_install_oclint () {
 }
 
 _do_install_sublime () {
-	SUBL3_VERSION=114
-	SUBL3_NAME="Sublime Text 3"
-	SUBL3_SITE="https://download.sublimetext.com"
-	SUBL3_FILE="sublime-text_build-3${SUBL3_VERSION}_amd64.deb"
-	_install_dpkg "$SUBL3_NAME" $SUBL3_SITE $SUBL3_FILE
+	SUBL_VERSION=3126
+	SUBL_NAME="Sublime Text 3"
+	SUBL_SITE="https://download.sublimetext.com"
+	SUBL_FILE="sublime-text_build-${SUBL_VERSION}_amd64.deb"
+	_install_dpkg "$SUBL_NAME" $SUBL_SITE $SUBL_FILE
 }
 
 _do_install_chrome () {
