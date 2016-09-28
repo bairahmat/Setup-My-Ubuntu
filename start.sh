@@ -523,6 +523,7 @@ _do_config () {
 	gsettings set com.canonical.Unity always-show-menus true
 	gsettings set com.canonical.Unity integrated-menus true
 	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
+	gsettings set org.gnome.desktop.media-handling automount-open false
 
 	# Terminal
 	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
