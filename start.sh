@@ -181,6 +181,7 @@ _delete_dirs () {
 
 _change_dlloc () {
 	sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
+	sudo apt-get -qq update &> /dev/null
 	DLLOC_CHANGED=1
 }
 
@@ -318,11 +319,6 @@ _do_update () {
 
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
-	fi
-
-	sudo apt-get -qq update &> /dev/null
-	if [[ $? -ne 0 ]]; then
-		_print_error "Update failed"
 	fi
 
 	# Add texlive repository after first update, because it would always cause
