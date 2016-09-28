@@ -81,7 +81,7 @@ _install_start () {
 # $1 = Name of software
 _install_generic () {
 	SUCCESS=0
-	sudo apt-get -y -qq install "$1" > /dev/null
+	sudo apt-get -y -qq install "$1" &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		_install_fail "$1"
 		SUCCESS=1
