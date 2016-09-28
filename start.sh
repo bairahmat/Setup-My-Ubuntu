@@ -1,13 +1,13 @@
 #!/bin/bash
 # Author: 	Lasse Meyer
 # Source:	https://github.com/meyerlasse/Linux-Init
-# License: 	MIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE)
+# License: 	MIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE.md)
 
 ## User variables - NEED TO BE CHANGED
 
 USER_GIT_NAME="Lasse Meyer"
 USER_GIT_EMAIL="meyer.lasse@gmail.com"
-USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com"
+USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
 USER_SSH_KEYS=("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
 			   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com")
 USER_DLLOC=de
@@ -182,9 +182,11 @@ _delete_dirs () {
 }
 
 _change_dlloc () {
-	sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
-	sudo apt-get -qq update &> /dev/null
-	DLLOC_CHANGED=1
+	if [[ $PARAM_OFFLINE -ne 1 ]]; then
+		sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
+		sudo apt-get -qq update &> /dev/null
+		DLLOC_CHANGED=1
+	fi
 }
 
 _do_homedir () {
