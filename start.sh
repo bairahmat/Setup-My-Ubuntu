@@ -5,29 +5,29 @@
 
 ## User variables - NEED TO BE CHANGED
 
-USER_GIT_NAME="Lasse Meyer"
-USER_GIT_EMAIL="meyer.lasse@gmail.com"
-USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
-USER_SSH_KEYS=("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
+readonly USER_GIT_NAME="Lasse Meyer"
+readonly USER_GIT_EMAIL="meyer.lasse@gmail.com"
+readonly USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
+readonly USER_SSH_KEYS=("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
 			   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com")
-USER_DLLOC=de
+readonly USER_DLLOC=de
 
 ## Variables
 
-PWD_START=$PWD
+readonly PWD_START=$PWD
 
-FORMAT_BOLD="\e[1m"
-FORMAT_RESET_ALL="\e[0m"
+readonly FORMAT_BOLD="\e[1m"
+readonly FORMAT_RESET_ALL="\e[0m"
 
-COLOR_DEFAULT="\e[39m"
-COLOR_RED="\e[31m"
-COLOR_GREEN="\e[32m"
-COLOR_YELLOW="\e[33m"
-COLOR_BLUE="\e[34m"
+readonly COLOR_DEFAULT="\e[39m"
+readonly COLOR_RED="\e[31m"
+readonly COLOR_GREEN="\e[32m"
+readonly COLOR_YELLOW="\e[33m"
+readonly COLOR_BLUE="\e[34m"
 
-DL_PREFIX="/tmp"
-DEFAULTS="$HOME/.local/share/applications/defaults.list"
-ENV_FILE="/etc/environment"
+readonly DL_PREFIX="/tmp"
+readonly DEFAULTS="$HOME/.local/share/applications/defaults.list"
+readonly ENV_FILE="/etc/environment"
 
 PARAM_QUICK=0
 PARAM_IMPORTANT=0
@@ -82,7 +82,7 @@ _install_start () {
 
 # $1 = Name of software
 _install_generic () {
-	SUCCESS=0
+	local SUCCESS=0
 	sudo apt-get -y -qq install "$1" &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		_install_fail "$1"
@@ -108,8 +108,8 @@ _install () {
 # $1 = Array of dependencies (has to be passed like this: NAME_OF_ARRAY[@])
 # $2 = Name of software that needs dependencies
 _install_depends () {
-	SUCCESS=0
-	declare -a DEPENDS=("${!1}")
+	local SUCCESS=0
+	local -a -r DEPENDS=("${!1}")
 	for DEP in "${DEPENDS[@]}"; do
 		_install_generic "$DEP"
 		if [[ $? -ne 0 ]]; then
@@ -126,7 +126,7 @@ _install_depends () {
 # $2 = Download prefix (without file name, without / at the end)
 # $3 = File name to download and install
 _install_dpkg () {
-	SUCCESS=0
+	local SUCCESS=0
 	_install_start "$1"
 	_download "$2/$3" "$DL_PREFIX"
 	if [[ $? -eq 0 ]]; then
@@ -152,7 +152,7 @@ _is_installed () {
 # $1 = Array of MIME types (has to be passed like this: NAME_OF_ARRAY[@])
 # $2 = Name of desktop file that should be applied
 _setmimes () {
-	declare -a MIMES=("${!1}")
+	local -a -r MIMES=("${!1}")
 	for MIMETYPE in "${MIMES[@]}"; do
 		echo "$MIMETYPE=$2" >> "$DEFAULTS"
 	done
@@ -174,7 +174,7 @@ _append_to_path () {
 
 # $1 = Array of directories to delete (has to be passed like this: NAME_OF_ARRAY[@])
 _delete_dirs () {
-	declare -a DIRECS=("${!1}")
+	local -a -r DIRECS=("${!1}")
 	for DIR in "${DIRECS[@]}"; do
 		rm -rf "$DIR"
 	done
@@ -297,17 +297,18 @@ bind '\"\C-r\": \"\C-a hh \C-j\"'" \
 	## Delete most preexisting repositories in home directory
 
 	# shellcheck disable=2034
-	DEL_DIRS=("$HOME/Documents"\
-			  "$HOME/Dokumente"\
-			  "$HOME/Music"\
-			  "$HOME/Musik"\
-			  "$HOME/Videos"\
-			  "$HOME/Pictures"\
-			  "$HOME/Bilder"\
-			  "$HOME/Templates"\
-			  "$HOME/Vorlagen"\
-			  "$HOME/Public"\
-			  "$HOME/Öffentlich")
+	local -a -r DEL_DIRS=(\
+		"$HOME/Documents"\
+		"$HOME/Dokumente"\
+		"$HOME/Music"\
+		"$HOME/Musik"\
+		"$HOME/Videos"\
+		"$HOME/Pictures"\
+		"$HOME/Bilder"\
+		"$HOME/Templates"\
+		"$HOME/Vorlagen"\
+		"$HOME/Public"\
+		"$HOME/Öffentlich")
 	_delete_dirs DEL_DIRS[@]
 	rm -f "$HOME"/examples.desktop
 
@@ -343,11 +344,11 @@ _do_update () {
 }
 
 _do_install_oclint () {
-	OCLINT_RETURN=0
-	OCLINT_VERSION="0.10.2"
-	OCLINT_SITE="https://github.com/oclint/oclint/releases/download/v${OCLINT_VERSION}"
-	OCLINT_FILE="oclint-${OCLINT_VERSION}-x86_64-linux-3.13.0-48-generic.tar.gz"
-	OCLINT_DIR="oclint-${OCLINT_VERSION}"
+	local OCLINT_RETURN=0
+	local -r OCLINT_VERSION="0.10.2"
+	local -r OCLINT_SITE="https://github.com/oclint/oclint/releases/download/v${OCLINT_VERSION}"
+	local -r OCLINT_FILE="oclint-${OCLINT_VERSION}-x86_64-linux-3.13.0-48-generic.tar.gz"
+	local -r OCLINT_DIR="oclint-${OCLINT_VERSION}"
 	_install_start "oclint"
 
 	# Download
@@ -380,19 +381,19 @@ _do_install_oclint () {
 }
 
 _do_install_sublime () {
-	SUBL_VERSION=3126
-	SUBL_NAME="Sublime Text 3"
-	SUBL_SITE="https://download.sublimetext.com"
-	SUBL_FILE="sublime-text_build-${SUBL_VERSION}_amd64.deb"
+	local -r SUBL_VERSION=3126
+	local -r SUBL_NAME="Sublime Text 3"
+	local -r SUBL_SITE="https://download.sublimetext.com"
+	local -r SUBL_FILE="sublime-text_build-${SUBL_VERSION}_amd64.deb"
 	_install_dpkg "$SUBL_NAME" $SUBL_SITE $SUBL_FILE
 }
 
 _do_install_chrome () {
-	CHROME_NAME="Google Chrome"
-	CHROME_SITE="https://dl.google.com/linux/direct"
-	CHROME_FILE="google-chrome-stable_current_amd64.deb"
+	local -r CHROME_NAME="Google Chrome"
+	local -r CHROME_SITE="https://dl.google.com/linux/direct"
+	local -r CHROME_FILE="google-chrome-stable_current_amd64.deb"
 	# shellcheck disable=2034
-	CHROME_DEPENDS=("libindicator7" "libappindicator1")
+	local -r -a CHROME_DEPENDS=("libindicator7" "libappindicator1")
 	_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
 	if [[ $? -eq 0 ]]; then
 		_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
@@ -453,10 +454,10 @@ _do_install () {
 _do_ssh () {
 	_print_info "Setting up SSH ..."
 
-	SSH_DIR=$HOME/.ssh
-	SSH_FILE=$SSH_DIR/id_rsa
-	SSH_PFILE=$SSH_FILE.pub
-	SSH_KFILE=$SSH_DIR/authorized_keys
+	local -r SSH_DIR=$HOME/.ssh
+	local -r SSH_FILE=$SSH_DIR/id_rsa
+	local -r SSH_PFILE=$SSH_FILE.pub
+	local -r SSH_KFILE=$SSH_DIR/authorized_keys
 
 	mkdir -p "$SSH_DIR"
 	chmod 700 "$SSH_DIR"
@@ -476,7 +477,7 @@ _do_ssh () {
 	done
 
 	# SSH server
-	SSH_SCONFIG=/etc/ssh/sshd_config
+	local -r SSH_SCONFIG=/etc/ssh/sshd_config
 	if [[ -f $SSH_SCONFIG ]]; then
 		sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
 	fi
@@ -498,9 +499,10 @@ _do_config () {
 	fi
 
 	# Modifying global environment variables and library search path for linker
-	LOCAL_LIB=/usr/local/lib
-	LD_CONFIG_PATH=/etc/ld.so.conf.d
-	LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
+	local -r LOCAL_LIB=/usr/local/lib
+	local -r LD_CONFIG_PATH=/etc/ld.so.conf.d
+	local -r LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
+
 	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		sudo sh -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
@@ -528,6 +530,7 @@ _do_config () {
 	gsettings set org.gnome.desktop.media-handling automount-open false
 
 	# Terminal
+	local TPROFILE
 	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
 	TPROFILE=${TPROFILE:1:-1}
 	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
@@ -536,7 +539,7 @@ _do_config () {
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
 	# PS1 for root
-	ROOTCUSTOMRC="/root/.customrc"
+	local -r ROOTCUSTOMRC="/root/.customrc"
 	sudo sh -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\\$ \"' > $ROOTCUSTOMRC"
 	sudo sh -c "grep $ROOTCUSTOMRC < /root/.bashrc &> /dev/null"
 	if [[ $? -ne 0 ]]; then
@@ -545,31 +548,33 @@ _do_config () {
 
 	# Default applications
 	echo "[Default Applications]" > "$DEFAULTS"
-	DESKTOP_SUBL=sublime_text.desktop
+	local -r DESKTOP_SUBL="sublime_text.desktop"
 	# shellcheck disable=2034
-	MIMES_SUBL=("text/xml"\
-				"text/richtext"\
-				"text/x-java"\
-				"text/plain"\
-				"text/tab-separated-values"\
-				"text/x-c++hdr"\
-				"text/x-c++src"\
-				"text/x-chdr"\
-				"text/x-csrc"\
-				"text/x-sql"\
-				"text/x-python"\
-				"text/x-dtd"\
-				"text/mathml"\
-				"application/x-perl")
+	local -a -r MIMES_SUBL=(\
+		"text/xml"\
+		"text/richtext"\
+		"text/x-java"\
+		"text/plain"\
+		"text/tab-separated-values"\
+		"text/x-c++hdr"\
+		"text/x-c++src"\
+		"text/x-chdr"\
+		"text/x-csrc"\
+		"text/x-sql"\
+		"text/x-python"\
+		"text/x-dtd"\
+		"text/mathml"\
+		"application/x-perl")
 	_setmimes MIMES_SUBL[@] $DESKTOP_SUBL
-	DESKTOP_CHROME=google-chrome.desktop
+	local -r DESKTOP_CHROME="google-chrome.desktop"
 	# shellcheck disable=2034
-	MIMES_CHROME=("appplication/xhtml+xml"\
-				  "application/xhtml_xml"\
-				  "text/html"\
-				  "x-scheme-handler/http"\
-				  "x-scheme-handler/https"\
-				  "x-scheme-handler/ftp")
+	local -a -r MIMES_CHROME=(\
+		"appplication/xhtml+xml"\
+		"application/xhtml_xml"\
+		"text/html"\
+		"x-scheme-handler/http"\
+		"x-scheme-handler/https"\
+		"x-scheme-handler/ftp")
 	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
 
 	# Git
@@ -751,7 +756,7 @@ _clean_dos () {
 ## Parameter parsing
 
 while [[ $# -gt 0 ]]; do
-	PARAM="$1"
+	readonly PARAM="$1"
 	case $PARAM in
 		-q|--quick)
 			PARAM_QUICK=1
