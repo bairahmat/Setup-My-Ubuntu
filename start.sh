@@ -415,6 +415,7 @@ _do_install () {
 	_do_install_chrome
 
 	if [[ $PARAM_IMPORTANT -ne 1 ]]; then
+		_install tmuxinator
 		_install openssh-server
 		_install cloc
 		_install tig
