@@ -407,6 +407,7 @@ _do_install () {
 	_install git
 	_install git-gui
 	_install tmux
+	_install xclip
 	_install htop
 	_install build-essential
 	_install unp
