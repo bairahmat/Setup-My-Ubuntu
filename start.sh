@@ -23,6 +23,7 @@ COLOR_DEFAULT="\e[39m"
 COLOR_RED="\e[31m"
 COLOR_GREEN="\e[32m"
 COLOR_YELLOW="\e[33m"
+COLOR_BLUE="\e[34m"
 
 DL_PREFIX="/tmp"
 DEFAULTS="$HOME/.local/share/applications/defaults.list"
@@ -32,6 +33,7 @@ PARAM_QUICK=0
 PARAM_IMPORTANT=0
 PARAM_OFFLINE=0
 PARAM_RESTART=0
+PARAM_HELP=0
 PARAM_DO_UPDATE=1
 PARAM_DO_INSTALL=1
 PARAM_DO_SSH=1
@@ -706,6 +708,32 @@ _do_config () {
 	return 0
 }
 
+# shellcheck disable=2059
+_show_help () {
+	# General stuff
+	printf "${FORMAT_BOLD}${COLOR_BLUE}***${COLOR_DEFAULT} Linux-Init user manual ${COLOR_BLUE}***${COLOR_DEFAULT}${FORMAT_RESET_ALL}\n"
+	printf "A script to install, set and configure basic things that you need for a new Linux setup.\n\n"
+	# Parameters
+	printf "${FORMAT_BOLD}Parameters:${FORMAT_RESET_ALL}\n\n"
+	printf -- "-q / --quick\t\tDon't do anything that takes a significant amount of time (~ >1 min)\n"
+	printf -- "-i / --important\tOnly install important programs\n"
+	printf -- "-o / --offline\t\tDon't do anything that requires an internet connection\n"
+	printf -- "-r / --restart\t\tRestart when done\n"
+	printf -- "-h / --help\t\tShow help, don't do anything else\n"
+	printf -- "--do_homedir\t\tCall homedir function\n"
+	printf -- "--do_update\t\tCall update function\n"
+	printf -- "--do_install\t\tCall install function\n"
+	printf -- "--do_ssh\t\tCall SSH function\n"
+	printf -- "--do_config\t\tCall config function\n\n"
+	printf "If one or more of the *--do_** parameters are used, only the according functions will be called, but not the others.\n"
+	printf "These parameters do not have priority, so if you use both *--offline* and *--do_install*, nothing will happen.\n\n"
+	# Info
+	printf "${FORMAT_BOLD}Info:${FORMAT_RESET_ALL}\n\n"
+	printf "Author:\t\tLasse Meyer\n"
+	printf "Source:\t\thttps://github.com/meyerlasse/Linux-Init\n"
+	printf "License:\tMIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE.md)\n"
+}
+
 _clean_dos () {
 	if [[ $DOS_CLEANED -ne 1 ]]; then
 		PARAM_DO_UPDATE=0
@@ -737,6 +765,10 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-r|--restart)
 			PARAM_RESTART=1
+			shift
+			;;
+		-h|--help)
+			PARAM_HELP=1
 			shift
 			;;
 		--do_update)
@@ -772,6 +804,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 ## Check if run without sudo
+
+if [[ $PARAM_HELP -eq 1 ]]; then
+	_show_help
+	exit 0
+fi
 
 if [[ $EUID == 0 ]]; then
 	_print_error "Don't run with sudo or as root!"

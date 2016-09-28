@@ -31,6 +31,7 @@ If you want to use it, you have to **_change the USER variables first_**. They c
 | -i / --important| Only install important programs                                      |
 | -o / --offline  | Don't do anything that requires an internet connection               |
 | -r / --restart  | Restart when done                                                    |
+| -h / --help     | Show help, don't do anything else                                    |
 | --do_homedir    | Call homedir function                                                |
 | --do_update     | Call update function                                                 |
 | --do_install    | Call install function                                                |
