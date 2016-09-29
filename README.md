@@ -35,7 +35,6 @@ If you want to use it, you have to **_change the USER variables first_**. They c
 | --do_homedir    | Call homedir function                                                |
 | --do_update     | Call update function                                                 |
 | --do_install    | Call install function                                                |
-| --do_ssh        | Call SSH function                                                    |
 | --do_config     | Call config function                                                 |
 
 If one or more of the *--do_** parameters are used, only the according functions will be called, but not the others. These parameters do not have priority, so if you use both *--offline* and *--do_install*, nothing will happen.

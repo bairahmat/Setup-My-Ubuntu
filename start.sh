@@ -36,7 +36,6 @@ PARAM_RESTART=0
 PARAM_HELP=0
 PARAM_DO_UPDATE=1
 PARAM_DO_INSTALL=1
-PARAM_DO_SSH=1
 PARAM_DO_CONFIG=1
 PARAM_DO_HOMEDIR=1
 DOS_CLEANED=0
@@ -456,46 +455,6 @@ _do_install () {
 	return 0
 }
 
-_do_ssh () {
-	_print_info "Setting up SSH ..."
-
-	local -r SSH_DIR=$HOME/.ssh
-	local -r SSH_FILE=$SSH_DIR/id_rsa
-	local -r SSH_PFILE=$SSH_FILE.pub
-	local -r SSH_KFILE=$SSH_DIR/authorized_keys
-
-	mkdir -p "$SSH_DIR"
-	chmod 700 "$SSH_DIR"
-	if [[ -f $SSH_FILE ]]; then
-		mv "$SSH_FILE" "$SSH_DIR"/id_rsa.old
-		_print_warning "SSH key files already existed, renamed to id_rsa.old and id_rsa.pub.old"
-	fi
-	if [[ -f $SSH_PFILE ]]; then
-		mv "$SSH_PFILE" "$SSH_DIR"/old_id_rsa.pub.old
-	fi
-	ssh-keygen -q -t rsa -N "" -f "$SSH_FILE"
-	touch "$SSH_KFILE"
-	chmod 600 "$SSH_KFILE"
-
-	for I in "${USER_SSH_KEYS[@]}"; do
-		echo "$I" >> "$SSH_KFILE"
-	done
-
-	# SSH server
-	if _is_installed sshd; then
-		local -r SSH_SCONFIG=/etc/ssh/sshd_config
-		if [[ -f $SSH_SCONFIG ]]; then
-			sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
-		fi
-		sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
-		sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
-		sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
-		sudo systemctl restart ssh
-	fi
-
-	return 0
-}
-
 _do_config_general () {
 	rm -f "$HOME"/.config/monitors.xml
 	local -r LIGHTDM_CONF="/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
@@ -540,6 +499,8 @@ _do_config_general () {
 		"x-scheme-handler/https"\
 		"x-scheme-handler/ftp")
 	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
+
+	return 0
 }
 
 _do_config_variables () {
@@ -554,6 +515,8 @@ _do_config_variables () {
 	fi
 	_append_to_path "/usr/local/bin"
 	_append_to_path "/usr/local/sbin"
+
+	return 0
 }
 
 _do_config_desktop () {
@@ -569,6 +532,8 @@ _do_config_desktop () {
 	gsettings set com.canonical.Unity integrated-menus true
 	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
 	gsettings set org.gnome.desktop.media-handling automount-open false
+
+	return 0
 }
 
 _do_config_terminal () {
@@ -588,6 +553,46 @@ _do_config_terminal () {
 	if [[ $? -ne 0 ]]; then
 		sudo sh -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
 	fi
+
+	return 0
+}
+
+_do_config_ssh () {
+	local -r SSH_DIR=$HOME/.ssh
+	local -r SSH_FILE=$SSH_DIR/id_rsa
+	local -r SSH_PFILE=$SSH_FILE.pub
+	local -r SSH_KFILE=$SSH_DIR/authorized_keys
+
+	mkdir -p "$SSH_DIR"
+	chmod 700 "$SSH_DIR"
+	if [[ -f $SSH_FILE ]]; then
+		mv "$SSH_FILE" "$SSH_DIR"/id_rsa.old
+		_print_warning "SSH key files already existed, renamed to id_rsa.old and id_rsa.pub.old"
+	fi
+	if [[ -f $SSH_PFILE ]]; then
+		mv "$SSH_PFILE" "$SSH_DIR"/old_id_rsa.pub.old
+	fi
+	ssh-keygen -q -t rsa -N "" -f "$SSH_FILE"
+	touch "$SSH_KFILE"
+	chmod 600 "$SSH_KFILE"
+
+	for I in "${USER_SSH_KEYS[@]}"; do
+		echo "$I" >> "$SSH_KFILE"
+	done
+
+	# SSH server
+	if _is_installed sshd; then
+		local -r SSH_SCONFIG=/etc/ssh/sshd_config
+		if [[ -f $SSH_SCONFIG ]]; then
+			sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
+		fi
+		sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
+		sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
+		sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
+		sudo systemctl restart ssh
+	fi
+
+	return 0
 }
 
 _do_config_git () {
@@ -595,6 +600,8 @@ _do_config_git () {
 		git config --global user.email "$USER_GIT_EMAIL"
 		git config --global user.name "$USER_GIT_NAME"
 	fi
+
+	return 0
 }
 
 _do_config_hstr () {
@@ -611,6 +618,8 @@ _do_config_hstr () {
 
 		EOF
 	fi
+
+	return 0
 }
 
 _do_config_tmux () {
@@ -736,6 +745,8 @@ _do_config_tmux () {
 			EOF
 		fi
 	fi
+
+	return 0
 }
 
 _do_config_nano () {
@@ -747,6 +758,8 @@ _do_config_nano () {
 
 		EOF
 	fi
+
+	return 0
 }
 
 _do_config () {
@@ -756,6 +769,7 @@ _do_config () {
 	_do_config_variables
 	_do_config_desktop
 	_do_config_terminal
+	_do_config_ssh
 	_do_config_git
 	_do_config_hstr
 	_do_config_tmux
@@ -794,7 +808,6 @@ _clean_dos () {
 	if [[ $DOS_CLEANED -ne 1 ]]; then
 		PARAM_DO_UPDATE=0
 		PARAM_DO_INSTALL=0
-		PARAM_DO_SSH=0
 		PARAM_DO_CONFIG=0
 		PARAM_DO_HOMEDIR=0
 		DOS_CLEANED=1
@@ -837,11 +850,6 @@ while [[ $# -gt 0 ]]; do
 			PARAM_DO_INSTALL=1
 			shift
 			;;
-		--do_ssh)
-			_clean_dos
-			PARAM_DO_SSH=1
-			shift
-			;;
 		--do_config)
 			_clean_dos
 			PARAM_DO_CONFIG=1
@@ -871,7 +879,7 @@ if [[ $EUID == 0 ]]; then
 	exit 1
 fi
 
-if [[ $PARAM_DO_UPDATE -eq 1 || $PARAM_DO_INSTALL -eq 1 || $PARAM_DO_SSH -eq 1 || $PARAM_DO_CONFIG -eq 1 ]]; then
+if [[ $PARAM_DO_UPDATE -eq 1 || $PARAM_DO_INSTALL -eq 1 || $PARAM_DO_CONFIG -eq 1 ]]; then
 	sudo test
 fi
 
@@ -883,9 +891,6 @@ if [[ $PARAM_DO_UPDATE -eq 1 && $PARAM_OFFLINE -eq 0 ]]; then
 fi
 if [[ $PARAM_DO_INSTALL -eq 1 && $PARAM_OFFLINE -eq 0 ]]; then
 	_do_install
-fi
-if [[ $PARAM_DO_SSH -eq 1 ]]; then
-	_do_ssh
 fi
 if [[ $PARAM_DO_CONFIG -eq 1 ]]; then
 	_do_config
