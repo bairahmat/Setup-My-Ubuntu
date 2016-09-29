@@ -482,14 +482,16 @@ _do_ssh () {
 	done
 
 	# SSH server
-	local -r SSH_SCONFIG=/etc/ssh/sshd_config
-	if [[ -f $SSH_SCONFIG ]]; then
-		sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
+	if _is_installed sshd; then
+		local -r SSH_SCONFIG=/etc/ssh/sshd_config
+		if [[ -f $SSH_SCONFIG ]]; then
+			sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
+		fi
+		sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
+		sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
+		sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
+		sudo systemctl restart ssh
 	fi
-	sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
-	sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
-	sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
-	sudo systemctl restart ssh
 
 	return 0
 }
