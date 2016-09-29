@@ -496,7 +496,11 @@ _do_ssh () {
 
 _do_config_general () {
 	rm -f "$HOME"/.config/monitors.xml
-	sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+	local -r LIGHTDM_CONF="/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+	sudo sh -c "grep 'allow-guest=false' < $LIGHTDM_CONF &> /dev/null"
+	if [[ $? -ne 0 ]]; then
+		sudo sh -c "echo 'allow-guest=false' >> $LIGHTDM_CONF"
+	fi
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
 	fi
@@ -799,7 +803,7 @@ _clean_dos () {
 ## Parameter parsing
 
 while [[ $# -gt 0 ]]; do
-	readonly PARAM="$1"
+	PARAM="$1"
 	case $PARAM in
 		-q|--quick)
 			PARAM_QUICK=1
