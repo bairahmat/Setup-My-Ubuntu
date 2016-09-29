@@ -489,63 +489,16 @@ _do_ssh () {
 	return 0
 }
 
-_do_config () {
-	_print_info "Configuring ..."
-
+_do_config_general () {
 	rm -f "$HOME"/.config/monitors.xml
 	sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
 	fi
-
-	# Modifying global environment variables and library search path for linker
-	local -r LOCAL_LIB=/usr/local/lib
-	local -r LD_CONFIG_PATH=/etc/ld.so.conf.d
-	local -r LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
-
-	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
-	if [[ $? -ne 0 ]]; then
-		sudo sh -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
-	fi
-	_append_to_path "/usr/local/bin"
-	_append_to_path "/usr/local/sbin"
-
 	# Locale and timezone
 	timedatectl set-timezone Europe/Berlin
 	sudo locale-gen de_DE.UTF-8 > /dev/null
 	sudo update-locale LANG=de_DE.UTF-8
-
-	# Desktop
-	dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
-	dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
-	gsettings set com.ubuntu.update-notifier no-show-notifications true
-	gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
-	gsettings set org.gnome.desktop.interface clock-show-date true
-	gsettings set org.gnome.desktop.screensaver lock-enabled false
-	gsettings set org.gnome.desktop.session idle-delay 0
-	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-minimize-window true
-	gsettings set com.canonical.Unity always-show-menus true
-	gsettings set com.canonical.Unity integrated-menus true
-	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
-	gsettings set org.gnome.desktop.media-handling automount-open false
-
-	# Terminal
-	local TPROFILE
-	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
-	TPROFILE=${TPROFILE:1:-1}
-	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
-	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/use-theme-colors false
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
-	# PS1 for root
-	local -r ROOTCUSTOMRC="/root/.customrc"
-	sudo sh -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\\$ \"' > $ROOTCUSTOMRC"
-	sudo sh -c "grep $ROOTCUSTOMRC < /root/.bashrc &> /dev/null"
-	if [[ $? -ne 0 ]]; then
-		sudo sh -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
-	fi
-
 	# Default applications
 	echo "[Default Applications]" > "$DEFAULTS"
 	local -r DESKTOP_SUBL="sublime_text.desktop"
@@ -576,14 +529,64 @@ _do_config () {
 		"x-scheme-handler/https"\
 		"x-scheme-handler/ftp")
 	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
+}
 
-	# Git
+_do_config_variables () {
+	# Modifying global environment variables and library search path for linker
+	local -r LOCAL_LIB=/usr/local/lib
+	local -r LD_CONFIG_PATH=/etc/ld.so.conf.d
+	local -r LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
+
+	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		sudo sh -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
+	fi
+	_append_to_path "/usr/local/bin"
+	_append_to_path "/usr/local/sbin"
+}
+
+_do_config_desktop () {
+	dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
+	dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
+	gsettings set com.ubuntu.update-notifier no-show-notifications true
+	gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
+	gsettings set org.gnome.desktop.interface clock-show-date true
+	gsettings set org.gnome.desktop.screensaver lock-enabled false
+	gsettings set org.gnome.desktop.session idle-delay 0
+	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-minimize-window true
+	gsettings set com.canonical.Unity always-show-menus true
+	gsettings set com.canonical.Unity integrated-menus true
+	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
+	gsettings set org.gnome.desktop.media-handling automount-open false
+}
+
+_do_config_terminal () {
+	# Terminal
+	local TPROFILE
+	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
+	TPROFILE=${TPROFILE:1:-1}
+	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
+	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/use-theme-colors false
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
+	# PS1 for root
+	local -r ROOTCUSTOMRC="/root/.customrc"
+	sudo sh -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\\$ \"' > $ROOTCUSTOMRC"
+	sudo sh -c "grep $ROOTCUSTOMRC < /root/.bashrc &> /dev/null"
+	if [[ $? -ne 0 ]]; then
+		sudo sh -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
+	fi
+}
+
+_do_config_git () {
 	if _is_installed git; then
 		git config --global user.email "$USER_GIT_EMAIL"
 		git config --global user.name "$USER_GIT_NAME"
 	fi
+}
 
-	# HSTR
+_do_config_hstr () {
 	if _is_installed hh; then
 		echo "\
 			cd
@@ -594,9 +597,9 @@ _do_config () {
 			llr" \
 		| tr -d "\t" > "$HOME"/.hh_blacklist
 	fi
+}
 
-
-	# tmux
+_do_config_tmux () {
 	if _is_installed tmux; then
 		echo "\
 			# Enable mouse mode (tmux 2.1 and above)
@@ -624,7 +627,7 @@ _do_config () {
 			set -g message-command-fg blue
 			set -g message-command-bg black
 
-			#window mode
+			# window mode
 			setw -g mode-bg colour6
 			setw -g mode-fg colour0
 
@@ -705,12 +708,35 @@ _do_config () {
 
 			# Activate copying to system buffer
 			setw -g mode-keys vi
-			bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'" \
+			bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'"\
 		| tr -d "\t" > "$HOME"/.tmux.conf
-	fi
+		if _is_installed git; then
+			git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar
+			echo "\
 
-	# Nano
+				# Git-bar
+				source-file \"\$HOME/.tmux-gitbar/tmux-gitbar.tmux\"
+				"\
+			| tr -d "\t" >> "$HOME/.tmux.conf"
+		fi
+	fi
+}
+
+_do_config_nano () {
 	echo "set tabsize 4" >> "$HOME"/.nanorc
+}
+
+_do_config () {
+	_print_info "Configuring ..."
+	
+	_do_config_general
+	_do_config_variables
+	_do_config_desktop
+	_do_config_terminal
+	_do_config_git
+	_do_config_hstr
+	_do_config_tmux
+	_do_config_nano
 
 	return 0
 }
