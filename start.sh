@@ -737,12 +737,14 @@ _do_config_tmux () {
 
 		EOF
 		if _is_installed git; then
-			git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar
-			cat <<- 'EOF' >> "$TMUX_CONFIG"
-				# Git-bar
-				source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
+			git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar &> /dev/null
+			if [[ $? -eq 0 ]]; then
+				cat <<- 'EOF' >> "$TMUX_CONFIG"
+					# Git-bar
+					source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
 
-			EOF
+				EOF
+			fi
 		fi
 	fi
 
