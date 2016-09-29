@@ -193,105 +193,110 @@ _do_homedir () {
 	## Create .customrc and source it in .bashrc
 	_print_info "Setting up home directory ..."
 
-	echo "export PATH=\$PATH:$HOME/bin
-export PS4='[ \$LINENO ] '
+	local -r BASHRC="$HOME"/.bashrc
+	local -r CUSTOMRC="$HOME"/.customrc
 
-alias go-dl='cd ~/Downloads'
-alias go-pr='cd ~/projects'
-alias go-re='cd ~/repos'
-alias ll='ls -AlFh --color=auto'
-alias ls='ls -lFh --color=auto'
-alias l='ls -ACF --color=auto'
-alias lsr='ls -ACFR --color=auto'
-alias llr='ls -AlFRh --color=auto'
-alias dsize='du -sh'
-alias src='. ~/.bashrc'
-alias more='less'
-alias dta='dmesg | tail'
-alias grap='grep -R -n -i -e'
-alias grip='ps aux | grep -i -e'
-alias fond='find . -name'
-alias updog='sudo apt-get update; sudo apt-get upgrade'
-alias dl='sudo apt-get install'
-alias git-count='git rev-list --all --count'
-alias giff='git diff HEAD'
-alias giss='git status'
-alias gpush='git push'
-alias gpull='git pull'
-alias ggui='git gui'
-alias cloc-all='cloc *.c *.h Makefile'
-alias make='make -j4'
+	cat <<- 'EOF' > "$CUSTOMRC"
+		export PATH=$PATH:$HOME/bin
+		export PS4='[ \$LINENO ] '
 
-# Create directory and enter it
-# \$1 = Name of new directory
-mkc () {
-	mkdir \"\$1\"
-	cd \"\$1\"
-}
+		alias go-dl='cd ~/Downloads'
+		alias go-pr='cd ~/projects'
+		alias go-re='cd ~/repos'
+		alias ll='ls -AlFh --color=auto'
+		alias ls='ls -lFh --color=auto'
+		alias l='ls -ACF --color=auto'
+		alias lsr='ls -ACFR --color=auto'
+		alias llr='ls -AlFRh --color=auto'
+		alias dsize='du -sh'
+		alias src='. ~/.bashrc'
+		alias more='less'
+		alias dta='dmesg | tail'
+		alias grap='grep -R -n -i -e'
+		alias grip='ps aux | grep -i -e'
+		alias fond='find . -name'
+		alias updog='sudo apt-get update; sudo apt-get upgrade'
+		alias dl='sudo apt-get install'
+		alias git-count='git rev-list --all --count'
+		alias giff='git diff HEAD'
+		alias giss='git status'
+		alias gpush='git push'
+		alias gpull='git pull'
+		alias ggui='git gui'
+		alias cloc-all='cloc *.c *.h Makefile'
+		alias make='make -j4'
+
+		# Create directory and enter it
+		# \$1 = Name of new directory
+		mkc () {
+			mkdir "$1"
+			cd "$1"
+		}
 
 
-# Copy file and cd to destination
-# \$1 = File to copy
-# \$2 = Destination
-cpg () {
-	if [[ -d \"\$2\" ]]; then
-		cp \"\$1\" \" \$2\" && cd \"\$2\"
-	else
-		cp \"\$1\" \"\$2\"
-	fi
-}
+		# Copy file and cd to destination
+		# \$1 = File to copy
+		# \$2 = Destination
+		cpg () {
+			if [[ -d "$2" ]]; then
+				cp "$1" " $2" && cd "$2"
+			else
+				cp "$1" "$2"
+			fi
+		}
 
-# Move file and cd to destination
-# \$1 = File to move
-# \$2 = Destination
-mvg () {
-	if [[ -d \"\$2\" ]]; then
-		mv \"\$1\" \"\$2\" && cd \"\$2\"
-	else
-		mv \"\$1\" \"\$2\"
-	fi
-}
+		# Move file and cd to destination
+		# \$1 = File to move
+		# \$2 = Destination
+		mvg () {
+			if [[ -d "$2" ]]; then
+				mv "$1" "$2" && cd "$2"
+			else
+				mv "$1" "$2"
+			fi
+		}
 
-# Do move up multiple directories at once
-# \$1 = Number of directories to go up
-up () {
-	local D=\"\"
-	limit=\$1
-	for ((I=1 ; I <= limit ; I++)); do
-		D=\$D/..
-    done
-	D=\$(echo \$D | sed 's/^\///')
-	if [[ -z \"\$D\" ]]; then
-		D=..
-	fi
-	cd \$D
-}
+		# Do move up multiple directories at once
+		# \$1 = Number of directories to go up
+		up () {
+			local D=""
+			limit=$1
+			for ((I=1 ; I <= limit ; I++)); do
+				D=$D/..
+		    done
+			D=$(echo $D | sed 's/^\///')
+			if [[ -z "$D" ]]; then
+				D=..
+			fi
+			cd $D
+		}
 
-# For colored manpages
-export LESS_TERMCAP_mb=$'\E[01;31m'
-export LESS_TERMCAP_md=$'\E[01;31m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[01;44;33m'
-export LESS_TERMCAP_ue=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[01;32m'
+		# For colored manpages
+		export LESS_TERMCAP_mb=$'\E[01;31m'
+		export LESS_TERMCAP_md=$'\E[01;31m'
+		export LESS_TERMCAP_me=$'\E[0m'
+		export LESS_TERMCAP_se=$'\E[0m'
+		export LESS_TERMCAP_so=$'\E[01;44;33m'
+		export LESS_TERMCAP_ue=$'\E[0m'
+		export LESS_TERMCAP_us=$'\E[01;32m'
 
-# Command history settings
-# Combine multiline commands into one in history
-shopt -s cmdhist
-shopt -s histappend
-export HISTCONTROL=ignoreboth
-export HISTFILESIZE=10000
-export HISTSIZE=${HISTFILESIZE}
+		# Command history settings
+		# Combine multiline commands into one in history
+		shopt -s cmdhist
+		shopt -s histappend
+		export HISTCONTROL=ignoreboth
+		export HISTFILESIZE=10000
+		export HISTSIZE=${HISTFILESIZE}
 
-# HSTR settings
-export HH_CONFIG=hicolor,rawhistory,blacklist
-bind '\"\C-r\": \"\C-a hh \C-j\"'" \
-	> "$HOME"/.customrc
+		# HSTR settings
+		export HH_CONFIG=hicolor,rawhistory,blacklist
+		bind '\"\C-r\": \"\C-a hh \C-j\"'
 
-	grep .customrc < "$HOME"/.bashrc &> /dev/null
+	EOF
+
+	grep "$CUSTOMRC" < "$BASHRC" &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		echo -e "\nsource ~/.customrc" >> "$HOME"/.bashrc
+		echo -e "\nsource ~/.customrc" >> "$BASHRC"
 	fi
 
 	## Delete most preexisting repositories in home directory
@@ -588,20 +593,25 @@ _do_config_git () {
 
 _do_config_hstr () {
 	if _is_installed hh; then
-		echo "\
+		# shellcheck disable=2034
+		local -r HH_BLACKLIST="$HOME"/.hh_blacklist
+		cat <<- 'EOF' > "$HH_BLACKLIST"
 			cd
 			ls
 			ll
 			l
 			lsr
-			llr" \
-		| tr -d "\t" > "$HOME"/.hh_blacklist
+			llr
+
+		EOF
 	fi
 }
 
 _do_config_tmux () {
 	if _is_installed tmux; then
-		echo "\
+		# shellcheck disable=2034
+		local -r TMUX_CONFIG="$HOME"/.tmux.conf
+		cat <<- 'EOF' > "$TMUX_CONFIG"
 			# Enable mouse mode (tmux 2.1 and above)
 			# set -g mouse on
 
@@ -632,10 +642,10 @@ _do_config_tmux () {
 			setw -g mode-fg colour0
 
 			# window status
-			setw -g window-status-format \" #F#I:#W#F \"
-			setw -g window-status-current-format \" #F#I:#W#F \"
-			setw -g window-status-format \"#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W \"
-			setw -g window-status-current-format \"#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W \"
+			setw -g window-status-format " #F#I:#W#F "
+			setw -g window-status-current-format " #F#I:#W#F "
+			setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
+			setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
 			setw -g window-status-current-bg colour0
 			setw -g window-status-current-fg colour11
 			setw -g window-status-current-attr dim
@@ -653,7 +663,7 @@ _do_config_tmux () {
 			set-window-option -g monitor-activity off
 			set-option -g bell-action none
 
-			set -g default-terminal \"screen-256color\"
+			set -g default-terminal "screen-256color"
 
 			# The modes
 			setw -g clock-mode-colour colour135
@@ -708,22 +718,29 @@ _do_config_tmux () {
 
 			# Activate copying to system buffer
 			setw -g mode-keys vi
-			bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'"\
-		| tr -d "\t" > "$HOME"/.tmux.conf
+			bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'
+
+		EOF
 		if _is_installed git; then
 			git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar
-			echo "\
-
+			cat <<- 'EOF' >> "$TMUX_CONFIG"
 				# Git-bar
-				source-file \"\$HOME/.tmux-gitbar/tmux-gitbar.tmux\"
-				"\
-			| tr -d "\t" >> "$HOME/.tmux.conf"
+				source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
+
+			EOF
 		fi
 	fi
 }
 
 _do_config_nano () {
-	echo "set tabsize 4" >> "$HOME"/.nanorc
+	if _is_installed nano; then
+		# shellcheck disable=2034
+		local -r NANO_CONFIG="$HOME"/.nanorc
+		cat <<- 'EOF' > "$NANO_CONFIG"
+			set tabsize 4
+
+		EOF
+	fi
 }
 
 _do_config () {
