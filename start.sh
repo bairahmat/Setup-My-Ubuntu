@@ -349,59 +349,70 @@ _do_update () {
 
 _do_install_oclint () {
 	local OCLINT_RETURN=0
-	local -r OCLINT_VERSION="0.10.2"
-	local -r OCLINT_SITE="https://github.com/oclint/oclint/releases/download/v${OCLINT_VERSION}"
-	local -r OCLINT_FILE="oclint-${OCLINT_VERSION}-x86_64-linux-3.13.0-48-generic.tar.gz"
-	local -r OCLINT_DIR="oclint-${OCLINT_VERSION}"
-	_install_start "oclint"
+	if ! _is_installed oclint; then
+		local -r OCLINT_VERSION="0.10.2"
+		local -r OCLINT_SITE="https://github.com/oclint/oclint/releases/download/v${OCLINT_VERSION}"
+		local -r OCLINT_FILE="oclint-${OCLINT_VERSION}-x86_64-linux-3.13.0-48-generic.tar.gz"
+		local -r OCLINT_DIR="oclint-${OCLINT_VERSION}"
+		_install_start "oclint"
 
-	# Download
-	_download "$OCLINT_SITE/$OCLINT_FILE" "$DL_PREFIX"
-	OCLINT_RETURN=$!
-	# Unpack
-	if [[ $OCLINT_RETURN -eq 0 ]]; then
-		cd "$DL_PREFIX"
-		tar xzf "$DL_PREFIX/$OCLINT_FILE"
+		# Download
+		_download "$OCLINT_SITE/$OCLINT_FILE" "$DL_PREFIX"
 		OCLINT_RETURN=$!
-		rm -f "$DL_PREFIX/$OCLINT_FILE"
-	fi
-	# Install
-	if [[ $OCLINT_RETURN -eq 0 ]]; then
-		cd "$DL_PREFIX/$OCLINT_DIR"
-		OCLINT_RETURN=$!
-	fi
-	if [[ $OCLINT_RETURN -eq 0 ]]; then
-		sudo cp bin/oclint* /usr/local/bin/
-		sudo cp -rp lib/* /usr/local/lib/
-		rm -r -f "${DL_PREFIX:?}/$OCLINT_DIR"
-	fi
+		# Unpack
+		if [[ $OCLINT_RETURN -eq 0 ]]; then
+			cd "$DL_PREFIX"
+			tar xzf "$DL_PREFIX/$OCLINT_FILE"
+			OCLINT_RETURN=$!
+			rm -f "$DL_PREFIX/$OCLINT_FILE"
+		fi
+		# Install
+		if [[ $OCLINT_RETURN -eq 0 ]]; then
+			cd "$DL_PREFIX/$OCLINT_DIR"
+			OCLINT_RETURN=$!
+		fi
+		if [[ $OCLINT_RETURN -eq 0 ]]; then
+			sudo cp bin/oclint* /usr/local/bin/
+			sudo cp -rp lib/* /usr/local/lib/
+			rm -r -f "${DL_PREFIX:?}/$OCLINT_DIR"
+		fi
 
-	if [[ $OCLINT_RETURN -ne 0 ]]; then
-		_install_fail "oclint"
-	fi
+		if [[ $OCLINT_RETURN -ne 0 ]]; then
+			_install_fail "oclint"
+		fi
 
-	cd "$PWD_START"
+		cd "$PWD_START"
+	fi
 	return $OCLINT_RETURN
 }
 
 _do_install_sublime () {
-	local -r SUBL_VERSION=3126
-	local -r SUBL_NAME="Sublime Text 3"
-	local -r SUBL_SITE="https://download.sublimetext.com"
-	local -r SUBL_FILE="sublime-text_build-${SUBL_VERSION}_amd64.deb"
-	_install_dpkg "$SUBL_NAME" $SUBL_SITE $SUBL_FILE
+	if ! _is_installed subl; then
+		local -r SUBL_VERSION=3126
+		local -r SUBL_NAME="Sublime Text 3"
+		local -r SUBL_SITE="https://download.sublimetext.com"
+		local -r SUBL_FILE="sublime-text_build-${SUBL_VERSION}_amd64.deb"
+		_install_dpkg "$SUBL_NAME" $SUBL_SITE $SUBL_FILE
+		return $?
+	fi
+	return 0
 }
 
 _do_install_chrome () {
-	local -r CHROME_NAME="Google Chrome"
-	local -r CHROME_SITE="https://dl.google.com/linux/direct"
-	local -r CHROME_FILE="google-chrome-stable_current_amd64.deb"
-	# shellcheck disable=2034
-	local -r -a CHROME_DEPENDS=("libindicator7" "libappindicator1")
-	_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
-	if [[ $? -eq 0 ]]; then
-		_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
+	if ! _is_installed google-chrome; then
+		local -r CHROME_NAME="Google Chrome"
+		local -r CHROME_SITE="https://dl.google.com/linux/direct"
+		local -r CHROME_FILE="google-chrome-stable_current_amd64.deb"
+		# shellcheck disable=2034
+		local -r -a CHROME_DEPENDS=("libindicator7" "libappindicator1")
+		_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
+		if [[ $? -eq 0 ]]; then
+			_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
+			return $?
+		fi
+		return 1
 	fi
+	return 0
 }
 
 _do_install () {
