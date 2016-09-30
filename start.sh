@@ -198,6 +198,7 @@ _do_homedir () {
 	cat <<- 'EOF' > "$CUSTOMRC"
 		export PATH=$PATH:$HOME/bin
 		export PS4='[ \$LINENO ] '
+		export EDITOR="nano"
 
 		alias go-dl='cd ~/Downloads'
 		alias go-pr='cd ~/projects'
@@ -226,48 +227,25 @@ _do_homedir () {
 		alias make='make -j4'
 
 		# Create directory and enter it
-		# \$1 = Name of new directory
+		# $1 = Name of new directory
 		mkc () {
-			mkdir "$1"
-			cd "$1"
-		}
-
-
-		# Copy file and cd to destination
-		# \$1 = File to copy
-		# \$2 = Destination
-		cpg () {
-			if [[ -d "$2" ]]; then
-				cp "$1" " $2" && cd "$2"
-			else
-				cp "$1" "$2"
-			fi
-		}
-
-		# Move file and cd to destination
-		# \$1 = File to move
-		# \$2 = Destination
-		mvg () {
-			if [[ -d "$2" ]]; then
-				mv "$1" "$2" && cd "$2"
-			else
-				mv "$1" "$2"
-			fi
+		    mkdir "$1"
+		    cd "$1"
 		}
 
 		# Do move up multiple directories at once
-		# \$1 = Number of directories to go up
+		# $1 = Number of directories to go up
 		up () {
-			local D=""
-			limit=$1
-			for ((I=1 ; I <= limit ; I++)); do
-				D=$D/..
+		    local D=""
+		    limit=$1
+		    for ((I=1 ; I <= limit ; I++)); do
+		        D=$D/..
 		    done
-			D=$(echo $D | sed 's/^\///')
-			if [[ -z "$D" ]]; then
-				D=..
-			fi
-			cd $D
+		    D=$(echo $D | sed 's/^\///')
+		    if [[ -z "$D" ]]; then
+		        D=..
+		    fi
+		    cd $D
 		}
 
 		# For colored manpages
@@ -752,8 +730,8 @@ _do_config_tmux () {
 			if [[ $? -eq 0 ]]; then
 				cat <<- 'EOF' >> "$TMUX_CONFIG"
 					# Git-bar
-					source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
 					set -g status-right-length 100
+					source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
 
 				EOF
 			fi
