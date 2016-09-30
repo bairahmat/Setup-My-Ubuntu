@@ -445,13 +445,13 @@ _do_install () {
 }
 
 _do_config_general () {
-	sudo sh -c "usermod -a -G dialout $USER"
-	sudo sh -c "usermod -a -G tty $USER"
+	sudo bash -c "usermod -a -G dialout $USER"
+	sudo bash -c "usermod -a -G tty $USER"
 	rm -f "$HOME"/.config/monitors.xml
 	local -r LIGHTDM_CONF="/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-	sudo sh -c "grep 'allow-guest=false' < $LIGHTDM_CONF &> /dev/null"
+	grep 'allow-guest=false' < $LIGHTDM_CONF &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		sudo sh -c "echo 'allow-guest=false' >> $LIGHTDM_CONF"
+		sudo bash -c "echo 'allow-guest=false' >> $LIGHTDM_CONF"
 	fi
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
@@ -502,7 +502,7 @@ _do_config_variables () {
 
 	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		sudo sh -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
+		sudo bash -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
 	fi
 	_append_to_path "/usr/local/bin"
 	_append_to_path "/usr/local/sbin"
@@ -539,10 +539,10 @@ _do_config_terminal () {
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
 	# PS1 for root
 	local -r ROOTCUSTOMRC="/root/.customrc"
-	sudo sh -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\\\$ \"' > $ROOTCUSTOMRC"
-	sudo sh -c "grep $ROOTCUSTOMRC < /root/.bashrc &> /dev/null"
+	sudo bash -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]# \"' > $ROOTCUSTOMRC"
+	sudo bash -c "grep customrc < /root/.bashrc &> /dev/null"
 	if [[ $? -ne 0 ]]; then
-		sudo sh -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
+		sudo bash -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
 	fi
 
 	return 0
