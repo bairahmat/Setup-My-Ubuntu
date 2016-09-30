@@ -445,6 +445,8 @@ _do_install () {
 }
 
 _do_config_general () {
+	sudo sh -c "usermod -a -G dialout $USER"
+	sudo sh -c "usermod -a -G tty $USER"
 	rm -f "$HOME"/.config/monitors.xml
 	local -r LIGHTDM_CONF="/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 	sudo sh -c "grep 'allow-guest=false' < $LIGHTDM_CONF &> /dev/null"
