@@ -425,6 +425,9 @@ _do_install () {
 		_install qalc
 		_install tpp
 		_install hollywood
+		_install rar
+		_install unrar
+		_install rtorrent
 		_do_install_oclint
 
 		if [[ $PARAM_QUICK -ne 1 ]]; then
