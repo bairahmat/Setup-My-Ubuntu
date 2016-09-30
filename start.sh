@@ -753,6 +753,7 @@ _do_config_tmux () {
 				cat <<- 'EOF' >> "$TMUX_CONFIG"
 					# Git-bar
 					source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
+					set -g status-right-length 100
 
 				EOF
 			fi
