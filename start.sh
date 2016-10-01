@@ -193,6 +193,7 @@ _do_homedir () {
 	_print_info "Setting up home directory ..."
 
 	local -r BASHRC="$HOME"/.bashrc
+	# shellcheck disable=2034
 	local -r CUSTOMRC="$HOME"/.customrc
 
 	cat <<- 'EOF' > "$CUSTOMRC"
@@ -264,14 +265,15 @@ _do_homedir () {
 		export HISTCONTROL=ignoreboth
 		export HISTFILESIZE=10000
 		export HISTSIZE=${HISTFILESIZE}
+		export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 
 		# HSTR settings
 		export HH_CONFIG=hicolor,rawhistory,blacklist
-		bind '\"\C-r\": \"\C-a hh \C-j\"'
+		bind '"\C-r": "\C-a hh \C-j"'
 
 	EOF
 
-	grep "$CUSTOMRC" < "$BASHRC" &> /dev/null
+	grep "customrc" < "$BASHRC" &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		echo -e "\nsource ~/.customrc" >> "$BASHRC"
 	fi
