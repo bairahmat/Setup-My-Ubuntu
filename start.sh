@@ -189,18 +189,24 @@ _change_dlloc () {
 }
 
 _do_homedir () {
-	## Create .customrc and source it in .bashrc
 	_print_info "Setting up home directory ..."
 
-	local -r BASHRC="$HOME"/.bashrc
+	# Create .customrc and .customprofile
+	local -r FILE_PROFILE="$HOME"/.profile
+	local -r FILE_BASHRC="$HOME"/.bashrc
 	# shellcheck disable=2034
-	local -r CUSTOMRC="$HOME"/.customrc
+	local -r FILE_CUSTOMPROFILE="$HOME"/.customprofile
+	# shellcheck disable=2034
+	local -r FILE_CUSTOMRC="$HOME"/.customrc
 
-	cat <<- 'EOF' > "$CUSTOMRC"
+	cat <<- 'EOF' > "$FILE_CUSTOMPROFILE"
 		export PATH=$PATH:$HOME/bin
 		export PS4='[ \$LINENO ] '
 		export EDITOR="nano"
 
+	EOF
+
+	cat <<- 'EOF' > "$FILE_CUSTOMRC"
 		alias go-dl='cd ~/Downloads'
 		alias go-pr='cd ~/projects'
 		alias go-re='cd ~/repos'
@@ -273,13 +279,19 @@ _do_homedir () {
 
 	EOF
 
-	grep "customrc" < "$BASHRC" &> /dev/null
+	# Check if .customrc is sourced in .bashrc
+	grep "customrc" < "$FILE_BASHRC" &> /dev/null
 	if [[ $? -ne 0 ]]; then
-		echo -e "\nsource ~/.customrc" >> "$BASHRC"
+		echo -e "\nsource ~/.customrc" >> "$FILE_BASHRC"
 	fi
 
-	## Delete most preexisting repositories in home directory
+	# Check if .customprofile is sourced in .profile
+	grep "customprofile" < "$FILE_PROFILE" &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		echo -e "\nsource ~/.customprofile" >> "$FILE_PROFILE"
+	fi
 
+	# Delete most preexisting repositories in home directory
 	# shellcheck disable=2034
 	local -a -r DEL_DIRS=(\
 		"$HOME/Documents"\
@@ -296,6 +308,7 @@ _do_homedir () {
 	_delete_dirs DEL_DIRS[@]
 	rm -f "$HOME"/examples.desktop
 
+	# Create standard directories
 	mkdir -p "$HOME/bin"
 	mkdir -p "$HOME/projects/Archiv"
 	mkdir -p "$HOME/repos"
