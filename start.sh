@@ -396,7 +396,8 @@ _do_homedir () {
 		# Combine multiline commands into one in history
 		shopt -s cmdhist
 		shopt -s histappend
-		export HISTCONTROL=ignoreboth
+		export HISTCONTROL=ignoreboth:erasedups
+		export HISTIGNORE="${HISTIGNORE}:ls:ll:l:cd:"
 		export HISTFILESIZE=10000
 		export HISTSIZE=${HISTFILESIZE}
 		export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
