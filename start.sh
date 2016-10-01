@@ -207,6 +207,7 @@ _do_homedir () {
 	EOF
 
 	cat <<- 'EOF' > "$FILE_CUSTOMRC"
+		# Moving through, looking at & searching through directories
 		alias go-dl='cd ~/Downloads'
 		alias go-pr='cd ~/projects'
 		alias go-re='cd ~/repos'
@@ -215,14 +216,12 @@ _do_homedir () {
 		alias l='ls -ACF --color=auto'
 		alias exp='nautilus . &> /dev/null &'
 		alias dsize='du -sh'
-		alias src='. ~/.bashrc'
-		alias more='less'
-		alias dta='dmesg | tail'
 		alias grap='grep -R -n -i -e'
-		alias grip='ps aux | grep -i -e'
 		alias fond='find . -name'
-		alias updog='sudo apt-get update; sudo apt-get upgrade'
-		alias dl='sudo apt-get install'
+
+		# Applications
+		alias more='less -F'
+		alias less='less -F'
 		alias git-count='git rev-list --all --count'
 		alias giff='git diff HEAD'
 		alias giss='git status'
@@ -231,6 +230,13 @@ _do_homedir () {
 		alias ggui='git gui'
 		alias cloc-all='cloc *.c *.h Makefile'
 		alias make='make -j4'
+
+		# Other
+		alias src='. ~/.bashrc'
+		alias dta='dmesg | tail'
+		alias grip='ps aux | grep -i -e'
+		alias updog='sudo apt-get update; sudo apt-get upgrade'
+		alias dl='sudo apt-get install'
 
 		# Create directory and enter it
 		# $1 = Name of new directory
