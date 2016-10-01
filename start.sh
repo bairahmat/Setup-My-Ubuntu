@@ -549,6 +549,24 @@ _do_install_chrome () {
 	return 0
 }
 
+_do_install_hr () {
+	local -r HR_FILE="$HOME"/bin/hr
+	local HR_SUCCESS=0
+	_install_start hr
+	curl https://raw.githubusercontent.com/LuRsT/hr/master/hr > "$HR_FILE"
+	HR_SUCCESS=$?
+	if [[ $HR_SUCCESS -eq 0 ]]; then
+		chmod +x "$HR_FILE"
+		HR_SUCCESS=$?
+	fi
+	if [[ $HR_SUCCESS -ne 0 ]]; then
+		_install_fail hr
+		return 1
+	else
+		return 0
+	fi
+}
+
 _do_install () {
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
@@ -585,6 +603,7 @@ _do_install () {
 		_install unrar
 		_install rtorrent
 		_do_install_oclint
+		_do_install_hr
 
 		if [[ $PARAM_QUICK -ne 1 ]]; then
 			_install_long ubuntu-restricted-extras
