@@ -22,8 +22,9 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 ## Usage
 
-1. **Modify USER variables**. They can be found at the very beginning of the script.
-2. `./start.sh` - The script does not need to be in your home directory to work.
+1. Download: `curl https://raw.githubusercontent.com/meyerlasse/Linux-Init/master/start.sh > start.sh`
+2. **Modify USER variables**. They can be found at the very beginning of the script.
+3. Execute: `bash start.sh`
 
 ## Parameters
 | Parameter       | Meaning                                                              |
