@@ -20,9 +20,10 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 - Cleaning up home directory
 - More to come (if you have any suggestions, create an issue to let me know)
 
-## Using it yourself
+## Usage
 
-If you want to use it, you have to **_change the USER variables first_**. They can be found at the very beginning of the script. The rest *can* be left unchanged.
+1. **Modify USER variables**. They can be found at the very beginning of the script.
+2. `./start.sh` - The script does not need to be in your home directory to work.
 
 ## Parameters
 | Parameter       | Meaning                                                              |
@@ -37,7 +38,24 @@ If you want to use it, you have to **_change the USER variables first_**. They c
 | --do_install    | Call install function                                                |
 | --do_config     | Call config function                                                 |
 
-If one or more of the *--do_** parameters are used, only the according functions will be called, but not the others. These parameters do not have priority, so if you use both *--offline* and *--do_install*, nothing will happen.
+- If one or more of the *--do_...* parameters are used, only the according functions will be called, but not the others.
+- These parameters do not have priority, so if you use both *--offline* and *--do_install*, nothing will happen.
+- The order of parameters is irrelevant.
+
+#### Functions:
+
+- homedir: Clean up home directory, create .customrc
+- update: Add repositories, update & upgrade
+- install: Install software and configure it
+- config: Configure different things, including SSH, desktop settings, gnome-terminal & other pre-installed software
+
+#### USER variables:
+
+- USER_GIT_NAME: the name that will appear in Git commits, etc.
+- USER_GIT_EMAIL: the email address that will appear in Git commits, etc.
+- USER_SSH_BANNER: the banner you will see if you login remotely via SSH
+- USER_SSH_KEYS: your public keys
+- USER_DLLOC: the country-specific domain code that will be used to select the download servers for apt-get, like "us" for USA, "fr" for France or "de" for Germany
 
 <hr>
 
