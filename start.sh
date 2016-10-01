@@ -234,7 +234,7 @@ _do_homedir () {
 		    cd "$1"
 		}
 
-		# Do move up multiple directories at once
+		# Move up multiple directories at once
 		# $1 = Number of directories to go up
 		up () {
 		    local D=""
@@ -754,6 +754,7 @@ _do_config_nano () {
 		local -r NANO_CONFIG="$HOME"/.nanorc
 		cat <<- 'EOF' > "$NANO_CONFIG"
 			set tabsize 4
+			set const
 
 		EOF
 	fi
@@ -763,7 +764,7 @@ _do_config_nano () {
 
 _do_config () {
 	_print_info "Configuring ..."
-	
+
 	_do_config_general
 	_do_config_variables
 	_do_config_desktop
