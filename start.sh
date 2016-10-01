@@ -194,22 +194,6 @@ _configure_git () {
 	return 0
 }
 
-_configure_hh () {
-	# shellcheck disable=2034
-	local -r HH_BLACKLIST="$HOME"/.hh_blacklist
-	cat <<- 'EOF' > "$HH_BLACKLIST"
-		cd
-		ls
-		ll
-		l
-		lsr
-		llr
-
-	EOF
-
-	return 0
-}
-
 _configure_tmux () {
 	# shellcheck disable=2034
 	local -r TMUX_CONFIG="$HOME"/.tmux.conf
@@ -557,7 +541,7 @@ _do_install () {
 	_install htop
 	_install build-essential
 	_install unp
-	_install hh && _configure_hh
+	_install hh
 	_do_install_sublime
 	_do_install_chrome
 
