@@ -142,6 +142,24 @@ _install_dpkg () {
 	return $SUCCESS
 }
 
+# $1 = Name of software
+# $2 = URL of script
+# $3 = Destination file name (full path)
+_install_script () {
+	local SUCCESS=0
+	_install_start "$1"
+	curl --retry 3 -s "$2" > "$3" 2> /dev/null
+	SUCCESS=$?
+	if [[ $SUCCESS -eq 0 ]]; then
+		chmod +x "$3"
+		SUCCESS=$?
+	fi
+	if [[ $SUCCESS -ne 0 ]]; then
+		_install_fail "$1"
+	fi
+	return $SUCCESS
+}
+
 # $1 = Name of binary to check
 _is_installed () {
 	which "$1" &> /dev/null
@@ -550,21 +568,14 @@ _do_install_chrome () {
 }
 
 _do_install_hr () {
-	local -r HR_FILE="$HOME"/bin/hr
-	local HR_SUCCESS=0
-	_install_start hr
-	curl https://raw.githubusercontent.com/LuRsT/hr/master/hr > "$HR_FILE"
-	HR_SUCCESS=$?
-	if [[ $HR_SUCCESS -eq 0 ]]; then
-		chmod +x "$HR_FILE"
-		HR_SUCCESS=$?
+	if ! _is_installed hr; then
+		local -r HR_NAME="hr"
+		local -r HR_URL="https://raw.githubusercontent.com/LuRsT/hr/master/hr"
+		local -r HR_FILE="$HOME"/bin/hr
+		_install_script "$HR_NAME" "$HR_URL" "$HR_FILE"
+		return $?
 	fi
-	if [[ $HR_SUCCESS -ne 0 ]]; then
-		_install_fail hr
-		return 1
-	else
-		return 0
-	fi
+	return 0
 }
 
 _do_install () {
