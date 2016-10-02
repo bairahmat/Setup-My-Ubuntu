@@ -311,7 +311,12 @@ _do_homedir () {
 		# $1 = Name of new directory
 		mkc () {
 		    mkdir "$1"
-		    cd "$1"
+		    if [[ $? -eq 0 ]]; then
+		        cd "$1"
+		        return 0
+		    else
+		        return 1
+		    fi
 		}
 
 		# Move up multiple directories at once
