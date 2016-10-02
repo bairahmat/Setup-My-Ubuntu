@@ -52,6 +52,7 @@ readonly DEFAULTS="$HOME/.local/share/applications/defaults.list"
 readonly ENV_FILE="/etc/environment"
 
 PARAM_QUICK=0
+PARAM_LONG=0
 PARAM_IMPORTANT=0
 PARAM_OFFLINE=0
 PARAM_RESTART=0
@@ -637,17 +638,17 @@ _do_install () {
 		_install rtorrent
 		_do_install_oclint
 		_do_install_hr
+	fi
 
-		if [[ $PARAM_QUICK -ne 1 ]]; then
-			_install_long ubuntu-restricted-extras
-			_install_long texlive
-			_install_long latexmk
-			_install_long texlive-lang-german
-			_install_long texlive-latex-extra
-			_install_long texlive-fonts-extra
-			_install_long texlive-bibtex-extra
-			_install_long openjdk-8-jdk
-		fi
+	if [[ $PARAM_LONG -eq 1 ]]; then
+		_install_long ubuntu-restricted-extras
+		_install_long texlive
+		_install_long latexmk
+		_install_long texlive-lang-german
+		_install_long texlive-latex-extra
+		_install_long texlive-fonts-extra
+		_install_long texlive-bibtex-extra
+		_install_long openjdk-8-jdk
 	fi
 
 	sudo apt-get autoremove > /dev/null
@@ -868,6 +869,10 @@ while [[ $# -gt 0 ]]; do
 	case $PARAM in
 		-q|--quick)
 			PARAM_QUICK=1
+			shift
+			;;
+		-l|--long)
+			PARAM_LONG=1
 			shift
 			;;
 		-i|--important)

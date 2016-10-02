@@ -27,20 +27,23 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 3. Execute: `bash start.sh`
 
 ## Parameters
-| Parameter       | Meaning                                                              |
-|-----------------|----------------------------------------------------------------------|
-| -q / --quick    | Don't do anything that takes a significant amount of time (~ >1 min) |
-| -i / --important| Only install important programs                                      |
-| -o / --offline  | Don't do anything that requires an internet connection               |
-| -r / --restart  | Restart when done                                                    |
-| -h / --help     | Show help, don't do anything else                                    |
-| --do_homedir    | Call homedir function                                                |
-| --do_update     | Call update function                                                 |
-| --do_install    | Call install function                                                |
-| --do_config     | Call config function                                                 |
+
+| Parameter       | Meaning                                                                                                                       |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------|
+| -q / --quick    | Don't do anything that takes a significant amount of time (~ >1 min), e.g. `apt-get upgrade`.                                 |
+| -l / --long     | Install large software packets that take a while to install. Ignores parameter `-q/--quick`.                                  |
+| -i / --important| Only install important programs, e.g. git or tmux.                                                                            |
+| -o / --offline  | Don't do anything that requires an internet connection. Overrides parameters `-l/--long`, `-i/--important` and `--do_install`.|
+| -r / --restart  | Restart when finished.                                                                                                        |
+| -h / --help     | Show help, don't do anything else.                                                                                            |
+| --do_homedir    | Call homedir function.                                                                                                        |
+| --do_update     | Call update function.                                                                                                         |
+| --do_install    | Call install function.                                                                                                        |
+| --do_config     | Call config function.                                                                                                         |
+
+#### Additional infos:
 
 - If one or more of the *--do_...* parameters are used, only the according functions will be called, but not the others.
-- These parameters do not have priority, so if you use both *--offline* and *--do_install*, nothing will happen.
 - The order of parameters is irrelevant.
 
 #### Functions:
