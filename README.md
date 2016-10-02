@@ -22,9 +22,9 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 ## Usage
 
-1. Download: `curl https://raw.githubusercontent.com/meyerlasse/Linux-Startup/master/start.sh > start.sh`
+1. `wget https://github.com/meyerlasse/Linux-Startup/releases/download/1.0/start.sh`
 2. **Modify USER variables**. They can be found at the very beginning of the script.
-3. Execute: `bash start.sh`
+3. `bash start.sh`
 
 ## Parameters
 
