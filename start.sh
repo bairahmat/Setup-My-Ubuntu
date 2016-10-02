@@ -646,7 +646,6 @@ _do_install () {
 		_install valgrind
 		_install bear
 		_install unity-tweak-tool
-		_install xclip
 		_install qalc
 		_install tpp
 		_install hollywood
