@@ -609,6 +609,10 @@ _do_install_hr () {
 }
 
 _do_install_qfc () {
+	if ! _is_installed "git"; then
+		_install_fail "qfc"
+		return 1
+	fi
 	if ! _is_installed "qfc"; then
 		git clone https://github.com/pindexis/qfc "$HOME"/.qfc &> /dev/null
 		if [[ $? -ne 0 ]]; then
