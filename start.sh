@@ -83,11 +83,28 @@ _print_error () {
 	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "ERR" "$1"
 }
 
+# $1 = Name of binary to check
+_is_installed () {
+	which "$1" &> /dev/null
+	return $?
+}
+
 # $1 = File URL
 # $2 = Download location
 _download () {
 	wget --tries=3 "$1" -P "$2" -q
 	return $!
+}
+
+# $1 = Git repo URL
+# $2 = Target location
+_clone () {
+	if _is_installed "git"; then
+		git clone "$1" "$2" &> /dev/null
+		return $?
+	else
+		return 1
+	fi
 }
 
 # $1 = Name of software
@@ -183,10 +200,18 @@ _install_script () {
 	return $SUCCESS
 }
 
-# $1 = Name of binary to check
-_is_installed () {
-	which "$1" &> /dev/null
-	return $?
+# $1 = Name of software
+# $2 = URL of repo
+# $3 = Target directory
+_install_repo () {
+	_install_start "$1"
+	_clone "$2" "$3"
+	if [[ $? -ne 0 ]]; then
+		_install_fail "$1"
+		return 1
+	else
+		return 0
+	fi
 }
 
 # $1 = Array of MIME types (has to be passed like this: NAME_OF_ARRAY[@])
