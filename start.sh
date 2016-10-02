@@ -139,9 +139,12 @@ _install_long () {
 
 # $1 = Name of software
 _install () {
-	_install_start "$1"
-	_install_generic "$1"
-	return $?
+	if ! _is_installed; then
+		_install_start "$1"
+		_install_generic "$1"
+		return $?
+	fi
+	return 0
 }
 
 # $1 = Array of dependencies (has to be passed like this: NAME_OF_ARRAY[@])
