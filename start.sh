@@ -637,15 +637,12 @@ _do_install_hr () {
 }
 
 _do_install_qfc () {
-	if ! _is_installed "git"; then
-		_install_fail "qfc"
-		return 1
-	fi
-	if ! _is_installed "qfc"; then
-		git clone https://github.com/pindexis/qfc "$HOME"/.qfc &> /dev/null
-		if [[ $? -ne 0 ]]; then
-			_install_fail "qfc"
-		fi
+	if ! _is_installed qfc; then
+		local -r QFC_NAME="qfc"
+		local -r QFC_URL="https://github.com/pindexis/qfc"
+		local -r QFC_TARGET="$HOME/.qfc"
+		_install_repo "$QFC_NAME" "$QFC_URL" "$QFC_TARGET"
+		return $?
 	fi
 	return 0
 }
