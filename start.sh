@@ -506,6 +506,9 @@ _configure_tmux () {
 		bind -n C-S-Left previous-window
 		bind -n C-S-Right next-window
 
+		# Activate scroll mode with CTRL + PageUp
+		bind -n C-Pageup copy-mode -u
+
 		# Activate copying to system buffer
 		setw -g mode-keys vi
 		bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'
