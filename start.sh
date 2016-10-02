@@ -324,6 +324,10 @@ _do_homedir () {
 		export HH_CONFIG=hicolor,rawhistory,blacklist
 		bind '"\C-r": "\C-a hh \C-j"'
 
+		# qfc
+		[[ -s "$HOME/.qfc/bin/qfc.sh" ]] && source "$HOME/.qfc/bin/qfc.sh"
+		qfc_quick_command 'cd' '\C-n' 'cd $0'
+
 	EOF
 
 	# Check if .customrc is sourced in .bashrc
@@ -601,6 +605,16 @@ _do_install_hr () {
 	return 0
 }
 
+_do_install_qfc () {
+	if ! _is_installed "qfc"; then
+		git clone https://github.com/pindexis/qfc "$HOME"/.qfc &> /dev/null
+		if [[ $? -ne 0 ]]; then
+			_install_fail "qfc"
+		fi
+	fi
+	return 0
+}
+
 _do_install () {
 	if [ $DLLOC_CHANGED -ne 1 ]; then
 		_change_dlloc
@@ -638,6 +652,7 @@ _do_install () {
 		_install rtorrent
 		_do_install_oclint
 		_do_install_hr
+		_do_install_qfc
 	fi
 
 	if [[ $PARAM_LONG -eq 1 ]]; then
