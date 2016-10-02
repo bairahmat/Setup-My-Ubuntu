@@ -1,4 +1,4 @@
-# Linux-Init
+# Linux-Startup
 #### A script to install, set and configure basic things that you need for a new Linux setup.
 Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 <hr>
@@ -22,7 +22,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 ## Usage
 
-1. Download: `curl https://raw.githubusercontent.com/meyerlasse/Linux-Init/master/start.sh > start.sh`
+1. Download: `curl https://raw.githubusercontent.com/meyerlasse/Linux-Startup/master/start.sh > start.sh`
 2. **Modify USER variables**. They can be found at the very beginning of the script.
 3. Execute: `bash start.sh`
 

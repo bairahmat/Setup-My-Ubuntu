@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 # Author: 	Lasse Meyer
-# Source:	https://github.com/meyerlasse/Linux-Init
+# Source:	https://github.com/meyerlasse/Linux-Startup
 
 ## User variables - NEED TO BE CHANGED
 
@@ -828,7 +828,7 @@ _do_config () {
 # shellcheck disable=2059
 _show_help () {
 	# General stuff
-	printf "${FORMAT_BOLD}${COLOR_BLUE}***${COLOR_DEFAULT} Linux-Init user manual ${COLOR_BLUE}***${COLOR_DEFAULT}${FORMAT_RESET_ALL}\n"
+	printf "${FORMAT_BOLD}${COLOR_BLUE}***${COLOR_DEFAULT} Linux-Startup user manual ${COLOR_BLUE}***${COLOR_DEFAULT}${FORMAT_RESET_ALL}\n"
 	printf "A script to install, set and configure basic things that you need for a new Linux setup.\n\n"
 	# Parameters
 	printf "${FORMAT_BOLD}Parameters:${FORMAT_RESET_ALL}\n\n"
@@ -847,8 +847,8 @@ _show_help () {
 	# Info
 	printf "${FORMAT_BOLD}Info:${FORMAT_RESET_ALL}\n\n"
 	printf "Author:\t\tLasse Meyer\n"
-	printf "Source:\t\thttps://github.com/meyerlasse/Linux-Init\n"
-	printf "License:\tMIT (https://github.com/meyerlasse/Linux-Init/blob/master/LICENSE.md)\n"
+	printf "Source:\t\thttps://github.com/meyerlasse/Linux-Startup\n"
+	printf "License:\tMIT (https://github.com/meyerlasse/Linux-Startup/blob/master/LICENSE.md)\n"
 }
 
 _clean_dos () {
