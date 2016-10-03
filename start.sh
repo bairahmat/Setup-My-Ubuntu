@@ -970,6 +970,7 @@ while [[ $# -gt 0 ]]; do
 			;;
 		*)
 			_print_error "Invalid parameter: $PARAM"
+			_print_error "Use --help parameter to show help."
 			exit 1
 		;;
 	esac
@@ -1013,7 +1014,7 @@ if [[ $PARAM_RESTART -eq 0 ]]; then
 	# shellcheck disable=2059
 	printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
 else
-	_print_info "Restarting..."
+	_print_info "Rebooting..."
 	sudo reboot
 fi
 
