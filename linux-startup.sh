@@ -25,19 +25,20 @@
 # Author: 	Lasse Meyer
 # Source:	https://github.com/meyerlasse/Linux-Startup
 
-## User variables - NEED TO BE CHANGED
+###################################################################################################################################################
+### VARIABLES #####################################################################################################################################
+###################################################################################################################################################
 
+# User variables - NEED TO BE MODIFIED BEFORE USING
 readonly USER_GIT_NAME="Lasse Meyer"
 readonly USER_GIT_EMAIL="meyer.lasse@gmail.com"
 readonly USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
-readonly USER_SSH_KEYS=("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
-			   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com")
+readonly USER_SSH_KEYS=(\
+	"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
+	"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com")
 readonly USER_DLLOC=de
 
-## Variables
-
-readonly PWD_START=$PWD
-
+# Formatting variables
 readonly FORMAT_BOLD="\e[1m"
 readonly FORMAT_RESET_ALL="\e[0m"
 
@@ -47,10 +48,12 @@ readonly COLOR_GREEN="\e[32m"
 readonly COLOR_YELLOW="\e[33m"
 readonly COLOR_BLUE="\e[34m"
 
+# Static general purpose variables
+readonly PWD_START=$PWD
 readonly DL_PREFIX="/tmp"
 readonly DEFAULTS="$HOME/.local/share/applications/defaults.list"
-readonly ENV_FILE="/etc/environment"
 
+# Parameter variables
 PARAM_QUICK=0
 PARAM_LONG=0
 PARAM_IMPORTANT=0
@@ -61,34 +64,55 @@ PARAM_DO_UPDATE=1
 PARAM_DO_INSTALL=1
 PARAM_DO_CONFIG=1
 PARAM_DO_HOMEDIR=1
+
+# Other variables
 DOS_CLEANED=0
 DLLOC_CHANGED=0
-
 export DEBIAN_FRONTEND="noninteractive"
 
-## Functions
+###################################################################################################################################################
+### HELPER FUNCTIONS ##############################################################################################################################
+###################################################################################################################################################
 
+## Printing
+
+# Print info message
 # $1 = String to print
 _print_info () {
 	printf "[$COLOR_GREEN%s$COLOR_DEFAULT] %s\n" "INF" "$1"
 }
 
+# Print warning message
 # $1 = String to print
 _print_warning () {
 	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s\n" "WRN" "$1"
 }
 
+# Print error message
 # $1 = String to print
 _print_error () {
 	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "ERR" "$1"
 }
 
-# $1 = Name of binary to check
-_is_installed () {
-	which "$1" &> /dev/null
-	return $?
+# Print installation failure error message
+# $1 = Name of software
+_install_fail () {
+	_print_error "Installing $1 failed"
+	return 0
 }
 
+# Print installation start info message
+# $1 = Name of software
+_install_start () {
+	_print_info "Installing $1 ..."
+	return 0
+}
+
+#########################################################################
+
+## Downloading
+
+# Download file with wget
 # $1 = File URL
 # $2 = Download location
 _download () {
@@ -96,9 +120,10 @@ _download () {
 	return $!
 }
 
+# Clone a git repository
 # $1 = Git repo URL
 # $2 = Target location
-_clone () {
+_clone_git () {
 	if _is_installed "git"; then
 		git clone "$1" "$2" &> /dev/null
 		return $?
@@ -107,53 +132,108 @@ _clone () {
 	fi
 }
 
-# $1 = Name of software
-_install_fail () {
-	_print_error "Installing $1 failed"
-	return 0
-}
+#########################################################################
 
-# $1 = Name of software
-_install_start () {
-	_print_info "Installing $1 ..."
-	return 0
-}
+## Installing
+# See also _install_start & _install_fail in printing section
 
-# $1 = Name of software
-_install_generic () {
-	local SUCCESS=0
-	sudo apt-get -y -qq install "$1" &> /dev/null
-	if [[ $? -ne 0 ]]; then
-		_install_fail "$1"
-		SUCCESS=1
-	fi
-	return $SUCCESS
-}
-
-# $1 = Name of software
-_install_long () {
-	_print_info "Installing $1 ... (this could take a while)"
-	_install_generic "$1"
+# Check if program is installed already. Has to be somewhere in $PATH.
+# $1 = Name of program to check
+_is_installed () {
+	which "$1" &> /dev/null
 	return $?
 }
 
+# Install program with apt-get
 # $1 = Name of software
-_install () {
+_install_apt () {
 	if ! _is_installed; then
 		_install_start "$1"
-		_install_generic "$1"
+		_install_apt_generic "$1"
 		return $?
 	fi
 	return 0
 }
 
+# Install large program with apt-get
+# $1 = Name of software
+_install_apt_long () {
+	_print_info "Installing $1 ... (this could take a while)"
+	_install_apt_generic "$1"
+	return $?
+}
+
+# Download and install dpkg package, if not installed already
+# $1 = Name of software (name of binary)
+# $3 = File URL
+_install_dpkg () {
+	if ! _is_installed "$1"; then
+		local SUCCESS=0
+		_install_start "$1"
+		_download "$2/$3" "$DL_PREFIX"
+		if [[ $? -eq 0 ]]; then
+			sudo dpkg -i -G $DL_PREFIX/"$3" > /dev/null
+			if [[ $? -ne 0 ]]; then
+				_install_fail "$1"
+				SUCCESS=1
+			fi
+			rm -f $DL_PREFIX/"$3"
+		else
+			_install_fail "$1"
+			SUCCESS=1
+		fi
+	fi
+	return $SUCCESS
+}
+
+# Download and install script with curl, if not installed already somewhere in $PATH
+# $1 = Name of script
+# $2 = URL of script
+# $3 = Destination file name (full path)
+_install_script () {
+	local SUCCESS=0
+	if ! _is_installed "$1"; then
+		_install_start "$1"
+		curl --retry 3 -s "$2" > "$3" 2> /dev/null
+		SUCCESS=$?
+		if [[ $SUCCESS -eq 0 ]]; then
+			chmod +x "$3"
+			SUCCESS=$?
+		fi
+		if [[ $SUCCESS -ne 0 ]]; then
+			_install_fail "$1"
+		fi
+	fi
+	return $SUCCESS
+}
+
+# "Install" git repository. Checks if certain binary ($1) is present and if target directory already exists. If both are false, clones repo.
+# $1 = Name of software
+# $2 = URL of repo
+# $3 = Target directory
+_install_git_repo () {
+	local SUCCESS=0
+	if ! _is_installed "$1"; then
+		if [[ -d "$3" ]]; then
+			_install_start "$1"
+			_clone_git "$2" "$3"
+			if [[ $? -ne 0 ]]; then
+				_install_fail "$1"
+				SUCCESS=1
+			fi
+		fi
+	fi
+	return $SUCCESS
+}
+
+# Install dependencies for something with apt-get
 # $1 = Array of dependencies (has to be passed like this: NAME_OF_ARRAY[@])
 # $2 = Name of software that needs dependencies
-_install_depends () {
+_install_apt_depends () {
 	local SUCCESS=0
 	local -a -r DEPENDS=("${!1}")
 	for DEP in "${DEPENDS[@]}"; do
-		_install_generic "$DEP"
+		_install_apt_generic "$DEP"
 		if [[ $? -ne 0 ]]; then
 			SUCCESS=1
 		fi
@@ -164,71 +244,26 @@ _install_depends () {
 	return $SUCCESS
 }
 
+# Function to be used by other _install_apt functions. Does the actual installation.
 # $1 = Name of software
-# $2 = Download prefix (without file name, without / at the end)
-# $3 = File name to download and install
-_install_dpkg () {
+_install_apt_generic () {
 	local SUCCESS=0
-	_install_start "$1"
-	_download "$2/$3" "$DL_PREFIX"
-	if [[ $? -eq 0 ]]; then
-		sudo dpkg -i -G $DL_PREFIX/"$3" > /dev/null
-		if [[ $? -ne 0 ]]; then
-			_install_fail "$1"
-			SUCCESS=1
-		fi
-		rm -f $DL_PREFIX/"$3"
-	else
+	sudo apt-get -y -qq install "$1" &> /dev/null
+	if [[ $? -ne 0 ]]; then
 		_install_fail "$1"
 		SUCCESS=1
 	fi
 	return $SUCCESS
 }
 
-# $1 = Name of software
-# $2 = URL of script
-# $3 = Destination file name (full path)
-_install_script () {
-	local SUCCESS=0
-	_install_start "$1"
-	curl --retry 3 -s "$2" > "$3" 2> /dev/null
-	SUCCESS=$?
-	if [[ $SUCCESS -eq 0 ]]; then
-		chmod +x "$3"
-		SUCCESS=$?
-	fi
-	if [[ $SUCCESS -ne 0 ]]; then
-		_install_fail "$1"
-	fi
-	return $SUCCESS
-}
+#########################################################################
 
-# $1 = Name of software
-# $2 = URL of repo
-# $3 = Target directory
-_install_repo () {
-	_install_start "$1"
-	_clone "$2" "$3"
-	if [[ $? -ne 0 ]]; then
-		_install_fail "$1"
-		return 1
-	else
-		return 0
-	fi
-}
+## Other
 
-# $1 = Array of MIME types (has to be passed like this: NAME_OF_ARRAY[@])
-# $2 = Name of desktop file that should be applied
-_setmimes () {
-	local -a -r MIMES=("${!1}")
-	for MIMETYPE in "${MIMES[@]}"; do
-		echo "$MIMETYPE=$2" >> "$DEFAULTS"
-	done
-	return 0
-}
-
-# $1 = Path to append to PATH
+# Append path to $PATH globally, permanently. The path is appended only if it isn't included already.
+# $1 = Path to append to $PATH
 _append_to_path () {
+	local -r ENV_FILE="/etc/environment"
 	# Is the path already in PATH?
 	grep "PATH=.*$1" < "$ENV_FILE" &> /dev/null
 	if [[ $? -ne 0 ]]; then
@@ -240,6 +275,18 @@ _append_to_path () {
 	return 0
 }
 
+# Set standard applications for MIME types (file types)
+# $1 = Array of MIME types (has to be passed like this: NAME_OF_ARRAY[@])
+# $2 = Name of desktop file that should be applied
+_setmimes () {
+	local -a -r MIMES=("${!1}")
+	for MIMETYPE in "${MIMES[@]}"; do
+		echo "$MIMETYPE=$2" >> "$DEFAULTS"
+	done
+	return 0
+}
+
+# Delete an array of directories
 # $1 = Array of directories to delete (has to be passed like this: NAME_OF_ARRAY[@])
 _delete_dirs () {
 	local -a -r DIRECS=("${!1}")
@@ -249,24 +296,36 @@ _delete_dirs () {
 	return 0
 }
 
+# Change download server location for apt-get. Uses USER_DLLOC variable.
 _change_dlloc () {
-	if [[ $PARAM_OFFLINE -ne 1 ]]; then
+	if [[ $PARAM_OFFLINE -ne 1 && $DLLOC_CHANGED -ne 1 ]]; then
 		sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
 		sudo apt-get -qq update &> /dev/null
 		DLLOC_CHANGED=1
 	fi
 }
 
+###################################################################################################################################################
+### DO_HOMEDIR ####################################################################################################################################
+###################################################################################################################################################
+
+# Main homedir function
 _do_homedir () {
 	_print_info "Setting up home directory ..."
 
-	# Create .customrc and .customprofile
+	_do_homedir_customprofile
+	_do_homedir_customrc
+	_do_homedir_cleanup
+	_do_homedir_dirs
+
+	return 0
+}
+
+# Create ~/.customprofile
+_do_homedir_customprofile () {
 	local -r FILE_PROFILE="$HOME"/.profile
-	local -r FILE_BASHRC="$HOME"/.bashrc
 	# shellcheck disable=2034
 	local -r FILE_CUSTOMPROFILE="$HOME"/.customprofile
-	# shellcheck disable=2034
-	local -r FILE_CUSTOMRC="$HOME"/.customrc
 
 	cat <<- 'EOF' > "$FILE_CUSTOMPROFILE"
 		export PATH=$PATH:$HOME/bin
@@ -274,6 +333,20 @@ _do_homedir () {
 		export EDITOR="nano"
 
 	EOF
+
+	# Check if .customprofile is sourced in .profile
+	grep "customprofile" < "$FILE_PROFILE" &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		echo -e "\nsource ~/.customprofile" >> "$FILE_PROFILE"
+	fi
+
+	return 0
+}
+
+_do_homedir_customrc () {
+	local -r FILE_BASHRC="$HOME"/.bashrc
+	# shellcheck disable=2034
+	local -r FILE_CUSTOMRC="$HOME"/.customrc
 
 	cat <<- 'EOF' > "$FILE_CUSTOMRC"
 		# Moving through, looking at & searching through directories
@@ -374,13 +447,11 @@ _do_homedir () {
 		echo -e "\nsource ~/.customrc" >> "$FILE_BASHRC"
 	fi
 
-	# Check if .customprofile is sourced in .profile
-	grep "customprofile" < "$FILE_PROFILE" &> /dev/null
-	if [[ $? -ne 0 ]]; then
-		echo -e "\nsource ~/.customprofile" >> "$FILE_PROFILE"
-	fi
+	return 0
+}
 
-	# Delete most preexisting repositories in home directory
+# Delete most preexisting repositories in home directory
+_do_homedir_cleanup () {
 	# shellcheck disable=2034
 	local -a -r DEL_DIRS=(\
 		"$HOME/Documents"\
@@ -397,7 +468,11 @@ _do_homedir () {
 	_delete_dirs DEL_DIRS[@]
 	rm -f "$HOME"/examples.desktop
 
-	# Create standard directories
+	return 0
+}
+
+# Create standard directories
+_do_homedir_dirs () {
 	mkdir -p "$HOME/bin"
 	mkdir -p "$HOME/projects/Archiv"
 	mkdir -p "$HOME/repos"
@@ -405,19 +480,43 @@ _do_homedir () {
 	return 0
 }
 
+
+###################################################################################################################################################
+### DO_UPDATE #####################################################################################################################################
+###################################################################################################################################################
+
+# Main update function
 _do_update () {
-	_print_info "Updating ..."
+	_change_dlloc
 
-	if [ $DLLOC_CHANGED -ne 1 ]; then
-		_change_dlloc
-	fi
+	_do_update_add_repos
+	_do_update_update
+	_do_update_upgrade
 
-	# Add texlive repository after first update, because it would always cause
-	# apt-get update to throw errors that really should be warnings
+	return 0
+}
+
+# Add repositories
+_do_update_add_repos () {
 	sudo add-apt-repository -y ppa:texlive-backports/ppa &> /dev/null
 	sudo add-apt-repository -y ppa:ultradvorka/ppa &> /dev/null
-	sudo apt-get -qq update &> /dev/null
+	return 0
+}
 
+# Update
+_do_update_update () {
+	_print_info "Updating ..."
+	sudo apt-get -qq update &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		_print_error "Update failed"
+		return 1
+	else
+		return 0
+	fi
+}
+
+# Upgrade
+_do_update_upgrade () {
 	if [[ $PARAM_QUICK -ne 1 ]]; then
 		_print_info "Upgrading ... (this could take a while)"
 		sudo apt-get -y -qq upgrade > /dev/null
@@ -425,148 +524,74 @@ _do_update () {
 			_print_error "Upgrade failed"
 		fi
 	fi
-
-	return 0
 }
 
-_configure_git () {
-	git config --global user.email "$USER_GIT_EMAIL"
-	git config --global user.name "$USER_GIT_NAME"
+###################################################################################################################################################
+### DO_INSTALL ####################################################################################################################################
+###################################################################################################################################################
 
-	return 0
-}
+# Main installation function
+_do_install () {
+	_change_dlloc
 
-_configure_tmux () {
-	# shellcheck disable=2034
-	local -r TMUX_CONFIG="$HOME"/.tmux.conf
-	cat <<- 'EOF' > "$TMUX_CONFIG"
-		# Enable mouse mode (tmux 2.1 and above)
-		# set -g mouse on
+	_install_apt git
+	_install_apt git-gui
+	_install_apt tmux
+	_install_apt xclip
+	_install_apt htop
+	_install_apt build-essential
+	_install_apt unp
+	_install_apt hh
+	_do_install_sublime
+	_do_install_chrome
 
-		######################
-		### DESIGN CHANGES ###
-		######################
-
-		# panes
-		set -g pane-border-fg black
-		set -g pane-active-border-fg brightred
-
-		## Status bar design
-		# status line
-		set -g status-utf8 on
-		set -g status-justify left
-		set -g status-bg default
-		set -g status-fg colour12
-		set -g status-interval 1
-
-		# messaging
-		set -g message-fg black
-		set -g message-bg yellow
-		set -g message-command-fg blue
-		set -g message-command-bg black
-
-		# window mode
-		setw -g mode-bg colour6
-		setw -g mode-fg colour0
-
-		# window status
-		setw -g window-status-format " #F#I:#W#F "
-		setw -g window-status-current-format " #F#I:#W#F "
-		setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
-		setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
-		setw -g window-status-current-bg colour0
-		setw -g window-status-current-fg colour11
-		setw -g window-status-current-attr dim
-		setw -g window-status-bg green
-		setw -g window-status-fg black
-		setw -g window-status-attr reverse
-
-		# Info on left (I don't have a session display for now)
-		set -g status-left ''
-
-		# loud or quiet?
-		set-option -g visual-activity off
-		set-option -g visual-bell off
-		set-option -g visual-silence off
-		set-window-option -g monitor-activity off
-		set-option -g bell-action none
-
-		set -g default-terminal "screen-256color"
-
-		# The modes
-		setw -g clock-mode-colour colour135
-		setw -g mode-attr bold
-		setw -g mode-fg colour196
-		setw -g mode-bg colour238
-
-		# The panes
-		set -g pane-border-bg colour0
-		set -g pane-border-fg colour238
-		set -g pane-active-border-bg colour0
-		set -g pane-active-border-fg colour51
-
-		# The statusbar
-		set -g status-position bottom
-		set -g status-bg colour234
-		set -g status-fg colour137
-		set -g status-attr dim
-		set -g status-left ''
-		set -g status-right '#[fg=colour233,bg=colour241,bold] %d/%m #[fg=colour233,bg=colour245,bold] %H:%M:%S '
-		set -g status-right-length 50
-		set -g status-left-length 20
-
-		setw -g window-status-current-fg colour81
-		setw -g window-status-current-bg colour238
-		setw -g window-status-current-attr bold
-		setw -g window-status-current-format ' #I#[fg=colour250]:#[fg=colour255]#W#[fg=colour50]#F '
-
-		setw -g window-status-fg colour138
-		setw -g window-status-bg colour235
-		setw -g window-status-attr none
-		setw -g window-status-format ' #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F '
-
-		setw -g window-status-bell-attr bold
-		setw -g window-status-bell-fg colour255
-		setw -g window-status-bell-bg colour1
-
-		# The messages
-		set -g message-attr bold
-		set -g message-fg colour232
-		set -g message-bg colour166
-
-		# Activate pane switching with ALT + ARROW
-		bind -n M-Left select-pane -L
-		bind -n M-Right select-pane -R
-		bind -n M-Up select-pane -U
-		bind -n M-Down select-pane -D
-
-		# Activate window switching with CTRL + SHIFT + ARROW
-		bind -n C-S-Left previous-window
-		bind -n C-S-Right next-window
-
-		# Activate scroll mode with CTRL + PageUp
-		bind -n C-Pageup copy-mode -u
-
-		# Activate copying to system buffer
-		setw -g mode-keys vi
-		bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'
-
-	EOF
-	if _is_installed git; then
-		git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar &> /dev/null
-		if [[ $? -eq 0 ]]; then
-			cat <<- 'EOF' >> "$TMUX_CONFIG"
-				# Git-bar
-				set -g status-right-length 100
-				source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
-
-			EOF
-		fi
+	if [[ $PARAM_IMPORTANT -ne 1 ]]; then
+		_install_apt tmuxinator
+		_install_apt openssh-server
+		_install_apt cloc
+		_install_apt tig
+		_install_apt subversion
+		_install_apt cmake
+		_install_apt automake
+		_install_apt shellcheck
+		_install_apt valgrind
+		_install_apt bear
+		_install_apt unity-tweak-tool
+		_install_apt qalc
+		_install_apt tpp
+		_install_apt hollywood
+		_install_apt rar
+		_install_apt unrar
+		_install_apt rtorrent
+		_install_apt silversearcher-ag
+		_install_apt myrepos
+		_do_install_oclint
+		_do_install_hr
+		_do_install_qfc
 	fi
 
+	if [[ $PARAM_LONG -eq 1 ]]; then
+		_install_apt_long ubuntu-restricted-extras
+		_install_apt_long texlive
+		_install_apt_long latexmk
+		_install_apt_long texlive-lang-german
+		_install_apt_long texlive-latex-extra
+		_install_apt_long texlive-fonts-extra
+		_install_apt_long texlive-bibtex-extra
+		_install_apt_long openjdk-8-jdk
+	fi
+
+	sudo apt-get autoremove > /dev/null
+
 	return 0
 }
 
+#########################################################################
+
+## Manual installation functions
+# Programs that need extra parameters get their own functions, to keep the main _do_install function clean
+
+# Install oclint
 _do_install_oclint () {
 	local OCLINT_RETURN=0
 	if ! _is_installed oclint; then
@@ -606,129 +631,106 @@ _do_install_oclint () {
 	return $OCLINT_RETURN
 }
 
+# Install Sublime Text
 _do_install_sublime () {
-	if ! _is_installed subl; then
-		local -r SUBL_VERSION=3126
-		local -r SUBL_NAME="Sublime Text 3"
-		local -r SUBL_SITE="https://download.sublimetext.com"
-		local -r SUBL_FILE="sublime-text_build-${SUBL_VERSION}_amd64.deb"
-		_install_dpkg "$SUBL_NAME" $SUBL_SITE $SUBL_FILE
-		return $?
-	fi
-	return 0
+	local -r SUBL_VERSION=3126
+	_install_dpkg "subl" "https://download.sublimetext.com/sublime-text_build-${SUBL_VERSION}_amd64.deb"
+	return $?
 }
 
+# Install Google Chrome
 _do_install_chrome () {
-	if ! _is_installed google-chrome; then
-		local -r CHROME_NAME="Google Chrome"
-		local -r CHROME_SITE="https://dl.google.com/linux/direct"
-		local -r CHROME_FILE="google-chrome-stable_current_amd64.deb"
-		# shellcheck disable=2034
-		local -r -a CHROME_DEPENDS=("libindicator7" "libappindicator1")
-		_install_depends CHROME_DEPENDS[@] "$CHROME_NAME"
-		if [[ $? -eq 0 ]]; then
-			_install_dpkg "$CHROME_NAME" $CHROME_SITE $CHROME_FILE
-			return $?
-		fi
+	# shellcheck disable=2034
+	local -r -a CHROME_DEPENDS=("libindicator7" "libappindicator1")
+	_install_apt_depends CHROME_DEPENDS[@] "google-chrome"
+	if [[ $? -eq 0 ]]; then
+		_install_dpkg "google-chrome" "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+		return $?
+	else
 		return 1
 	fi
-	return 0
 }
 
+# Install hr
 _do_install_hr () {
-	if ! _is_installed hr; then
-		local -r HR_NAME="hr"
-		local -r HR_URL="https://raw.githubusercontent.com/LuRsT/hr/master/hr"
-		local -r HR_FILE="$HOME"/bin/hr
-		_install_script "$HR_NAME" "$HR_URL" "$HR_FILE"
-		return $?
-	fi
-	return 0
+	_install_script "hr" "https://raw.githubusercontent.com/LuRsT/hr/master/hr" "${HOME}/bin/hr"
+	return $?
 }
 
+# Install qfc
 _do_install_qfc () {
-	if ! _is_installed qfc; then
-		local -r QFC_NAME="qfc"
-		local -r QFC_URL="https://github.com/pindexis/qfc"
-		local -r QFC_TARGET="$HOME/.qfc"
-		_install_repo "$QFC_NAME" "$QFC_URL" "$QFC_TARGET"
-		return $?
-	fi
-	return 0
+	_install_git_repo "qfc" "https://github.com/pindexis/qfc" "$HOME/.qfc"
+	return $?
 }
 
-_do_install () {
-	if [ $DLLOC_CHANGED -ne 1 ]; then
-		_change_dlloc
-	fi
+###################################################################################################################################################
+### DO_CONFIG #####################################################################################################################################
+###################################################################################################################################################
 
-	_install git && _configure_git
-	_install git-gui
-	_install tmux && _configure_tmux
-	_install xclip
-	_install htop
-	_install build-essential
-	_install unp
-	_install hh
-	_do_install_sublime
-	_do_install_chrome
+# Main config function
+_do_config () {
+	_print_info "Configuring ..."
 
-	if [[ $PARAM_IMPORTANT -ne 1 ]]; then
-		_install tmuxinator
-		_install openssh-server
-		_install cloc
-		_install tig
-		_install subversion
-		_install cmake
-		_install automake
-		_install shellcheck
-		_install valgrind
-		_install bear
-		_install unity-tweak-tool
-		_install qalc
-		_install tpp
-		_install hollywood
-		_install rar
-		_install unrar
-		_install rtorrent
-		_install silversearcher-ag
-		_do_install_oclint
-		_do_install_hr
-		_do_install_qfc
-	fi
+	# Pre-installed
+	_do_config_variables
+	_do_config_general
+	_do_config_ssh
+	_do_config_desktop
+	_do_config_gnome_terminal
+	_do_config_nano
 
-	if [[ $PARAM_LONG -eq 1 ]]; then
-		_install_long ubuntu-restricted-extras
-		_install_long texlive
-		_install_long latexmk
-		_install_long texlive-lang-german
-		_install_long texlive-latex-extra
-		_install_long texlive-fonts-extra
-		_install_long texlive-bibtex-extra
-		_install_long openjdk-8-jdk
-	fi
-
-	sudo apt-get autoremove > /dev/null
+	# Manually installed
+	_do_config_git
+	_do_config_tmux
+	_do_config_openssh_server
 
 	return 0
 }
 
+#########################################################################
+
+## Configuration of everything not program-specific or specific for pre-installed software
+
+# Configure global environment variables
+_do_config_variables () {
+	local -r LOCAL_LIB=/usr/local/lib
+	local -r LD_CONFIG_PATH=/etc/ld.so.conf.d
+	local -r LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
+
+	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
+	if [[ $? -ne 0 ]]; then
+		sudo bash -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
+	fi
+	_append_to_path "/usr/local/bin"
+	_append_to_path "/usr/local/sbin"
+
+	return 0
+}
+
+# Configure all kinds of stuff
 _do_config_general () {
+	# Add user to groups
 	sudo bash -c "usermod -a -G dialout $USER"
 	sudo bash -c "usermod -a -G tty $USER"
+
+	# Remove file that causes to display useless, unclosable error window
 	rm -f "$HOME"/.config/monitors.xml
+
+	# Disable guest account
 	local -r LIGHTDM_CONF="/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 	grep 'allow-guest=false' < $LIGHTDM_CONF &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		sudo bash -c "echo 'allow-guest=false' >> $LIGHTDM_CONF"
 	fi
-	if [ $DLLOC_CHANGED -ne 1 ]; then
-		_change_dlloc
-	fi
+
+	# Change download server location
+	_change_dlloc
+
 	# Locale and timezone
 	timedatectl set-timezone Europe/Berlin
 	sudo locale-gen de_DE.UTF-8 > /dev/null
 	sudo update-locale LANG=de_DE.UTF-8
+
 	# Default applications
 	echo "[Default Applications]" > "$DEFAULTS"
 	local -r DESKTOP_SUBL="sublime_text.desktop"
@@ -760,55 +762,8 @@ _do_config_general () {
 		"x-scheme-handler/ftp")
 	_setmimes MIMES_CHROME[@] $DESKTOP_CHROME
 
-	return 0
-}
-
-_do_config_variables () {
-	# Modifying global environment variables and library search path for linker
-	local -r LOCAL_LIB=/usr/local/lib
-	local -r LD_CONFIG_PATH=/etc/ld.so.conf.d
-	local -r LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
-
-	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
-	if [[ $? -ne 0 ]]; then
-		sudo bash -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
-	fi
-	_append_to_path "/usr/local/bin"
-	_append_to_path "/usr/local/sbin"
-
-	return 0
-}
-
-_do_config_desktop () {
-	dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
-	dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
-	gsettings set com.ubuntu.update-notifier no-show-notifications true
-	gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
-	gsettings set org.gnome.desktop.interface clock-show-date true
-	gsettings set org.gnome.desktop.screensaver lock-enabled false
-	gsettings set org.gnome.desktop.session idle-delay 0
-	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-minimize-window true
-	gsettings set com.canonical.Unity always-show-menus true
-	gsettings set com.canonical.Unity integrated-menus true
-	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
-	gsettings set org.gnome.desktop.media-handling automount-open false
-
-	return 0
-}
-
-_do_config_terminal () {
-	# Terminal
-	local TPROFILE
-	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
-	TPROFILE=${TPROFILE:1:-1}
-	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
-	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/use-theme-colors false
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
-	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
 	# PS1 for root
-	local -r ROOTCUSTOMRC="/root/.customrc"
-	sudo bash -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]# \"' > $ROOTCUSTOMRC"
+	sudo bash -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]# \"' > /root/.customrc"
 	sudo bash -c "grep customrc < /root/.bashrc &> /dev/null"
 	if [[ $? -ne 0 ]]; then
 		sudo bash -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
@@ -840,48 +795,230 @@ _do_config_ssh () {
 		echo "$I" >> "$SSH_KFILE"
 	done
 
-	# SSH server
-	if _is_installed sshd; then
-		local -r SSH_SCONFIG=/etc/ssh/sshd_config
-		if [[ -f $SSH_SCONFIG ]]; then
-			sudo cp $SSH_SCONFIG $SSH_SCONFIG.default
-		fi
-		sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSH_SCONFIG
-		sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSH_SCONFIG
-		sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
-		sudo systemctl restart ssh
-	fi
+	return 0
+}
+
+# Configure desktop settings
+_do_config_desktop () {
+	dconf write /org/compiz/profiles/unity/plugins/unityshell/launcher-capture-mouse false
+	dconf write /org/compiz/profiles/unity/plugins/unityshell/icon-size 35
+	gsettings set com.ubuntu.update-notifier no-show-notifications true
+	gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/Flora_by_Marek_Koteluk.jpg
+	gsettings set org.gnome.desktop.interface clock-show-date true
+	gsettings set org.gnome.desktop.screensaver lock-enabled false
+	gsettings set org.gnome.desktop.session idle-delay 0
+	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-minimize-window true
+	gsettings set com.canonical.Unity always-show-menus true
+	gsettings set com.canonical.Unity integrated-menus true
+	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
+	gsettings set org.gnome.desktop.media-handling automount-open false
 
 	return 0
 }
 
+# Configure gnome-terminal
+_do_config_gnome_terminal () {
+	# Terminal
+	local TPROFILE
+	TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
+	TPROFILE=${TPROFILE:1:-1}
+	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/palette "['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(0,0,205)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(250,235,215)', 'rgb(64,64,64)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']"
+	dconf write /org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/use-theme-colors false
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
+	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
+	
+
+	return 0
+}
+
+# Configure nano
 _do_config_nano () {
-	if _is_installed nano; then
+	# shellcheck disable=2034
+	local -r NANO_CONFIG="$HOME"/.nanorc
+	cat <<- 'EOF' > "$NANO_CONFIG"
+		set tabsize 4
+		set const
+
+	EOF
+
+	return 0
+}
+
+#########################################################################
+
+## Configuration of manually installed software
+
+# Configure git
+_do_config_git () {
+	if _is_installed git; then
+		git config --global user.email "$USER_GIT_EMAIL"
+		git config --global user.name "$USER_GIT_NAME"
+		return 0
+	else
+		return 1
+	fi
+}
+
+# Configure tmux
+_do_config_tmux () {
+	if _is_installed tmux; then
 		# shellcheck disable=2034
-		local -r NANO_CONFIG="$HOME"/.nanorc
-		cat <<- 'EOF' > "$NANO_CONFIG"
-			set tabsize 4
-			set const
+		local -r TMUX_CONFIG="$HOME"/.tmux.conf
+		cat <<- 'EOF' > "$TMUX_CONFIG"
+			# Activate pane switching with ALT + ARROW
+			bind -n M-Left select-pane -L
+			bind -n M-Right select-pane -R
+			bind -n M-Up select-pane -U
+			bind -n M-Down select-pane -D
+
+			# Activate window switching with CTRL + SHIFT + ARROW
+			bind -n C-S-Left previous-window
+			bind -n C-S-Right next-window
+
+			# Activate scroll mode with CTRL + PageUp
+			bind -n C-Pageup copy-mode -u
+
+			# Activate copying to system buffer
+			setw -g mode-keys vi
+			bind -t vi-copy y copy-pipe 'xclip -in -selection clipboard'
+
+			# Enable mouse mode (tmux 2.1 and above)
+			# set -g mouse on
+
+			######################
+			### DESIGN CHANGES ###
+			######################
+
+			# panes
+			set -g pane-border-fg black
+			set -g pane-active-border-fg brightred
+
+			## Status bar design
+			# status line
+			set -g status-utf8 on
+			set -g status-justify left
+			set -g status-bg default
+			set -g status-fg colour12
+			set -g status-interval 1
+
+			# messaging
+			set -g message-fg black
+			set -g message-bg yellow
+			set -g message-command-fg blue
+			set -g message-command-bg black
+
+			# window mode
+			setw -g mode-bg colour6
+			setw -g mode-fg colour0
+
+			# window status
+			setw -g window-status-format " #F#I:#W#F "
+			setw -g window-status-current-format " #F#I:#W#F "
+			setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
+			setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
+			setw -g window-status-current-bg colour0
+			setw -g window-status-current-fg colour11
+			setw -g window-status-current-attr dim
+			setw -g window-status-bg green
+			setw -g window-status-fg black
+			setw -g window-status-attr reverse
+
+			# Info on left (I don't have a session display for now)
+			set -g status-left ''
+
+			# loud or quiet?
+			set-option -g visual-activity off
+			set-option -g visual-bell off
+			set-option -g visual-silence off
+			set-window-option -g monitor-activity off
+			set-option -g bell-action none
+
+			set -g default-terminal "screen-256color"
+
+			# The modes
+			setw -g clock-mode-colour colour135
+			setw -g mode-attr bold
+			setw -g mode-fg colour196
+			setw -g mode-bg colour238
+
+			# The panes
+			set -g pane-border-bg colour0
+			set -g pane-border-fg colour238
+			set -g pane-active-border-bg colour0
+			set -g pane-active-border-fg colour51
+
+			# The statusbar
+			set -g status-position bottom
+			set -g status-bg colour234
+			set -g status-fg colour137
+			set -g status-attr dim
+			set -g status-left ''
+			set -g status-right '#[fg=colour233,bg=colour241,bold] %d/%m #[fg=colour233,bg=colour245,bold] %H:%M:%S '
+			set -g status-right-length 50
+			set -g status-left-length 20
+
+			setw -g window-status-current-fg colour81
+			setw -g window-status-current-bg colour238
+			setw -g window-status-current-attr bold
+			setw -g window-status-current-format ' #I#[fg=colour250]:#[fg=colour255]#W#[fg=colour50]#F '
+
+			setw -g window-status-fg colour138
+			setw -g window-status-bg colour235
+			setw -g window-status-attr none
+			setw -g window-status-format ' #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F '
+
+			setw -g window-status-bell-attr bold
+			setw -g window-status-bell-fg colour255
+			setw -g window-status-bell-bg colour1
+
+			# The messages
+			set -g message-attr bold
+			set -g message-fg colour232
+			set -g message-bg colour166
 
 		EOF
+		if _is_installed git; then
+			git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar &> /dev/null
+			if [[ $? -eq 0 ]]; then
+				cat <<- 'EOF' >> "$TMUX_CONFIG"
+					# Git-bar
+					set -g status-right-length 100
+					source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
+
+				EOF
+			fi
+		fi
+
+		return 0
+	else
+		return 1
 	fi
-
-	return 0
 }
 
-_do_config () {
-	_print_info "Configuring ..."
+# Configure OpenSSH server
+_do_config_openssh_server () {
+	if _is_installed sshd; then
+		local -r SSHD_CONFIG=/etc/ssh/sshd_config
+		if [[ -f $SSHD_CONFIG ]]; then
+			sudo cp $SSHD_CONFIG $SSHD_CONFIG.default
+		fi
+		sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSHD_CONFIG
+		sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSHD_CONFIG
+		sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
+		sudo systemctl restart ssh
 
-	_do_config_general
-	_do_config_variables
-	_do_config_desktop
-	_do_config_terminal
-	_do_config_ssh
-	_do_config_nano
-
-	return 0
+		return 0
+	else
+		return 1
+	fi
 }
 
+###################################################################################################################################################
+### HELP ##########################################################################################################################################
+###################################################################################################################################################
+
+# Show help
 # shellcheck disable=2059
 _show_help () {
 	# General stuff
@@ -908,6 +1045,11 @@ _show_help () {
 	printf "License:\tMIT (https://github.com/meyerlasse/Linux-Startup/blob/master/LICENSE.md)\n"
 }
 
+###################################################################################################################################################
+### PARAMETER PARSING #############################################################################################################################
+###################################################################################################################################################
+
+# If one or more of the --do_* parameters is used, this function makes sure only those functions are called, but not the others
 _clean_dos () {
 	if [[ $DOS_CLEANED -ne 1 ]]; then
 		PARAM_DO_UPDATE=0
@@ -919,8 +1061,7 @@ _clean_dos () {
 	return 0
 }
 
-## Parameter parsing
-
+# Parameter parsing
 while [[ $# -gt 0 ]]; do
 	PARAM="$1"
 	case $PARAM in
@@ -976,22 +1117,28 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-## Check if run without sudo
+###################################################################################################################################################
+### EXECUTION #####################################################################################################################################
+###################################################################################################################################################
 
+# Check if help parameter was used
 if [[ $PARAM_HELP -eq 1 ]]; then
 	_show_help
 	exit 0
 fi
 
+# Check if run with normal user privileges
 if [[ $EUID == 0 ]]; then
 	_print_error "Don't run with sudo or as root!"
 	exit 1
 fi
 
+# If sudo is needed at some point, ask for password right away
 if [[ $PARAM_DO_UPDATE -eq 1 || $PARAM_DO_INSTALL -eq 1 || $PARAM_DO_CONFIG -eq 1 ]]; then
 	sudo test
 fi
 
+# Call functions
 if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
 	_do_homedir
 fi
@@ -1005,7 +1152,9 @@ if [[ $PARAM_DO_CONFIG -eq 1 ]]; then
 	_do_config
 fi
 
-## End
+###################################################################################################################################################
+### END ###########################################################################################################################################
+###################################################################################################################################################
 
 cd "$PWD_START"
 _print_info "Done."

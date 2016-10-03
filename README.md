@@ -50,8 +50,8 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 - homedir: Clean up home directory, create .customrc
 - update: Add repositories, update & upgrade
-- install: Install software and configure it
-- config: Configure different things, including SSH, desktop settings, gnome-terminal & other pre-installed software
+- install: Install software
+- config: Configure different things, including SSH, desktop settings, gnome-terminal, git, tmux, etc.
 
 #### USER variables:
 
