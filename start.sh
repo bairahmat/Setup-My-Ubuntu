@@ -299,6 +299,7 @@ _do_homedir () {
 		alias ggui='git gui'
 		alias cloc-all='cloc *.c *.h Makefile'
 		alias make='make -j4'
+		alias ag='ag --hidden'
 
 		# Other
 		alias src='. ~/.bashrc'
@@ -686,6 +687,7 @@ _do_install () {
 		_install rar
 		_install unrar
 		_install rtorrent
+		_install silversearcher-ag
 		_do_install_oclint
 		_do_install_hr
 		_do_install_qfc
