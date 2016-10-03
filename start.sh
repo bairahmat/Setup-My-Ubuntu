@@ -288,15 +288,19 @@ _do_homedir () {
 		alias grap='grep -R -n -i -e'
 		alias fond='find . -name'
 
-		# Applications
-		alias more='less -F'
-		alias less='less -F'
+		# Git
 		alias git-count='git rev-list --all --count'
 		alias giff='git diff HEAD'
 		alias giss='git status'
 		alias gpush='git push'
 		alias gpull='git pull'
 		alias ggui='git gui'
+		alias gadd='git add'
+		alias gunst='git reset HEAD'
+
+		# Applications
+		alias more='less -F'
+		alias less='less -F'
 		alias cloc-all='cloc *.c *.h Makefile'
 		alias make='make -j4'
 		alias ag='ag --hidden'
