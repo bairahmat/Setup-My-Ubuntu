@@ -52,6 +52,8 @@ readonly COLOR_BLUE="\e[34m"
 readonly PWD_START=$PWD
 readonly DL_PREFIX="/tmp"
 readonly DEFAULTS="$HOME/.local/share/applications/defaults.list"
+# Used by functions if parameter count is invalid
+readonly INV_ARGS=45
 
 # Parameter variables
 PARAM_QUICK=0
@@ -304,6 +306,18 @@ _change_dlloc () {
 		DLLOC_CHANGED=1
 	fi
 }
+
+# Add user to group
+# $1 = Group name
+# $2 = User name
+_add_user2group () {
+	if [[ $# -ne 2 ]]; then
+		return $INV_ARGS;
+	fi
+	sudo bash -c "usermod -a -G $1 $2"
+	return $?
+}
+	
 
 ###################################################################################################################################################
 ### DO_HOMEDIR ####################################################################################################################################
@@ -710,8 +724,8 @@ _do_config_variables () {
 # Configure all kinds of stuff
 _do_config_general () {
 	# Add user to groups
-	sudo bash -c "usermod -a -G dialout $USER"
-	sudo bash -c "usermod -a -G tty $USER"
+	_add_user2group "dialout" "$USER"
+	_add_user2group "tty" "$USER"
 
 	# Remove file that causes to display useless, unclosable error window
 	rm -f "$HOME"/.config/monitors.xml
