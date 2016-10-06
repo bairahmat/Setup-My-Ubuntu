@@ -521,12 +521,7 @@ _do_update_add_repos () {
 # Update
 _do_update_update () {
 	sudo apt-get -qq update &> /dev/null
-	if [[ $? -ne 0 ]]; then
-		_print_error "Update failed"
-		return 1
-	else
-		return 0
-	fi
+	return $?
 }
 
 # Upgrade
