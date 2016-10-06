@@ -119,7 +119,7 @@ _install_start () {
 # $2 = Download location
 _download () {
 	wget --tries=3 "$1" -P "$2" -q
-	return $!
+	return $?
 }
 
 # Clone a git repository
@@ -216,7 +216,7 @@ _install_script () {
 _install_git_repo () {
 	local SUCCESS=0
 	if ! _is_installed "$1"; then
-		if [[ -d "$3" ]]; then
+		if [[ ! -d "$3" ]]; then
 			_install_start "$1"
 			_clone_git "$2" "$3"
 			if [[ $? -ne 0 ]]; then
@@ -501,6 +501,7 @@ _do_homedir_dirs () {
 
 # Main update function
 _do_update () {
+	_print_info "Updating ..."
 	_change_dlloc
 
 	_do_update_add_repos
@@ -519,7 +520,6 @@ _do_update_add_repos () {
 
 # Update
 _do_update_update () {
-	_print_info "Updating ..."
 	sudo apt-get -qq update &> /dev/null
 	if [[ $? -ne 0 ]]; then
 		_print_error "Update failed"
