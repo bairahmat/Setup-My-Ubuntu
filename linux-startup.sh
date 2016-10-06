@@ -165,19 +165,19 @@ _install_apt_long () {
 
 # Download and install dpkg package, if not installed already
 # $1 = Name of software (name of binary)
-# $3 = File URL
+# $2 = File URL
 _install_dpkg () {
 	if ! _is_installed "$1"; then
 		local SUCCESS=0
 		_install_start "$1"
-		_download "$2/$3" "$DL_PREFIX"
+		_download "$2" "$DL_PREFIX"
 		if [[ $? -eq 0 ]]; then
-			sudo dpkg -i -G $DL_PREFIX/"$3" > /dev/null
+			sudo dpkg -i -G $DL_PREFIX/"${2##*/}" > /dev/null
 			if [[ $? -ne 0 ]]; then
 				_install_fail "$1"
 				SUCCESS=1
 			fi
-			rm -f $DL_PREFIX/"$3"
+			rm -f $DL_PREFIX/"${2##*/}"
 		else
 			_install_fail "$1"
 			SUCCESS=1
