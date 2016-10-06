@@ -577,6 +577,7 @@ _do_install () {
 		_do_install_oclint
 		_do_install_hr
 		_do_install_qfc
+		_do_install_tmux_gitbar
 	fi
 
 	if [[ $PARAM_LONG -eq 1 ]]; then
@@ -669,6 +670,12 @@ _do_install_hr () {
 # Install qfc
 _do_install_qfc () {
 	_install_git_repo "qfc" "https://github.com/pindexis/qfc" "$HOME/.qfc"
+	return $?
+}
+
+# Install tmux gitbar
+_do_install_tmux_gitbar () {
+	_install_git_repo "tmux-gitbar" "https://github.com/aurelien-rainone/tmux-gitbar.git" "$HOME/.tmux-gitbar"
 	return $?
 }
 
@@ -987,16 +994,13 @@ _do_config_tmux () {
 			set -g message-bg colour166
 
 		EOF
-		if _is_installed git; then
-			git clone https://github.com/aurelien-rainone/tmux-gitbar.git "$HOME"/.tmux-gitbar &> /dev/null
-			if [[ $? -eq 0 ]]; then
-				cat <<- 'EOF' >> "$TMUX_CONFIG"
-					# Git-bar
-					set -g status-right-length 100
-					source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
+		if [[ -d "$HOME/.tmux-gitbar" ]]; then
+			cat <<- 'EOF' >> "$TMUX_CONFIG"
+				# Git-bar
+				set -g status-right-length 100
+				source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
 
-				EOF
-			fi
+			EOF
 		fi
 
 		return 0
