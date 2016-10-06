@@ -33,6 +33,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 | -q / --quick    | Don't do anything that takes a significant amount of time (~ >1 min), e.g. `apt-get upgrade`.                                 |
 | -l / --long     | Install large software packets that take a while to install. Ignores parameter `-q/--quick`.                                  |
 | -i / --important| Only install important programs, e.g. git or tmux.                                                                            |
+| --4K            | Configure desktop to be more usuable with a 4K resolution                                                                     |
 | -o / --offline  | Don't do anything that requires an internet connection. Overrides parameters `-l/--long`, `-i/--important` and `--do_install`.|
 | -r / --restart  | Restart when finished.                                                                                                        |
 | -h / --help     | Show help, don't do anything else.                                                                                            |

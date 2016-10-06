@@ -60,6 +60,7 @@ PARAM_QUICK=0
 PARAM_LONG=0
 PARAM_IMPORTANT=0
 PARAM_OFFLINE=0
+PARAM_4K=0
 PARAM_RESTART=0
 PARAM_HELP=0
 PARAM_DO_UPDATE=1
@@ -829,6 +830,10 @@ _do_config_desktop () {
 	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
 	gsettings set org.gnome.desktop.media-handling automount-open false
 
+	if [[ $PARAM_4K -eq 1 ]]; then
+		gsettings set org.gnome.desktop.interface scaling-factor 1.75
+	fi
+
 	return 0
 }
 
@@ -1092,6 +1097,10 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-o|--offline)
 			PARAM_OFFLINE=1
+			shift
+			;;
+		--4K)
+			PARAM_4K=1
 			shift
 			;;
 		-r|--restart)
