@@ -875,6 +875,7 @@ _do_config_git () {
 	if _is_installed git; then
 		git config --global user.email "$USER_GIT_EMAIL"
 		git config --global user.name "$USER_GIT_NAME"
+		git config --global push.default simple
 		return 0
 	else
 		return 1
