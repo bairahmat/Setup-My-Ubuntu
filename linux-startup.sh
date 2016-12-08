@@ -576,6 +576,7 @@ _do_install () {
 		_install_apt silversearcher-ag
 		_install_apt myrepos
 		_install_apt aptitude
+		_install_apt xdotool
 		_do_install_oclint
 		_do_install_hr
 		_do_install_qfc
@@ -1185,8 +1186,13 @@ cd "$PWD_START"
 _print_info "Done."
 
 if [[ $PARAM_RESTART -eq 0 ]]; then
-	# shellcheck disable=2059
-	printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
+	if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
+		# shellcheck disable=2059
+		printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
+		if _is_installed xdotool; then
+			xdotool type ". ~/.bashrc"
+		fi
+	fi
 else
 	_print_info "Rebooting..."
 	sudo reboot
