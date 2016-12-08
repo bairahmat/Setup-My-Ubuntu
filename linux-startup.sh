@@ -397,8 +397,8 @@ _do_homedir_customrc () {
 		alias src='. ~/.bashrc'
 		alias dta='dmesg | tail'
 		alias grip='ps aux | grep -i -e'
-		alias updog='sudo apt-get update; sudo apt-get upgrade'
-		alias dl='sudo apt-get install'
+		alias updog='sudo aptitude update; sudo aptitude upgrade'
+		alias dl='sudo aptitude install'
 
 		# Create directory and enter it
 		# $1 = Name of new directory
@@ -575,6 +575,7 @@ _do_install () {
 		_install_apt rtorrent
 		_install_apt silversearcher-ag
 		_install_apt myrepos
+		_install_apt aptitude
 		_do_install_oclint
 		_do_install_hr
 		_do_install_qfc
