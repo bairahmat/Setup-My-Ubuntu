@@ -594,7 +594,7 @@ _do_install () {
 		_install_apt_long openjdk-8-jdk
 	fi
 
-	sudo apt-get autoremove > /dev/null
+	sudo apt-get autoremove -y -qq > /dev/null
 
 	return 0
 }
@@ -654,7 +654,7 @@ _do_install_sublime () {
 # Install Google Chrome
 _do_install_chrome () {
 	# shellcheck disable=2034
-	local -r -a CHROME_DEPENDS=("libpango1.0-0 libindicator7" "libappindicator1")
+	local -r -a CHROME_DEPENDS=("libpango1.0-0" "libindicator7" "libappindicator1")
 	_install_apt_depends CHROME_DEPENDS[@] "google-chrome"
 	if [[ $? -eq 0 ]]; then
 		_install_dpkg "google-chrome" "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
