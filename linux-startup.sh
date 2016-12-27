@@ -87,32 +87,35 @@ export DEBIAN_FRONTEND="noninteractive"
 # $1 = String to print
 _print_info () {
 	printf "[$COLOR_GREEN%s$COLOR_DEFAULT] %s\n" "INF" "$1"
+	return $?
 }
 
 # Print warning message
 # $1 = String to print
 _print_warning () {
 	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s\n" "WRN" "$1"
+	return $?
 }
 
 # Print error message
 # $1 = String to print
 _print_error () {
 	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "ERR" "$1"
+	return $?
 }
 
 # Print installation failure error message
 # $1 = Name of software
 _install_fail () {
 	_print_error "Installing $1 failed"
-	return 0
+	return $?
 }
 
 # Print installation start info message
 # $1 = Name of software
 _install_start () {
 	_print_info "Installing $1 ..."
-	return 0
+	return $?
 }
 
 #########################################################################
@@ -310,6 +313,7 @@ _change_dlloc () {
 		sudo apt-get -qq update &> /dev/null
 		DLLOC_CHANGED=1
 	fi
+	return $?
 }
 
 # Add user to group
@@ -457,6 +461,7 @@ _do_homedir_customrc () {
 _do_homedir_customrc_programs () {
 	_do_homedir_customrc_programs_hstr
 	_do_homedir_customrc_programs_qfc
+	return 0
 }
 
 _do_homedir_customrc_programs_hstr () {
@@ -468,6 +473,7 @@ _do_homedir_customrc_programs_hstr () {
 			bind '"\C-r": "\C-a hh \C-j"'
 		EOF
 	fi
+	return 0
 }
 
 _do_homedir_customrc_programs_qfc () {
@@ -479,6 +485,7 @@ _do_homedir_customrc_programs_qfc () {
 			qfc_quick_command 'cd' '\C-n' 'cd $0'
 		EOF
 	fi
+	return 0
 }
 
 # Delete most preexisting repositories in home directory
@@ -548,8 +555,10 @@ _do_update_upgrade () {
 		sudo apt-get -y -qq upgrade > /dev/null
 		if [[ $? -ne 0 ]]; then
 			_print_error "Upgrade failed"
+			return 1
 		fi
 	fi
+	return 0
 }
 
 ###################################################################################################################################################
@@ -1083,6 +1092,7 @@ _show_help () {
 	printf "Author:\t\tLasse Meyer\n"
 	printf "Source:\t\thttps://github.com/meyerlasse/Linux-Startup\n"
 	printf "License:\tMIT (https://github.com/meyerlasse/Linux-Startup/blob/master/LICENSE.md)\n"
+	return 0
 }
 
 ###################################################################################################################################################
