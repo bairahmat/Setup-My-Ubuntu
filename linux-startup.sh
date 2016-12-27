@@ -1030,12 +1030,8 @@ _do_config_tmux () {
 
 		EOF
 		if [[ -d "$HOME/.tmux-gitbar" ]]; then
-			cat <<- 'EOF' >> "$TMUX_CONFIG"
-				# Git-bar
-				set -g status-right-length 100
-				source-file "~/.tmux-gitbar/tmux-gitbar.tmux"
-
-			EOF
+			echo "set -g status-right-length 100" >> "$TMUX_CONFIG"
+			echo "source-file $HOME/.tmux-gitbar/tmux-gitbar.tmux" >> "$TMUX_CONFIG"
 		fi
 
 		return 0
