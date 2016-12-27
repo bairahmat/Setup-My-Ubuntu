@@ -52,6 +52,10 @@ readonly COLOR_BLUE="\e[34m"
 readonly PWD_START=$PWD
 readonly DL_PREFIX="/tmp"
 readonly DEFAULTS="$HOME/.local/share/applications/defaults.list"
+readonly FILE_BASHRC="$HOME"/.bashrc
+readonly FILE_CUSTOMRC="$HOME"/.customrc
+readonly FILE_PROFILE="$HOME"/.profile
+readonly FILE_CUSTOMPROFILE="$HOME"/.customprofile
 # Used by functions if parameter count is invalid
 readonly INV_ARGS=45
 
@@ -338,10 +342,6 @@ _do_homedir () {
 
 # Create ~/.customprofile
 _do_homedir_customprofile () {
-	local -r FILE_PROFILE="$HOME"/.profile
-	# shellcheck disable=2034
-	local -r FILE_CUSTOMPROFILE="$HOME"/.customprofile
-
 	cat <<- 'EOF' > "$FILE_CUSTOMPROFILE"
 		export PATH=$PATH:$HOME/bin
 		export PS4='[ \$LINENO ] '
@@ -359,10 +359,6 @@ _do_homedir_customprofile () {
 }
 
 _do_homedir_customrc () {
-	local -r FILE_BASHRC="$HOME"/.bashrc
-	# shellcheck disable=2034
-	local -r FILE_CUSTOMRC="$HOME"/.customrc
-
 	cat <<- 'EOF' > "$FILE_CUSTOMRC"
 		# Moving through, looking at & searching through directories
 		alias go-dl='cd ~/Downloads'
@@ -445,16 +441,9 @@ _do_homedir_customrc () {
 		HISTFILESIZE=10000
 		HISTSIZE=${HISTFILESIZE}
 		PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
-
-		# HSTR settings
-		export HH_CONFIG=hicolor,rawhistory,blacklist
-		bind '"\C-r": "\C-a hh \C-j"'
-
-		# qfc
-		[[ -s "$HOME/.qfc/bin/qfc.sh" ]] && source "$HOME/.qfc/bin/qfc.sh"
-		qfc_quick_command 'cd' '\C-n' 'cd $0'
-
 	EOF
+
+	_do_homedir_customrc_programs
 
 	# Check if .customrc is sourced in .bashrc
 	grep "customrc" < "$FILE_BASHRC" &> /dev/null
@@ -463,6 +452,33 @@ _do_homedir_customrc () {
 	fi
 
 	return 0
+}
+
+_do_homedir_customrc_programs () {
+	_do_homedir_customrc_programs_hstr
+	_do_homedir_customrc_programs_qfc
+}
+
+_do_homedir_customrc_programs_hstr () {
+	if _is_installed hh; then
+		cat <<- 'EOF' >> "$FILE_CUSTOMRC"
+
+			# HSTR settings
+			export HH_CONFIG=hicolor,rawhistory,blacklist
+			bind '"\C-r": "\C-a hh \C-j"'
+		EOF
+	fi
+}
+
+_do_homedir_customrc_programs_qfc () {
+	if _is_installed qfc_quick_command; then
+		cat <<- 'EOF' >> "$FILE_CUSTOMRC"
+
+			# qfc
+			[[ -s "$HOME/.qfc/bin/qfc.sh" ]] && source "$HOME/.qfc/bin/qfc.sh"
+			qfc_quick_command 'cd' '\C-n' 'cd $0'
+		EOF
+	fi
 }
 
 # Delete most preexisting repositories in home directory
@@ -595,6 +611,8 @@ _do_install () {
 	fi
 
 	sudo apt-get autoremove -y -qq > /dev/null
+
+	_do_homedir_customrc
 
 	return 0
 }
