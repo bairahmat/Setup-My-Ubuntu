@@ -588,6 +588,8 @@ _do_install () {
 		_install_apt subversion
 		_install_apt cmake
 		_install_apt automake
+		_install_apt autoconf
+		_install_apt libtool
 		_install_apt shellcheck
 		_install_apt valgrind
 		_install_apt bear
