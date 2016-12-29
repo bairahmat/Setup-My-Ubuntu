@@ -181,9 +181,9 @@ _install_dpkg () {
 		local SUCCESS=0
 		_install_start "$1"
 		_download "$2" "$DL_PREFIX"
-		if [[ $? -eq 0 ]]; then
+		if (( $? == 0 )); then
 			sudo dpkg -i -G $DL_PREFIX/"${2##*/}" > /dev/null
-			if [[ $? -ne 0 ]]; then
+			if (( $? != 0 )); then
 				_install_fail "$1"
 				SUCCESS=1
 			fi
@@ -206,11 +206,11 @@ _install_script () {
 		_install_start "$1"
 		curl --retry 3 -s "$2" > "$3" 2> /dev/null
 		SUCCESS=$?
-		if [[ $SUCCESS -eq 0 ]]; then
+		if (( SUCCESS == 0 )); then
 			chmod +x "$3"
 			SUCCESS=$?
 		fi
-		if [[ $SUCCESS -ne 0 ]]; then
+		if (( SUCCESS != 0 )); then
 			_install_fail "$1"
 		fi
 	fi
@@ -227,7 +227,7 @@ _install_git_repo () {
 		if [[ ! -d "$3" ]]; then
 			_install_start "$1"
 			_clone_git "$2" "$3"
-			if [[ $? -ne 0 ]]; then
+			if (( $? != 0 )); then
 				_install_fail "$1"
 				SUCCESS=1
 			fi
@@ -244,11 +244,11 @@ _install_apt_depends () {
 	local -a -r DEPENDS=("${!1}")
 	for DEP in "${DEPENDS[@]}"; do
 		_install_apt_generic "$DEP"
-		if [[ $? -ne 0 ]]; then
+		if (( $? != 0 )); then
 			SUCCESS=1
 		fi
 	done
-	if [[ $SUCCESS -ne 0 ]]; then
+	if (( SUCCESS != 0 )); then
 		_print_error "Installing dependencies for $2 failed"
 	fi
 	return $SUCCESS
@@ -259,7 +259,7 @@ _install_apt_depends () {
 _install_apt_generic () {
 	local SUCCESS=0
 	sudo apt-get -y -qq install "$1" &> /dev/null
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		_install_fail "$1"
 		SUCCESS=1
 	fi
@@ -276,7 +276,7 @@ _append_to_path () {
 	local -r ENV_FILE="/etc/environment"
 	# Is the path already in PATH?
 	grep "PATH=.*$1" < "$ENV_FILE" &> /dev/null
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		# Cut off "
 		sudo sed -i '/^PATH=/ s/\"$//' $ENV_FILE
 		# Add new path and add "
@@ -308,7 +308,7 @@ _delete_dirs () {
 
 # Change download server location for apt-get. Uses USER_DLLOC variable.
 _change_dlloc () {
-	if [[ $PARAM_OFFLINE -ne 1 && $DLLOC_CHANGED -ne 1 ]]; then
+	if (( PARAM_OFFLINE != 1 && DLLOC_CHANGED != 1 )); then
 		sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
 		sudo apt-get -qq update &> /dev/null
 		DLLOC_CHANGED=1
@@ -320,7 +320,7 @@ _change_dlloc () {
 # $1 = Group name
 # $2 = User name
 _add_user2group () {
-	if [[ $# -ne 2 ]]; then
+	if (( $# != 2 )); then
 		return $INV_ARGS;
 	fi
 	sudo bash -c "usermod -a -G $1 $2"
@@ -355,7 +355,7 @@ _do_homedir_customprofile () {
 
 	# Check if .customprofile is sourced in .profile
 	grep "customprofile" < "$FILE_PROFILE" &> /dev/null
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		echo -e "\nsource ~/.customprofile" >> "$FILE_PROFILE"
 	fi
 
@@ -404,7 +404,7 @@ _do_homedir_customrc () {
 		# $1 = Name of new directory
 		mkc () {
 		    mkdir "$1"
-		    if [[ $? -eq 0 ]]; then
+		    if (( $? == 0 )); then
 		        cd "$1"
 		        return 0
 		    else
@@ -451,7 +451,7 @@ _do_homedir_customrc () {
 
 	# Check if .customrc is sourced in .bashrc
 	grep "customrc" < "$FILE_BASHRC" &> /dev/null
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		echo -e "\nsource ~/.customrc" >> "$FILE_BASHRC"
 	fi
 
@@ -550,10 +550,10 @@ _do_update_update () {
 
 # Upgrade
 _do_update_upgrade () {
-	if [[ $PARAM_QUICK -ne 1 ]]; then
+	if (( PARAM_QUICK != 1 )); then
 		_print_info "Upgrading ... (this could take a while)"
 		sudo apt-get -y -qq upgrade > /dev/null
-		if [[ $? -ne 0 ]]; then
+		if (( $? != 0 )); then
 			_print_error "Upgrade failed"
 			return 1
 		fi
@@ -580,7 +580,7 @@ _do_install () {
 	_do_install_sublime
 	_do_install_chrome
 
-	if [[ $PARAM_IMPORTANT -ne 1 ]]; then
+	if (( PARAM_IMPORTANT != 1 )); then
 		_install_apt tmuxinator
 		_install_apt openssh-server
 		_install_apt cloc
@@ -610,7 +610,7 @@ _do_install () {
 		_do_install_tmux_gitbar
 	fi
 
-	if [[ $PARAM_LONG -eq 1 ]]; then
+	if (( PARAM_LONG == 1 )); then
 		_install_apt_long ubuntu-restricted-extras
 		_install_apt_long texlive
 		_install_apt_long latexmk
@@ -647,24 +647,24 @@ _do_install_oclint () {
 		_download "$OCLINT_SITE/$OCLINT_FILE" "$DL_PREFIX"
 		OCLINT_RETURN=$!
 		# Unpack
-		if [[ $OCLINT_RETURN -eq 0 ]]; then
+		if (( OCLINT_RETURN == 0 )); then
 			cd "$DL_PREFIX"
 			tar xzf "$DL_PREFIX/$OCLINT_FILE"
 			OCLINT_RETURN=$!
 			rm -f "$DL_PREFIX/$OCLINT_FILE"
 		fi
 		# Install
-		if [[ $OCLINT_RETURN -eq 0 ]]; then
+		if (( OCLINT_RETURN == 0 )); then
 			cd "$DL_PREFIX/$OCLINT_DIR"
 			OCLINT_RETURN=$!
 		fi
-		if [[ $OCLINT_RETURN -eq 0 ]]; then
+		if (( OCLINT_RETURN == 0 )); then
 			sudo cp bin/oclint* /usr/local/bin/
 			sudo cp -rp lib/* /usr/local/lib/
 			rm -r -f "${DL_PREFIX:?}/$OCLINT_DIR"
 		fi
 
-		if [[ $OCLINT_RETURN -ne 0 ]]; then
+		if (( OCLINT_RETURN != 0 )); then
 			_install_fail "oclint"
 		fi
 
@@ -685,7 +685,7 @@ _do_install_chrome () {
 	# shellcheck disable=2034
 	local -r -a CHROME_DEPENDS=("libpango1.0-0" "libindicator7" "libappindicator1")
 	_install_apt_depends CHROME_DEPENDS[@] "google-chrome"
-	if [[ $? -eq 0 ]]; then
+	if (( $? == 0 )); then
 		_install_dpkg "google-chrome" "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
 		return $?
 	else
@@ -746,7 +746,7 @@ _do_config_variables () {
 	local -r LD_CONFIG_CUSTOM=$LD_CONFIG_PATH/user.conf
 
 	grep -R $LD_CONFIG_PATH -e $LOCAL_LIB &> /dev/null
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		sudo bash -c "echo $LOCAL_LIB > $LD_CONFIG_CUSTOM"
 	fi
 	_append_to_path "/usr/local/bin"
@@ -767,7 +767,7 @@ _do_config_general () {
 	# Disable guest account
 	local -r LIGHTDM_CONF="/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 	grep 'allow-guest=false' < $LIGHTDM_CONF &> /dev/null
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		sudo bash -c "echo 'allow-guest=false' >> $LIGHTDM_CONF"
 	fi
 
@@ -813,7 +813,7 @@ _do_config_general () {
 	# PS1 for root
 	sudo bash -c "echo 'export PS1=\"\\\${debian_chroot:+(\\\$debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]# \"' > /root/.customrc"
 	sudo bash -c "grep customrc < /root/.bashrc &> /dev/null"
-	if [[ $? -ne 0 ]]; then
+	if (( $? != 0 )); then
 		sudo bash -c "echo '\nsource ~/.customrc' >> /root/.bashrc"
 	fi
 
@@ -861,7 +861,7 @@ _do_config_desktop () {
 	gsettings set com.canonical.Unity.Launcher favorites "['application://gnome-terminal.desktop', 'application://org.gnome.Nautilus.desktop', 'application://google-chrome.desktop', 'application://sublime_text.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices', 'unity://desktop-icon']"
 	gsettings set org.gnome.desktop.media-handling automount-open false
 
-	if [[ $PARAM_4K -eq 1 ]]; then
+	if (( PARAM_4K == 1 )); then
 		gsettings set org.gnome.desktop.interface scaling-factor 1.75
 	fi
 
@@ -1099,7 +1099,7 @@ _show_help () {
 
 # If one or more of the --do_* parameters is used, this function makes sure only those functions are called, but not the others
 _clean_dos () {
-	if [[ $DOS_CLEANED -ne 1 ]]; then
+	if (( DOS_CLEANED != 1 )); then
 		PARAM_DO_UPDATE=0
 		PARAM_DO_INSTALL=0
 		PARAM_DO_CONFIG=0
@@ -1174,33 +1174,33 @@ done
 ###################################################################################################################################################
 
 # Check if help parameter was used
-if [[ $PARAM_HELP -eq 1 ]]; then
+if (( PARAM_HELP == 1 )); then
 	_show_help
 	exit 0
 fi
 
 # Check if run with normal user privileges
-if [[ $EUID == 0 ]]; then
+if (( EUID == 0 )); then
 	_print_error "Don't run with sudo or as root!"
 	exit 1
 fi
 
 # If sudo is needed at some point, ask for password right away
-if [[ $PARAM_DO_UPDATE -eq 1 || $PARAM_DO_INSTALL -eq 1 || $PARAM_DO_CONFIG -eq 1 ]]; then
+if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
 	sudo test
 fi
 
 # Call functions
-if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
+if (( PARAM_DO_HOMEDIR == 1 )); then
 	_do_homedir
 fi
-if [[ $PARAM_DO_UPDATE -eq 1 && $PARAM_OFFLINE -eq 0 ]]; then
+if (( PARAM_DO_UPDATE == 1 && PARAM_OFFLINE == 0 )); then
 	_do_update
 fi
-if [[ $PARAM_DO_INSTALL -eq 1 && $PARAM_OFFLINE -eq 0 ]]; then
+if (( PARAM_DO_INSTALL == 1 && PARAM_OFFLINE == 0 )); then
 	_do_install
 fi
-if [[ $PARAM_DO_CONFIG -eq 1 ]]; then
+if (( PARAM_DO_CONFIG == 1 )); then
 	_do_config
 fi
 
@@ -1211,8 +1211,8 @@ fi
 cd "$PWD_START"
 _print_info "Done."
 
-if [[ $PARAM_RESTART -eq 0 ]]; then
-	if [[ $PARAM_DO_HOMEDIR -eq 1 ]]; then
+if (( PARAM_RESTART == 0 )); then
+	if (( PARAM_DO_HOMEDIR == 1 )); then
 		# shellcheck disable=2059
 		printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
 		if _is_installed xdotool; then
