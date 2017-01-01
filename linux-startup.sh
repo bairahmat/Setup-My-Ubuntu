@@ -73,6 +73,7 @@ PARAM_LONG=0
 PARAM_IMPORTANT=0
 PARAM_OFFLINE=0
 PARAM_4K=0
+PARAM_FORCE=0
 PARAM_RESTART=0
 PARAM_HELP=0
 PARAM_DO_UPDATE=1
@@ -1152,6 +1153,10 @@ while (( $# > 0 )); do
 			PARAM_OFFLINE=1
 			shift
 			;;
+		-f|--force)
+			PARAM_FORCE=1
+			shift
+			;;
 		--4K)
 			PARAM_4K=1
 			shift
@@ -1250,7 +1255,7 @@ if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); 
 	if (( USER_CUSTOM == 1 )); then
 		_print_info "Using custom user variables..."
 	else
-		if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 )); then
+		if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 && PARAM_FORCE == 0)); then
 			_print_warning "At least one USER variable is set to its default value, continue anyway? [y/n]"
 			read CHOICE
 			if ! _check_choice; then

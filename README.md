@@ -35,6 +35,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 | -i / --important| Only install important programs, e.g. git or tmux.                                                                            |
 | --4K            | Configure desktop to be more usuable with a 4K resolution                                                                     |
 | -o / --offline  | Don't do anything that requires an internet connection. Overrides parameters `-l/--long`, `-i/--important` and `--do_install`.|
+| -f / --force    | Ignore all warnings.                                                                                                          |
 | -r / --restart  | Restart when finished.                                                                                                        |
 | -h / --help     | Show help, don't do anything else.                                                                                            |
 | --do_homedir    | Call homedir function.                                                                                                        |
