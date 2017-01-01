@@ -23,7 +23,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 ## Usage
 
 1. `wget https://github.com/meyerlasse/Linux-Startup/releases/download/2.0/linux-startup.sh`
-2. **Modify USER variables**. They can be found at the very beginning of the script.
+2. **Modify USER variables** or use --user_* parameters to override them
 3. `bash start.sh`
 
 ## Parameters
@@ -41,6 +41,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 | --do_update     | Call update function.                                                                                                         |
 | --do_install    | Call install function.                                                                                                        |
 | --do_config     | Call config function.                                                                                                         |
+| --user_*        | Override USER variables. See section below for more information.                                                              |
 
 #### Additional infos:
 
@@ -55,6 +56,8 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 - config: Configure different things, including SSH, desktop settings, gnome-terminal, git, tmux, etc.
 
 #### USER variables:
+
+All the USER variables are used when configuring certain software, including the download location for apt-get. You can manually set the user variables before starting the script (find them at the very beginning of the script) or use the --user_* parameters to override them (e.g. `--user_git_name "Your Name"` or `--user_dlloc "US"`).
 
 - USER_GIT_NAME: the name that will appear in Git commits, etc.
 - USER_GIT_EMAIL: the email address that will appear in Git commits, etc.

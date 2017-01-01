@@ -29,14 +29,22 @@
 ### VARIABLES #####################################################################################################################################
 ###################################################################################################################################################
 
-# User variables - NEED TO BE MODIFIED BEFORE USING
-readonly USER_GIT_NAME="Lasse Meyer"
-readonly USER_GIT_EMAIL="meyer.lasse@gmail.com"
-readonly USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
-readonly USER_SSH_KEYS=(\
+# User variables, use parameters to override or set them all manually and then set USER_CUSTOM=1
+USER_CUSTOM=0
+
+USER_GIT_NAME="Lasse Meyer"
+USER_GIT_EMAIL="meyer.lasse@gmail.com"
+USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
+USER_SSH_KEYS=(\
 	"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
 	"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com")
-readonly USER_DLLOC=de
+USER_DLLOC=de
+
+USER_GIT_NAME_C=0
+USER_GIT_EMAIL_C=0
+USER_SSH_BANNER_C=0
+USER_SSH_KEYS_C=0
+USER_DLLOC_C=0
 
 # Formatting variables
 readonly FORMAT_BOLD="\e[1m"
@@ -325,6 +333,21 @@ _add_user2group () {
 	fi
 	sudo bash -c "usermod -a -G $1 $2"
 	return $?
+}
+
+# Check if user has input y/yes (case-insensitive) -> true, anything else -> false
+_check_choice () {
+	case "$CHOICE" in
+		[y/Y])
+			return 0
+			;;
+		[yY][eE][sS])
+			return 0
+			;;
+		*)
+			return 1
+			;;
+	esac
 }
 	
 
@@ -1110,7 +1133,7 @@ _clean_dos () {
 }
 
 # Parameter parsing
-while [[ $# -gt 0 ]]; do
+while (( $# > 0 )); do
 	PARAM="$1"
 	case $PARAM in
 		-q|--quick)
@@ -1161,6 +1184,31 @@ while [[ $# -gt 0 ]]; do
 			PARAM_DO_HOMEDIR=1
 			shift
 			;;
+		--user_git_name)
+			USER_GIT_NAME="$2"
+			USER_GIT_NAME_C=1
+			shift; shift
+			;;
+		--user_git_email)
+			USER_GIT_EMAIL="$2"
+			USER_GIT_EMAIL_C=1
+			shift; shift
+			;;
+		--user_ssh_banner)
+			USER_SSH_BANNER="$2"
+			USER_SSH_BANNER_C=1
+			shift; shift
+			;;
+		--user_ssh_keys)
+			USER_SSH_KEYS="$2"
+			USER_SSH_KEYS_C=1
+			shift; shift
+			;;
+		--user_dlloc)
+			USER_DLLOC="$2"
+			USER_DLLOC_C=1
+			shift; shift
+			;;
 		*)
 			_print_error "Invalid parameter: $PARAM"
 			_print_error "Use --help parameter to show help."
@@ -1168,6 +1216,13 @@ while [[ $# -gt 0 ]]; do
 		;;
 	esac
 done
+
+# Protect user variables
+declare -r USER_GIT_NAME
+declare -r USER_GIT_EMAIL
+declare -r USER_SSH_BANNER
+declare -r USER_SSH_KEYS
+declare -r USER_DLLOC
 
 ###################################################################################################################################################
 ### EXECUTION #####################################################################################################################################
@@ -1188,6 +1243,21 @@ fi
 # If sudo is needed at some point, ask for password right away
 if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
 	sudo test
+fi
+
+# Check USER variables, if needed at all
+if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
+	if (( USER_CUSTOM == 1 )); then
+		_print_info "Using custom user variables..."
+	else
+		if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 )); then
+			_print_warning "At least one USER variable is set to its default value, continue anyway? [y/n]"
+			read CHOICE
+			if ! _check_choice; then
+				exit 0
+			fi
+		fi
+	fi
 fi
 
 # Call functions
