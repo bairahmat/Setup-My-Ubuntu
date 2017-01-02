@@ -38,6 +38,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 | -f / --force    | Ignore all warnings.                                                                                                          |
 | -r / --restart  | Restart when finished.                                                                                                        |
 | -h / --help     | Show help, don't do anything else.                                                                                            |
+| --rewrite_config| Rewrite configuration files.                                                                                                  |
 | --do_homedir    | Call homedir function.                                                                                                        |
 | --do_update     | Call update function.                                                                                                         |
 | --do_install    | Call install function.                                                                                                        |
