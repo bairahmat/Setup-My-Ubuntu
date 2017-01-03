@@ -1109,25 +1109,27 @@ _rewrite_config () {
 # Show help
 # shellcheck disable=2059
 _show_help () {
+	local -r COMMAND_LENGTH=18
+
 	# General stuff
 	printf "${FORMAT_BOLD}${COLOR_BLUE}***${COLOR_DEFAULT} Linux-Startup user manual ${COLOR_BLUE}***${COLOR_DEFAULT}${FORMAT_RESET_ALL}\n"
 	printf "A script to install, set and configure basic things that you need for a new Linux setup.\n\n"
 	# Parameters
 	printf "${FORMAT_BOLD}Parameters:${FORMAT_RESET_ALL}\n\n"
-	printf -- "-q / --quick\t\tDon't do anything that takes a significant amount of time (~ >1 min), e.g. \`apt-get upgrade\`\n"
-	printf -- "-l / --long\t\tInstall large software packets that take a while to install. Ignores parameter -q/--quick.\n"
-	printf -- "-i / --important\tOnly install important programs, e.g. git or tmux\n"
-	printf -- "--4K\t\t\tConfigure desktop to be more usuable with a 4K resolution\n"
-	printf -- "-o / --offline\t\tDon't do anything that requires an internet connection. Overrides parameters -l/--long, -i/--important and --do_install\n"
-	printf -- "-f / --force\t\tIgnore all warnings\n"
-	printf -- "-r / --restart\t\tRestart when finished\n"
-	printf -- "-h / --help\t\tShow help, don't do anything else\n"
-	printf -- "--rewrite_config\tRewrite configuration files\n"
-	printf -- "--do_homedir\t\tCall homedir function\n"
-	printf -- "--do_update\t\tCall update function\n"
-	printf -- "--do_install\t\tCall install function\n"
-	printf -- "--do_config\t\tCall config function\n"
-	printf -- "--user_*\t\tOverride user variables (see README.md for more information)\n"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-q / --quick" "Don't do anything that takes a significant amount of time (~ >1 min), e.g. \`apt-get upgrade\`"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-l / --long" "Install large software packets that take a while to install. Ignores parameter -q/--quick."
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-i / --important" "Only install important programs, e.g. git or tmux"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--4K" "Configure desktop to be more usuable with a 4K resolution"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-o / --offline" "Don't do anything that requires an internet connection. Overrides parameters -l/--long, -i/--important and --do_install"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-f / --force" "Ignore all warnings"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-r / --restart" "Restart when finished"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "-h / --help" "Show help, don't do anything else"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--rewrite_config" "Rewrite configuration files"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--do_homedir" "Call homedir function"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--do_update" "Call update function"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--do_install" "Call install function"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--do_config" "Call config function"
+	printf -- "%-${COMMAND_LENGTH}s %s\n" "--user_*" "Override user variables (see README.md for more information)"
 	printf "\n* If one or more of the *--do_** or --rewrite_config parameters are used, only the according functions will be called, but not the others.\n"
 	printf "* The order of parameters is irrelevant.\n\n"
 	# Info
