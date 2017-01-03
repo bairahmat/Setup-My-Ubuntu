@@ -485,7 +485,6 @@ _do_homedir_customrc () {
 
 _do_homedir_customrc_programs () {
 	_do_homedir_customrc_programs_hstr
-	_do_homedir_customrc_programs_qfc
 	return 0
 }
 
@@ -496,18 +495,6 @@ _do_homedir_customrc_programs_hstr () {
 			# HSTR settings
 			export HH_CONFIG=hicolor,rawhistory,blacklist
 			bind '"\C-r": "\C-a hh \C-j"'
-		EOF
-	fi
-	return 0
-}
-
-_do_homedir_customrc_programs_qfc () {
-	if _is_installed qfc_quick_command; then
-		cat <<- 'EOF' >> "$FILE_CUSTOMRC"
-
-			# qfc
-			[[ -s "$HOME/.qfc/bin/qfc.sh" ]] && source "$HOME/.qfc/bin/qfc.sh"
-			qfc_quick_command 'cd' '\C-n' 'cd $0'
 		EOF
 	fi
 	return 0
@@ -626,12 +613,10 @@ _do_install () {
 		_install_apt unrar
 		_install_apt rtorrent
 		_install_apt silversearcher-ag
-		_install_apt myrepos
 		_install_apt aptitude
 		_install_apt xdotool
 		_do_install_oclint
 		_do_install_hr
-		_do_install_qfc
 		_do_install_tmux_gitbar
 	fi
 
@@ -721,12 +706,6 @@ _do_install_chrome () {
 # Install hr
 _do_install_hr () {
 	_install_script "hr" "https://raw.githubusercontent.com/LuRsT/hr/master/hr" "${HOME}/bin/hr"
-	return $?
-}
-
-# Install qfc
-_do_install_qfc () {
-	_install_git_repo "qfc" "https://github.com/pindexis/qfc" "$HOME/.qfc"
 	return $?
 }
 
