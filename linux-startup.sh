@@ -373,7 +373,7 @@ _do_homedir () {
 _do_homedir_customprofile () {
 	cat <<- 'EOF' > "$FILE_CUSTOMPROFILE"
 		export PATH=$PATH:$HOME/bin
-		export PS4='[ \$LINENO ] '
+		export PS4='[ $LINENO ] '
 		export EDITOR="nano"
 
 	EOF
