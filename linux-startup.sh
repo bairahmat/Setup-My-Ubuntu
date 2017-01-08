@@ -339,7 +339,7 @@ _add_user2group () {
 
 # Check if user has input y/yes (case-insensitive) -> true, anything else -> false
 _check_choice () {
-	case "$CHOICE" in
+	case "$REPLY" in
 		[y/Y])
 			return 0
 			;;
@@ -1265,7 +1265,7 @@ if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); 
 	else
 		if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 && PARAM_FORCE == 0)); then
 			_print_warning "At least one USER variable is set to its default value, continue anyway? [y/n]"
-			read CHOICE
+			read
 			if ! _check_choice; then
 				exit 0
 			fi
