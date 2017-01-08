@@ -1137,6 +1137,8 @@ _show_help () {
 _parameter_parsing () {
 	_parse_params "$@"
 	_protect_user_vars
+
+	return 0
 }
 
 # If one or more of the --do_* parameters is used, this function makes sure only those functions are called, but not the others
@@ -1245,6 +1247,8 @@ _parse_params () {
 			;;
 		esac
 	done
+
+	return 0
 }
 
 # Protect user variables
@@ -1254,18 +1258,24 @@ _protect_user_vars () {
 	declare -r USER_SSH_BANNER
 	declare -r USER_SSH_KEYS
 	declare -r USER_DLLOC
+
+	return 0
 }
 
 ###################################################################################################################################################
 ### EXECUTION #####################################################################################################################################
 ###################################################################################################################################################
 
+# Main execution funtion
+# $* = Pass all script parameters
 _execution () {
 	_exec_check_help
 	_exec_check_privis
 	_exec_ask_pw
 	_exec_check_user_vars
 	_exec_call
+
+	return 0
 }
 
 # Call functions to rewrite config files, including .customrc
@@ -1277,6 +1287,8 @@ _exec_rewrite_config () {
 	_do_homedir_customrc_programs
 	_do_config_nano
 	_do_config_tmux
+
+	return 0
 }
 
 # Check if help parameter was used
@@ -1285,6 +1297,8 @@ _exec_check_help () {
 		_show_help
 		exit 0
 	fi
+
+	return 0
 }
 
 # Check if run with normal user privileges
@@ -1293,6 +1307,8 @@ _exec_check_privis () {
 		_print_error "Don't run with sudo or as root!"
 		exit 1
 	fi
+
+	return 0
 }
 
 # If sudo is needed at some point, ask for password right away
@@ -1300,6 +1316,8 @@ _exec_ask_pw () {
 	if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
 		sudo test
 	fi
+
+	return 0
 }
 
 # Check USER variables, if needed at all
@@ -1316,6 +1334,8 @@ _exec_check_user_vars () {
 			fi
 		fi
 	fi
+
+	return 0
 }
 
 # Call functions
@@ -1336,6 +1356,8 @@ _exec_call () {
 	if (( PARAM_REWRITE_CONFIG == 1 )); then
 		_exec_rewrite_config
 	fi
+
+	return 0
 }
 
 ###################################################################################################################################################
@@ -1359,6 +1381,8 @@ _end () {
 		_print_info "Rebooting..."
 		sudo reboot
 	fi
+
+	return 0
 }
 
 ###################################################################################################################################################
@@ -1366,6 +1390,7 @@ _end () {
 ###################################################################################################################################################
 
 # Main function
+# $* = Pass all script parameters
 _main () {
 	_parameter_parsing "$@" || return 1
 	_execution || return 1
