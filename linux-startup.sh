@@ -1133,6 +1133,12 @@ _show_help () {
 ### PARAMETER PARSING #############################################################################################################################
 ###################################################################################################################################################
 
+# Main parameter parsing function
+_parameter_parsing () {
+	_parse_params "$@"
+	_protect_user_vars
+}
+
 # If one or more of the --do_* parameters is used, this function makes sure only those functions are called, but not the others
 _clean_dos () {
 	if (( DOS_CLEANED != 1 )); then
@@ -1250,14 +1256,11 @@ _protect_user_vars () {
 	declare -r USER_DLLOC
 }
 
-_parse_params "$@"
-_protect_user_vars
-
 ###################################################################################################################################################
 ### EXECUTION #####################################################################################################################################
 ###################################################################################################################################################
 
-_exec () {
+_execution () {
 	_exec_check_help
 	_exec_check_privis
 	_exec_ask_pw
@@ -1335,26 +1338,35 @@ _exec_call () {
 	fi
 }
 
-_exec
-
 ###################################################################################################################################################
 ### END ###########################################################################################################################################
 ###################################################################################################################################################
 
-cd "$PWD_START"
-_print_info "Done."
+# Main end function, should only be called at the very end
+_ending () {
+	cd "$PWD_START"
+	_print_info "Done."
 
-if (( PARAM_RESTART == 0 )); then
-	if (( PARAM_DO_HOMEDIR == 1 || PARAM_REWRITE_CONFIG == 1 )); then
-		# shellcheck disable=2059
-		printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
-		if _is_installed xdotool; then
-			xdotool type ". ~/.bashrc"
+	if (( PARAM_RESTART == 0 )); then
+		if (( PARAM_DO_HOMEDIR == 1 || PARAM_REWRITE_CONFIG == 1 )); then
+			# shellcheck disable=2059
+			printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
+			if _is_installed xdotool; then
+				xdotool type ". ~/.bashrc"
+			fi
 		fi
+	else
+		_print_info "Rebooting..."
+		sudo reboot
 	fi
-else
-	_print_info "Rebooting..."
-	sudo reboot
-fi
+}
+
+###################################################################################################################################################
+### MAIN ##########################################################################################################################################
+###################################################################################################################################################
+
+_parameter_parsing "$@"
+_execution
+_end
 
 exit 0
