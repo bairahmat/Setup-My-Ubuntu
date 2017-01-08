@@ -1091,21 +1091,6 @@ _do_config_openssh_server () {
 }
 
 ###################################################################################################################################################
-### OTHER #########################################################################################################################################
-###################################################################################################################################################
-
-# Call functions to rewrite config files, including .customrc
-_rewrite_config () {
-	_print_info "Rewriting config files..."
-
-	_do_homedir_customprofile
-	_do_homedir_customrc
-	_do_homedir_customrc_programs
-	_do_config_nano
-	_do_config_tmux
-}
-
-###################################################################################################################################################
 ### HELP ##########################################################################################################################################
 ###################################################################################################################################################
 
@@ -1264,55 +1249,85 @@ declare -r USER_DLLOC
 ### EXECUTION #####################################################################################################################################
 ###################################################################################################################################################
 
+_exec () {
+	_exec_check_help
+	_exec_check_privis
+	_exec_ask_pw
+	_exec_check_user_vars
+	_exec_call
+}
+
+# Call functions to rewrite config files, including .customrc
+_exec_rewrite_config () {
+	_print_info "Rewriting config files..."
+
+	_do_homedir_customprofile
+	_do_homedir_customrc
+	_do_homedir_customrc_programs
+	_do_config_nano
+	_do_config_tmux
+}
+
 # Check if help parameter was used
-if (( PARAM_HELP == 1 )); then
-	_show_help
-	exit 0
-fi
+_exec_check_help () {
+	if (( PARAM_HELP == 1 )); then
+		_show_help
+		exit 0
+	fi
+}
 
 # Check if run with normal user privileges
-if (( EUID == 0 )); then
-	_print_error "Don't run with sudo or as root!"
-	exit 1
-fi
+_exec_check_privis () {
+	if (( EUID == 0 )); then
+		_print_error "Don't run with sudo or as root!"
+		exit 1
+	fi
+}
 
 # If sudo is needed at some point, ask for password right away
-if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
-	sudo test
-fi
+_exec_ask_pw () {
+	if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
+		sudo test
+	fi
+}
 
 # Check USER variables, if needed at all
-if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
-	if (( USER_CUSTOM == 1 )); then
-		_print_info "Using custom user variables..."
-	else
-		if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 && PARAM_FORCE == 0)); then
-			_print_warning "At least one USER variable is set to its default value, continue anyway? [y/n]"
-			read
-			if ! _check_choice; then
-				exit 0
+_exec_check_user_vars () {
+	if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
+		if (( USER_CUSTOM == 1 )); then
+			_print_info "Using custom user variables..."
+		else
+			if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 && PARAM_FORCE == 0)); then
+				#_print_warning "At least one USER variable is set to its default value, continue anyway? [y/n]"
+				if ! _check_choice "At least one USER variable is set to its default value, continue anyway?"; then
+					exit 0
+				fi
 			fi
 		fi
 	fi
-fi
+}
 
 # Call functions
-if (( PARAM_DO_HOMEDIR == 1 )); then
-	_do_homedir
-fi
-if (( PARAM_DO_UPDATE == 1 && PARAM_OFFLINE == 0 )); then
-	_do_update
-fi
-if (( PARAM_DO_INSTALL == 1 && PARAM_OFFLINE == 0 )); then
-	_do_install
-fi
-if (( PARAM_DO_CONFIG == 1 )); then
-	_do_config
-fi
+_exec_call () {
+	if (( PARAM_DO_HOMEDIR == 1 )); then
+		_do_homedir
+	fi
+	if (( PARAM_DO_UPDATE == 1 && PARAM_OFFLINE == 0 )); then
+		_do_update
+	fi
+	if (( PARAM_DO_INSTALL == 1 && PARAM_OFFLINE == 0 )); then
+		_do_install
+	fi
+	if (( PARAM_DO_CONFIG == 1 )); then
+		_do_config
+	fi
 
-if (( PARAM_REWRITE_CONFIG == 1 )); then
-	_rewrite_config
-fi
+	if (( PARAM_REWRITE_CONFIG == 1 )); then
+		_exec_rewrite_config
+	fi
+}
+
+_exec
 
 ###################################################################################################################################################
 ### END ###########################################################################################################################################
