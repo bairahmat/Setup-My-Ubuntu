@@ -639,6 +639,7 @@ _do_install () {
 		_install_apt silversearcher-ag
 		_install_apt aptitude
 		_install_apt xdotool
+		_install_apt dialog
 		_do_install_oclint
 		_do_install_hr
 		_do_install_tmux_gitbar
