@@ -708,9 +708,16 @@ _do_install_oclint () {
 	return $OCLINT_RETURN
 }
 
+_do_install_sublime_get_version () {
+	local SUBL_VERSION
+	SUBL_VERSION=$(curl --silent "https://www.sublimetext.com/3" | grep "The latest build is" | tr -dc '0-9')
+	SUBL_VERSION=${SUBL_VERSION:1}
+	echo "$SUBL_VERSION"
+}
+
 # Install Sublime Text
 _do_install_sublime () {
-	local -r SUBL_VERSION=3126
+	local -r SUBL_VERSION=$(_do_install_sublime_get_version)
 	_install_dpkg "subl" "https://download.sublimetext.com/sublime-text_build-${SUBL_VERSION}_amd64.deb"
 	return $?
 }
