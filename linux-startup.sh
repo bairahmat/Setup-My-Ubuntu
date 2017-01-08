@@ -1146,105 +1146,112 @@ _clean_dos () {
 }
 
 # Parameter parsing
-while (( $# > 0 )); do
-	PARAM="$1"
-	case $PARAM in
-		-q|--quick)
-			PARAM_QUICK=1
-			shift
+_parse_params () {
+	while (( $# > 0 )); do
+		PARAM="$1"
+		case $PARAM in
+			-q|--quick)
+				PARAM_QUICK=1
+				shift
+				;;
+			-l|--long)
+				PARAM_LONG=1
+				shift
+				;;
+			-i|--important)
+				PARAM_IMPORTANT=1
+				shift
+				;;
+			-o|--offline)
+				PARAM_OFFLINE=1
+				shift
+				;;
+			-f|--force)
+				PARAM_FORCE=1
+				shift
+				;;
+			--4K)
+				PARAM_4K=1
+				shift
+				;;
+			-r|--restart)
+				PARAM_RESTART=1
+				shift
+				;;
+			-h|--help)
+				PARAM_HELP=1
+				shift
+				;;
+			--rewrite_config)
+				_clean_dos
+				PARAM_REWRITE_CONFIG=1
+				shift
+				;;
+			--do_update)
+				_clean_dos
+				PARAM_DO_UPDATE=1
+				shift
+				;;
+			--do_install)
+				_clean_dos
+				PARAM_DO_INSTALL=1
+				shift
+				;;
+			--do_config)
+				_clean_dos
+				PARAM_DO_CONFIG=1
+				shift
+				;;
+			--do_homedir)
+				_clean_dos
+				PARAM_DO_HOMEDIR=1
+				shift
+				;;
+			--user_git_name)
+				USER_GIT_NAME="$2"
+				USER_GIT_NAME_C=1
+				shift; shift
+				;;
+			--user_git_email)
+				USER_GIT_EMAIL="$2"
+				USER_GIT_EMAIL_C=1
+				shift; shift
+				;;
+			--user_ssh_banner)
+				USER_SSH_BANNER="$2"
+				USER_SSH_BANNER_C=1
+				shift; shift
+				;;
+			--user_ssh_keys)
+				USER_SSH_KEYS="$2"
+				USER_SSH_KEYS_C=1
+				shift; shift
+				;;
+			--user_dlloc)
+				USER_DLLOC="$2"
+				USER_DLLOC_C=1
+				shift; shift
+				;;
+			*)
+				_print_error "Invalid parameter: $PARAM"
+				_print_error "Use --help parameter to show help."
+				exit 1
 			;;
-		-l|--long)
-			PARAM_LONG=1
-			shift
-			;;
-		-i|--important)
-			PARAM_IMPORTANT=1
-			shift
-			;;
-		-o|--offline)
-			PARAM_OFFLINE=1
-			shift
-			;;
-		-f|--force)
-			PARAM_FORCE=1
-			shift
-			;;
-		--4K)
-			PARAM_4K=1
-			shift
-			;;
-		-r|--restart)
-			PARAM_RESTART=1
-			shift
-			;;
-		-h|--help)
-			PARAM_HELP=1
-			shift
-			;;
-		--rewrite_config)
-			_clean_dos
-			PARAM_REWRITE_CONFIG=1
-			shift
-			;;
-		--do_update)
-			_clean_dos
-			PARAM_DO_UPDATE=1
-			shift
-			;;
-		--do_install)
-			_clean_dos
-			PARAM_DO_INSTALL=1
-			shift
-			;;
-		--do_config)
-			_clean_dos
-			PARAM_DO_CONFIG=1
-			shift
-			;;
-		--do_homedir)
-			_clean_dos
-			PARAM_DO_HOMEDIR=1
-			shift
-			;;
-		--user_git_name)
-			USER_GIT_NAME="$2"
-			USER_GIT_NAME_C=1
-			shift; shift
-			;;
-		--user_git_email)
-			USER_GIT_EMAIL="$2"
-			USER_GIT_EMAIL_C=1
-			shift; shift
-			;;
-		--user_ssh_banner)
-			USER_SSH_BANNER="$2"
-			USER_SSH_BANNER_C=1
-			shift; shift
-			;;
-		--user_ssh_keys)
-			USER_SSH_KEYS="$2"
-			USER_SSH_KEYS_C=1
-			shift; shift
-			;;
-		--user_dlloc)
-			USER_DLLOC="$2"
-			USER_DLLOC_C=1
-			shift; shift
-			;;
-		*)
-			_print_error "Invalid parameter: $PARAM"
-			_print_error "Use --help parameter to show help."
-			exit 1
-		;;
-	esac
-done
+		esac
+	done
+}
 
 # Protect user variables
-declare -r USER_GIT_NAME
-declare -r USER_GIT_EMAIL
-declare -r USER_SSH_BANNER
-declare -r USER_SSH_KEYS
-declare -r USER_DLLOC
+_protect_user_vars () {
+	declare -r USER_GIT_NAME
+	declare -r USER_GIT_EMAIL
+	declare -r USER_SSH_BANNER
+	declare -r USER_SSH_KEYS
+	declare -r USER_DLLOC
+}
+
+_parse_params "$@"
+_protect_user_vars
 
 ###################################################################################################################################################
 ### EXECUTION #####################################################################################################################################
