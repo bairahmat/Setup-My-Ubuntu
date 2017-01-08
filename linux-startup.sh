@@ -393,6 +393,7 @@ _do_homedir_customrc () {
 		alias go-dl='cd ~/Downloads'
 		alias go-pr='cd ~/projects'
 		alias go-re='cd ~/repos'
+		alias repwd='cd "$PWD"'
 		alias ll='ls -AlFh --color=auto'
 		alias ls='ls -lFh --color=auto'
 		alias l='ls -ACF --color=auto'
@@ -1298,7 +1299,7 @@ cd "$PWD_START"
 _print_info "Done."
 
 if (( PARAM_RESTART == 0 )); then
-	if (( PARAM_DO_HOMEDIR == 1 )); then
+	if (( PARAM_DO_HOMEDIR == 1 || PARAM_REWRITE_CONFIG == 1 )); then
 		# shellcheck disable=2059
 		printf "[${COLOR_GREEN}INF${COLOR_DEFAULT}] You should run '${FORMAT_BOLD}. ~/.bashrc${FORMAT_RESET_ALL}' now.\n"
 		if _is_installed xdotool; then
