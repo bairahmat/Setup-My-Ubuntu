@@ -337,8 +337,11 @@ _add_user2group () {
 	return $?
 }
 
-# Check if user has input y/yes (case-insensitive) -> true, anything else -> false
-_check_choice () {
+# Check if user has input y/yes (case-insensitive) returns 0, anything else returns 1
+# $1 = Question to display
+_check_choice_text () {
+	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s " "WRN" "$1"
+	read
 	case "$REPLY" in
 		[y/Y])
 			return 0
@@ -351,7 +354,27 @@ _check_choice () {
 			;;
 	esac
 }
-	
+
+# Check for user choice with dialog, yes returns 0, no returns 1
+# $1 = Question to display
+_check_choice_gui () {
+	dialog --yesno "$1" 0 0
+	RET=$?
+	clear
+	return $RET
+}
+
+# Check for user choice, yes returns 0, no returns 1
+# $1 = Question to display
+_check_choice () {
+	if _is_installed dialog; then
+		_check_choice_gui "$1"
+		return $?
+	else
+		_check_choice_text "$1"
+		return $?
+	fi
+}
 
 ###################################################################################################################################################
 ### DO_HOMEDIR ####################################################################################################################################
