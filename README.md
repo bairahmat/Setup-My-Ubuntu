@@ -22,7 +22,7 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 ## Usage
 
-1. `wget https://github.com/meyerlasse/Linux-Startup/releases/download/2.0/linux-startup.sh`
+1. `wget https://github.com/meyerlasse/Linux-Startup/releases/download/2.1/linux-startup.sh`
 2. **Modify USER variables** or use --user_* parameters to override them
 3. `bash start.sh`
 
