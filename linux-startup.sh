@@ -610,6 +610,21 @@ _do_update_upgrade () {
 _do_install () {
 	_change_dlloc
 
+	_do_install_main
+	_do_install_unimportant
+	_do_install_long
+
+	sudo apt-get autoremove -y -qq > /dev/null
+
+	_do_install_repos
+
+	_do_homedir_customrc
+
+	return 0
+}
+
+# Install most important programs
+_do_install_main () {
 	_install_apt git
 	_install_apt git-gui
 	_install_apt tmux
@@ -621,6 +636,11 @@ _do_install () {
 	_do_install_sublime
 	_do_install_chrome
 
+	return 0
+}
+
+# Install programs that are that important
+_do_install_unimportant () {
 	if (( PARAM_IMPORTANT != 1 )); then
 		_install_apt tmuxinator
 		_install_apt openssh-server
@@ -650,6 +670,11 @@ _do_install () {
 		_do_install_tmux_gitbar
 	fi
 
+	return 0
+}
+
+# Install programs that take a long time to download and/or install
+_do_install_long () {
 	if (( PARAM_LONG == 1 )); then
 		_install_apt_long ubuntu-restricted-extras
 		_install_apt_long texlive
@@ -661,9 +686,20 @@ _do_install () {
 		_install_apt_long openjdk-8-jdk
 	fi
 
-	sudo apt-get autoremove -y -qq > /dev/null
+	return 0
+}
 
-	_do_homedir_customrc
+# Clone repositories
+_do_install_repos () {
+	if (( PARAM_IMPORTANT != 1 )); then
+		_clone_git "git@github.com:meyerlasse/Linux-Startup.git"		"$DIR_PROJECTS/Linux-Startup"
+		_clone_git "git@github.com:meyerlasse/LaTeX-Vorlage.git"		"$DIR_PROJECTS/LaTeX-Vorlage"
+		_clone_git "git@github.com:meyerlasse/BananaPi_HFU.git"			"$DIR_PROJECTSARCHVIE/BananaPi_HFU"
+		_clone_git "git@github.com:meyerlasse/Praktikumsbericht.git"	"$DIR_PROJECTSARCHVIE/Praktikumsbericht"
+		_clone_git "git@github.com:meyerlasse/vNets.git"				"$DIR_PROJECTSARCHVIE/vNets"
+		_clone_git "git@github.com:meyerlasse/CPP-TCP-Server.git"		"$DIR_PROJECTSARCHVIE/CPP-TCP-Server"
+		_clone_git "git@github.com:meyerlasse/Java-TCP-Server.git"		"$DIR_PROJECTSARCHVIE/Java-TCP-Server"
+	fi
 
 	return 0
 }
@@ -671,7 +707,7 @@ _do_install () {
 #########################################################################
 
 ## Manual installation functions
-# Programs that need extra parameters get their own functions, to keep the main _do_install function clean
+# Programs that need extra parameters get their own functions, to keep the main functions clean
 
 # Install oclint
 _do_install_oclint () {
