@@ -58,8 +58,12 @@ readonly COLOR_BLUE="\e[34m"
 
 # Static general purpose variables
 readonly PWD_START=$PWD
-readonly DL_PREFIX="/tmp"
-readonly DEFAULTS="$HOME/.local/share/applications/defaults.list"
+readonly DIR_DL="/tmp"
+readonly DIR_PROJECTS="$HOME/projects"
+readonly DIR_PROJECTSARCHVIE="${DIR_PROJECTS}/archive"
+readonly DIR_REPOS="$HOME/repos"
+readonly DIR_BINS="$HOME/bin"
+readonly FILE_DEFAULTS="$HOME/.local/share/applications/defaults.list"
 readonly FILE_BASHRC="$HOME"/.bashrc
 readonly FILE_CUSTOMRC="$HOME"/.customrc
 readonly FILE_PROFILE="$HOME"/.profile
@@ -190,14 +194,14 @@ _install_dpkg () {
 	if ! _is_installed "$1"; then
 		local SUCCESS=0
 		_install_start "$1"
-		_download "$2" "$DL_PREFIX"
+		_download "$2" "$DIR_DL"
 		if (( $? == 0 )); then
-			sudo dpkg -i -G $DL_PREFIX/"${2##*/}" > /dev/null
+			sudo dpkg -i -G $DIR_DL/"${2##*/}" > /dev/null
 			if (( $? != 0 )); then
 				_install_fail "$1"
 				SUCCESS=1
 			fi
-			rm -f $DL_PREFIX/"${2##*/}"
+			rm -f $DIR_DL/"${2##*/}"
 		else
 			_install_fail "$1"
 			SUCCESS=1
@@ -301,7 +305,7 @@ _append_to_path () {
 _setmimes () {
 	local -a -r MIMES=("${!1}")
 	for MIMETYPE in "${MIMES[@]}"; do
-		echo "$MIMETYPE=$2" >> "$DEFAULTS"
+		echo "$MIMETYPE=$2" >> "$FILE_DEFAULTS"
 	done
 	return 0
 }
@@ -524,7 +528,7 @@ _do_homedir_customrc_programs_hstr () {
 	return 0
 }
 
-# Delete most preexisting repositories in home directory
+# Delete most preexisting directories in home directory
 _do_homedir_cleanup () {
 	# shellcheck disable=2034
 	local -a -r DEL_DIRS=(\
@@ -547,9 +551,10 @@ _do_homedir_cleanup () {
 
 # Create standard directories
 _do_homedir_dirs () {
-	mkdir -p "$HOME/bin"
-	mkdir -p "$HOME/projects/Archiv"
-	mkdir -p "$HOME/repos"
+	mkdir -p "$DIR_BINS"
+	mkdir -p "$DIR_PROJECTS"
+	mkdir -p "$DIR_PROJECTSARCHVIE"
+	mkdir -p "$DIR_REPOS"
 
 	return 0
 }
@@ -679,24 +684,24 @@ _do_install_oclint () {
 		_install_start "oclint"
 
 		# Download
-		_download "$OCLINT_SITE/$OCLINT_FILE" "$DL_PREFIX"
+		_download "$OCLINT_SITE/$OCLINT_FILE" "$DIR_DL"
 		OCLINT_RETURN=$!
 		# Unpack
 		if (( OCLINT_RETURN == 0 )); then
-			cd "$DL_PREFIX"
-			tar xzf "$DL_PREFIX/$OCLINT_FILE"
+			cd "$DIR_DL"
+			tar xzf "$DIR_DL/$OCLINT_FILE"
 			OCLINT_RETURN=$!
-			rm -f "$DL_PREFIX/$OCLINT_FILE"
+			rm -f "$DIR_DL/$OCLINT_FILE"
 		fi
 		# Install
 		if (( OCLINT_RETURN == 0 )); then
-			cd "$DL_PREFIX/$OCLINT_DIR"
+			cd "$DIR_DL/$OCLINT_DIR"
 			OCLINT_RETURN=$!
 		fi
 		if (( OCLINT_RETURN == 0 )); then
 			sudo cp bin/oclint* /usr/local/bin/
 			sudo cp -rp lib/* /usr/local/lib/
-			rm -r -f "${DL_PREFIX:?}/$OCLINT_DIR"
+			rm -r -f "${DIR_DL:?}/$OCLINT_DIR"
 		fi
 
 		if (( OCLINT_RETURN != 0 )); then
@@ -816,7 +821,7 @@ _do_config_general () {
 	sudo update-locale LANG=de_DE.UTF-8
 
 	# Default applications
-	echo "[Default Applications]" > "$DEFAULTS"
+	echo "[Default Applications]" > "$FILE_DEFAULTS"
 	local -r DESKTOP_SUBL="sublime_text.desktop"
 	# shellcheck disable=2034
 	local -a -r MIMES_SUBL=(\
