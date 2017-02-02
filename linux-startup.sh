@@ -435,7 +435,7 @@ _do_homedir_customrc () {
 		alias giss='git status'
 		alias gpush='git push'
 		alias gpull='git pull'
-		alias ggui='git gui'
+		alias ggui='git gui &'
 		alias gadd='git add'
 
 		# Applications
