@@ -479,6 +479,28 @@ _do_homedir_customrc () {
 		    cd $D
 		}
 
+		greset () {
+		    local -r MSGINVUSE="Invalid parameters.\nUsage: greset <hard/soft> <number of commits (defaults to 1)>\n"
+		    local RET=0
+		    if (( $# < 1 )); then
+		        printf "%s" "$MSGINVUSE"
+		        return 1;
+		    fi
+		    case $1 in
+		        hard|HARD)
+		            git reset --hard HEAD~"$2"
+		            ;;
+		        soft|SOFT)
+		            git reset --soft HEAD~"$2"
+		            ;;
+		        *)
+		            printf "%s" "$MSGINVUSE"
+		            RET=1;
+		            ;;
+		    esac
+		    return $RET
+		}
+
 		# For colored manpages
 		export LESS_TERMCAP_mb=$'\E[01;31m'
 		export LESS_TERMCAP_md=$'\E[01;31m'
