@@ -437,7 +437,6 @@ _do_homedir_customrc () {
 		alias gpull='git pull'
 		alias ggui='git gui'
 		alias gadd='git add'
-		alias gunst='git reset HEAD'
 
 		# Applications
 		alias more='less -F'
