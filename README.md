@@ -1,5 +1,5 @@
-# Linux-Startup
-#### A script to install, set and configure basic things that you need for a new Linux setup.
+# Setup-My-Ubuntu
+#### A script to install, set and configure basic things that you need for a new Ubuntu setup.
 Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 <hr>
 ## Features
@@ -22,9 +22,9 @@ Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 
 ## Usage
 
-1. `wget https://raw.githubusercontent.com/meyerlasse/Linux-Startup/master/linux-startup.sh`
+1. `wget https://raw.githubusercontent.com/meyerlasse/Setup-My-Ubuntu/master/setup-my-ubuntu.sh`
 2. **Modify USER variables** or use --user_* parameters to override them
-3. `bash start.sh`
+3. `bash setup-my-ubuntu.sh`
 
 ## Parameters
 

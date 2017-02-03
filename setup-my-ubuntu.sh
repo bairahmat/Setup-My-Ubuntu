@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 # Author: 	Lasse Meyer
-# Website:	https://github.com/meyerlasse/Linux-Startup
+# Website:	https://github.com/meyerlasse/Setup-My-Ubuntu
 
 ###################################################################################################################################################
 ### VARIABLES #####################################################################################################################################
@@ -1170,8 +1170,8 @@ _show_help () {
 	local -r COMMAND_LENGTH=18
 
 	# General stuff
-	printf "${FORMAT_BOLD}${COLOR_BLUE}***${COLOR_DEFAULT} Linux-Startup user manual ${COLOR_BLUE}***${COLOR_DEFAULT}${FORMAT_RESET_ALL}\n"
-	printf "A script to install, set and configure basic things that you need for a new Linux setup.\n\n"
+	printf "${FORMAT_BOLD}${COLOR_BLUE}***${COLOR_DEFAULT} Setup-My-Ubuntu user manual ${COLOR_BLUE}***${COLOR_DEFAULT}${FORMAT_RESET_ALL}\n"
+	printf "A script to install, set and configure basic things that you need for a new Ubuntu setup.\n\n"
 	# Parameters
 	printf "${FORMAT_BOLD}Parameters:${FORMAT_RESET_ALL}\n\n"
 	printf -- "%-${COMMAND_LENGTH}s %s\n" "-q / --quick" "Don't do anything that takes a significant amount of time (~ >1 min), e.g. \`apt-get upgrade\`"
@@ -1193,8 +1193,8 @@ _show_help () {
 	# Info
 	printf "${FORMAT_BOLD}Info:${FORMAT_RESET_ALL}\n\n"
 	printf "Author:\t\tLasse Meyer\n"
-	printf "Website:\thttps://github.com/meyerlasse/Linux-Startup\n"
-	printf "License:\tMIT (https://github.com/meyerlasse/Linux-Startup/blob/master/LICENSE.md)\n"
+	printf "Website:\thttps://github.com/meyerlasse/Setup-My-Ubuntu\n"
+	printf "License:\tMIT (https://github.com/meyerlasse/Setup-My-Ubuntu/blob/master/LICENSE.md)\n"
 	return 0
 }
 
