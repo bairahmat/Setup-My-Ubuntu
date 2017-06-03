@@ -698,12 +698,8 @@ _do_install_unimportant () {
 _do_install_long () {
 	if (( PARAM_LONG == 1 )); then
 		_install_apt_long ubuntu-restricted-extras
-		_install_apt_long texlive
+		_install_apt_long texlive-full
 		_install_apt_long latexmk
-		_install_apt_long texlive-lang-german
-		_install_apt_long texlive-latex-extra
-		_install_apt_long texlive-fonts-extra
-		_install_apt_long texlive-bibtex-extra
 		_install_apt_long openjdk-8-jdk
 	fi
 
