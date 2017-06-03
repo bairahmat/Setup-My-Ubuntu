@@ -2,6 +2,7 @@
 #### A script to install, set and configure basic things that you need for a new Ubuntu setup.
 Does currently only work with Ubuntu 16, a version for Raspbian is planned.
 <hr>
+
 ## Features
 
 - Update and upgrade
