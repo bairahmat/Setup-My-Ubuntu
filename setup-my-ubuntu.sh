@@ -59,6 +59,7 @@ readonly COLOR_BLUE="\e[34m"
 readonly ICON_ERROR="ERR"
 readonly ICON_WARNING="WRN"
 readonly ICON_INFO="INF"
+readonly ICON_QUESTION=" ? "
 
 # Static general purpose variables
 readonly PWD_START=$PWD
@@ -91,6 +92,7 @@ PARAM_DO_CONFIG=1
 PARAM_DO_HOMEDIR=1
 
 # Other variables
+INPUT=
 DOS_CLEANED=0
 DLLOC_CHANGED=0
 export DEBIAN_FRONTEND="noninteractive"
@@ -100,6 +102,13 @@ export DEBIAN_FRONTEND="noninteractive"
 ###################################################################################################################################################
 
 ## Printing
+
+# Print question without new line
+# $1 = Question to print
+_print_question () {
+	printf "[$COLOR_BLUE%s$COLOR_DEFAULT] %s " "$ICON_QUESTION" "$1"
+	return $?
+}
 
 # Print info message
 # $1 = String to print
@@ -348,7 +357,7 @@ _add_user2group () {
 # Check if user has input y/yes (case-insensitive) returns 0, anything else returns 1
 # $1 = Question to display
 _check_choice_text () {
-	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s " "WRN" "$1"
+	_print_question "$1"
 	read
 	case "$REPLY" in
 		[y/Y])
