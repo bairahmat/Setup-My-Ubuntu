@@ -1482,6 +1482,8 @@ _end () {
 	cd "$PWD_START"
 	_print_info "Done."
 
+	_cleanup
+
 	if (( PARAM_RESTART == 0 )); then
 		if (( PARAM_DO_HOMEDIR == 1 || PARAM_REWRITE_CONFIG == 1 )); then
 			# shellcheck disable=2059
@@ -1495,6 +1497,12 @@ _end () {
 		sudo reboot
 	fi
 
+	return 0
+}
+
+# Cleanup files and other leftovers
+_cleanup () {
+	rm -f $FILE_TMP_DIALOG
 	return 0
 }
 
