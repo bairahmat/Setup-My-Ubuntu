@@ -56,6 +56,10 @@ readonly COLOR_GREEN="\e[32m"
 readonly COLOR_YELLOW="\e[33m"
 readonly COLOR_BLUE="\e[34m"
 
+readonly ICON_ERROR="ERR"
+readonly ICON_WARNING="WRN"
+readonly ICON_INFO="INF"
+
 # Static general purpose variables
 readonly PWD_START=$PWD
 readonly DIR_DL="/tmp"
@@ -100,21 +104,21 @@ export DEBIAN_FRONTEND="noninteractive"
 # Print info message
 # $1 = String to print
 _print_info () {
-	printf "[$COLOR_GREEN%s$COLOR_DEFAULT] %s\n" "INF" "$1"
+	printf "[$COLOR_GREEN%s$COLOR_DEFAULT] %s\n" "$ICON_INFO" "$1"
 	return $?
 }
 
 # Print warning message
 # $1 = String to print
 _print_warning () {
-	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s\n" "WRN" "$1"
+	printf "[$COLOR_YELLOW%s$COLOR_DEFAULT] %s\n" "$ICON_WARNING" "$1"
 	return $?
 }
 
 # Print error message
 # $1 = String to print
 _print_error () {
-	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "ERR" "$1"
+	printf "[$COLOR_RED%s$COLOR_DEFAULT] %s\n" "$ICON_ERROR" "$1"
 	return $?
 }
 
