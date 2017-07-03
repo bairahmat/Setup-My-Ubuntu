@@ -329,7 +329,7 @@ _delete_dirs () {
 
 # Change download server location for apt-get. Uses USER_DLLOC variable.
 _change_dlloc () {
-	if (( PARAM_OFFLINE != 1 && DLLOC_CHANGED != 1 )); then
+	if [[ $PARAM_OFFLINE -ne 1 && $DLLOC_CHANGED -ne 1 && ! -z $USER_DLLOC ]]; then
 		sudo sed -i "s|http://..\.archive|http://${USER_DLLOC}.archive|g" /etc/apt/sources.list
 		sudo apt-get -qq update &> /dev/null
 		DLLOC_CHANGED=1
@@ -1038,8 +1038,12 @@ _do_config_nano () {
 # Configure git
 _do_config_git () {
 	if _is_installed git; then
-		git config --global user.email "$USER_GIT_EMAIL"
-		git config --global user.name "$USER_GIT_NAME"
+		if [[ ! -z "$USER_GIT_EMAIL" ]]; then
+			git config --global user.email "$USER_GIT_EMAIL"
+		fi
+		if [[ ! -z "$USER_GIT_NAME" ]]; then
+			git config --global user.name "$USER_GIT_NAME"
+		fi
 		git config --global push.default simple
 		return 0
 	else
@@ -1186,8 +1190,10 @@ _do_config_openssh_server () {
 			sudo cp $SSHD_CONFIG $SSHD_CONFIG.default
 		fi
 		sudo sed -i '/#PasswordAuthentication/c\PasswordAuthentication no' $SSHD_CONFIG
-		sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSHD_CONFIG
-		sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
+		if [[ ! -z "$USER_SSH_BANNER" ]]; then
+			sudo sed -i '/#Banner/c\Banner /etc/issue.net' $SSHD_CONFIG
+			sudo sed -i -e "\$a${USER_SSH_BANNER}" /etc/issue.net
+		fi
 		sudo systemctl restart ssh
 
 		return 0
