@@ -943,8 +943,8 @@ _do_config_ssh () {
 
 	touch "$SSH_KFILE"
 	chmod 600 "$SSH_KFILE"
-
 	for I in "${USER_SSH_KEYS[@]}"; do
+		echo -e "\n" >> "$SSH_KFILE"
 		echo "$I" >> "$SSH_KFILE"
 	done
 
