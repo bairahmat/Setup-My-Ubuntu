@@ -32,19 +32,11 @@
 # User variables, use parameters to override or set them all manually and then set USER_CUSTOM=1
 USER_CUSTOM=0
 
-USER_GIT_NAME="Lasse Meyer"
-USER_GIT_EMAIL="meyer.lasse@gmail.com"
-USER_SSH_BANNER="Lasse Meyer <meyer.lasse@gmail.com>"
-USER_SSH_KEYS=(\
-	"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUMuxgGk1fje/hwY7TGC6cF+9AndEo6mryQ7VYKCOlBk8kVgLDRYG7uK8iotzFo/czIFzIi30smYh4B9XPAhYS6viPlhd4pSlob7OPK6eL8goO3mSU4mWzCOPW7ceRXlmQcLU1Q6q+zGts4Cw4anWVQNx9VhTxth0AyZMaKGXMerFG6Abwycsm1QncNZpQtghfCDa1f332LagZQnd1ds5TtAHoPBuwLbk6gYeLit6OJgqXW+bLK27IT2NoNOTkeDob5IzJUeb6U0kHuiXvCWnWr9FDsh3QJ4pIXgbothO3IkevIWsDTJL9zUCVLVIeawnNffY8hIQl8JfDLnYLmWPL lasse@ubuntu"\
-	"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDS30gjjffeXZefF4bp6DMf6HaP6YAgicZthSLZkgcta6wVa3wVsgm8XHH9drZR8oo6XCYaFWMUt/LQSlxwU8OXd6hWN8CoB3IVNFb1w7FdliP8Ek8+/TVEHx4rMZvzHXCzWGfuI1CkLLZOmI3dXWvAsIvZFffGyDHbxEZd/mMkBGLMTwkInLWKMLSJqL7nfaOcQc1oL2Squo8EW/PErafDfJQN+j792ZCsRa7K7WXJ2LzdENoE0cMc9mc0kfnu5e4TPamptq7csa01dkofJ91C+C55X/bdW0AUqenivho3Jm1/bHtvn/PmAN+ihKzxoRijMG5Nsk1rYADkcHEydrxx meyer.lasse@gmail.com")
-USER_DLLOC=de
-
-USER_GIT_NAME_C=0
-USER_GIT_EMAIL_C=0
-USER_SSH_BANNER_C=0
-USER_SSH_KEYS_C=0
-USER_DLLOC_C=0
+USER_GIT_NAME=
+USER_GIT_EMAIL=
+USER_SSH_BANNER=
+USER_SSH_KEYS=
+USER_DLLOC=
 
 # Formatting variables
 readonly FORMAT_BOLD="\e[1m"
@@ -1249,7 +1241,6 @@ _show_help () {
 # Main parameter parsing function
 _parameter_parsing () {
 	_parse_params "$@"
-	_protect_user_vars
 
 	return 0
 }
@@ -1330,27 +1321,27 @@ _parse_params () {
 				;;
 			--user_git_name)
 				USER_GIT_NAME="$2"
-				USER_GIT_NAME_C=1
+				USER_CUSTOM=1
 				shift; shift
 				;;
 			--user_git_email)
 				USER_GIT_EMAIL="$2"
-				USER_GIT_EMAIL_C=1
+				USER_CUSTOM=1
 				shift; shift
 				;;
 			--user_ssh_banner)
 				USER_SSH_BANNER="$2"
-				USER_SSH_BANNER_C=1
+				USER_CUSTOM=1
 				shift; shift
 				;;
 			--user_ssh_keys)
 				USER_SSH_KEYS="$2"
-				USER_SSH_KEYS_C=1
+				USER_CUSTOM=1
 				shift; shift
 				;;
 			--user_dlloc)
 				USER_DLLOC="$2"
-				USER_DLLOC_C=1
+				USER_CUSTOM=1
 				shift; shift
 				;;
 			*)
@@ -1360,17 +1351,6 @@ _parse_params () {
 			;;
 		esac
 	done
-
-	return 0
-}
-
-# Protect user variables
-_protect_user_vars () {
-	declare -r USER_GIT_NAME
-	declare -r USER_GIT_EMAIL
-	declare -r USER_SSH_BANNER
-	declare -r USER_SSH_KEYS
-	declare -r USER_DLLOC
 
 	return 0
 }
@@ -1433,20 +1413,62 @@ _exec_ask_pw () {
 	return 0
 }
 
+_exec_ask_user_vars () {
+	if [[ -z "$USER_GIT_NAME" ]]; then
+		_get_input "Git name:"
+		USER_GIT_NAME="$INPUT"
+	fi
+	if [[ -z "$USER_GIT_EMAIL" ]]; then
+		_get_input "Git email:"
+		USER_GIT_EMAIL="$INPUT"
+	fi
+	if [[ -z "$USER_SSH_BANNER" ]]; then
+		_get_input "SSH banner:"
+		USER_SSH_BANNER="$INPUT"
+	fi
+	if [[ -z "$USER_SSH_KEYS" ]]; then
+		while true;
+		do
+			local NEWKEY
+			_get_input "SSH authorized key (leave empty when finished):"
+			NEWKEY="$INPUT"
+			if [[ -z "$NEWKEY" ]]; then
+				break
+			else
+				USER_SSH_KEYS+="$NEWKEY"
+				unset NEWKEY
+			fi
+		done
+	fi
+	if [[ -z "$USER_DLLOC" ]]; then
+		_get_input "Download location (i.e. us, fr or de):"
+		USER_DLLOC="$INPUT"
+	fi
+}
+
 # Check USER variables, if needed at all
 _exec_check_user_vars () {
 	if (( PARAM_DO_UPDATE == 1 || PARAM_DO_INSTALL == 1 || PARAM_DO_CONFIG == 1 )); then
 		if (( USER_CUSTOM == 1 )); then
-			_print_info "Using custom user variables..."
+			_print_info "Using preset user variables..."
 		else
-			if (( (USER_GIT_NAME_C & USER_GIT_EMAIL_C & USER_SSH_BANNER_C & USER_SSH_KEYS_C & USER_DLLOC_C) == 0 && PARAM_FORCE == 0)); then
-				#_print_warning "At least one USER variable is set to its default value, continue anyway? [y/n]"
-				if ! _check_choice "At least one USER variable is set to its default value, continue anyway?"; then
-					exit 0
-				fi
+			if (( PARAM_FORCE != 1 )); then
+				_exec_ask_user_vars
 			fi
 		fi
 	fi
+	_protect_user_vars
+
+	return 0
+}
+
+# Protect user variables
+_protect_user_vars () {
+	declare -r USER_GIT_NAME
+	declare -r USER_GIT_EMAIL
+	declare -r USER_SSH_BANNER
+	declare -r USER_SSH_KEYS
+	declare -r USER_DLLOC
 
 	return 0
 }
