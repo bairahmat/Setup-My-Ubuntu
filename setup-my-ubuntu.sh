@@ -935,14 +935,12 @@ _do_config_ssh () {
 
 	mkdir -p "$SSH_DIR"
 	chmod 700 "$SSH_DIR"
-	if [[ -f $SSH_FILE ]]; then
-		mv "$SSH_FILE" "$SSH_DIR"/id_rsa.old
-		_print_warning "SSH key files already existed, renamed to id_rsa.old and id_rsa.pub.old"
+	if [[ -f $SSH_FILE && -f $SSH_PFILE ]]; then
+		_print_warning "SSH key files already exist, not generating new ones."
+	else
+		ssh-keygen -q -t rsa -N "" -f "$SSH_FILE"
 	fi
-	if [[ -f $SSH_PFILE ]]; then
-		mv "$SSH_PFILE" "$SSH_DIR"/old_id_rsa.pub.old
-	fi
-	ssh-keygen -q -t rsa -N "" -f "$SSH_FILE"
+
 	touch "$SSH_KFILE"
 	chmod 600 "$SSH_KFILE"
 
