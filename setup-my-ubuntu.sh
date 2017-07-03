@@ -75,6 +75,8 @@ readonly FILE_PROFILE="$HOME"/.profile
 readonly FILE_CUSTOMPROFILE="$HOME"/.customprofile
 # Used by functions if parameter count is invalid
 readonly INV_ARGS=45
+# Used to read input with dialog
+readonly FILE_TMP_DIALOG=/tmp/$$_dialog
 
 # Parameter variables
 PARAM_QUICK=0
@@ -389,6 +391,41 @@ _check_choice () {
 		return $?
 	else
 		_check_choice_text "$1"
+		return $?
+	fi
+}
+
+# Get user input textually
+# $1 = Text to display
+_get_input_text () {
+	_print_question "$1"
+	read
+	INPUT="$REPLY"
+	if [[ -z "$REPLY" ]]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+# Get user input with dialog
+# $1 = Text to display
+_get_input_gui () {
+	dialog --inputbox "$1" 8 60 2> $FILE_TMP_DIALOG
+	local SUCCESS=$?
+	INPUT="$(cat "$FILE_TMP_DIALOG")"
+	return $SUCCESS
+}
+
+# Get user input
+# $1 = Text to display
+_get_input () {
+	unset INPUT
+	if _is_installed dialog; then
+		_get_input_gui "$1"
+		return $?
+	else
+		_get_input_text "$1"
 		return $?
 	fi
 }
