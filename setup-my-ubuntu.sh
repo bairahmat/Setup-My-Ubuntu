@@ -1014,7 +1014,6 @@ _do_config_gnome_terminal () {
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ background-color "#000000"
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ foreground-color "#FFFFFF"
 	gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:"$TPROFILE"/ scrollback-unlimited true
-	
 
 	return 0
 }
@@ -1248,8 +1247,7 @@ _show_help () {
 # Main parameter parsing function
 _parameter_parsing () {
 	_parse_params "$@"
-
-	return 0
+	return $?
 }
 
 # If one or more of the --do_* parameters is used, this function makes sure only those functions are called, but not the others
@@ -1266,6 +1264,8 @@ _clean_dos () {
 
 # Parameter parsing
 _parse_params () {
+	local RET=0
+
 	while (( $# > 0 )); do
 		PARAM="$1"
 		case $PARAM in
@@ -1353,13 +1353,17 @@ _parse_params () {
 				;;
 			*)
 				_print_error "Invalid parameter: $PARAM"
-				_print_error "Use --help parameter to show help."
-				exit 1
-			;;
+				RET=1
+				shift
+				;;
 		esac
 	done
 
-	return 0
+	if (( RET == 1 )); then
+		_print_error "Use --help parameter to show help."
+	fi
+
+	return $RET
 }
 
 ###################################################################################################################################################
